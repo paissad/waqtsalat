@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<project name="Build GeoIPJava" default="build" >
+    <property name="unzip-destination" value="WORK" />
+    <property name="file" value="GeoIPJava" />
+    <property name="version" value="1.2.4" />
+    <property name="topDir" value="${unzip-destination}/${file}-${version}" />
+    <property name="buildDir" value="${topDir}/classes" />
+    <property name="srcDir" value="${topDir}/source" />
+    <property name="outputJar" value="geoip-${version}.jar" />
+    <tstamp>
+        <format property="TODAY" pattern="EEEE, d-MMM-yyyy HH:mm:ss, Z" locale="en,UK" />
+    </tstamp>
+
+    <!--target clean-->
+    <target name="clean">
+        <delete dir="${unzip-destination}" />
+        <delete file="${outputJar}" />
+    </target>
+
+    <!--target unzip-->
+    <target name="unzip">
+        <unzip src="${file}-${version}.zip" dest="${unzip-destination}" />
+    </target>
+
+    <!--target build-->
+    <target name="build" depends="clean,unzip">
+        <mkdir dir="${buildDir}" />
+        <javac srcdir="${srcDir}" destdir="${buildDir}" debug="on" includeantruntime="false" />
+        <jar basedir="${buildDir}" destfile="${outputJar}" compress="off" duplicate="preserve">
+            <manifest>
+                <attribute name="Created-By" value="MAXMIND http://www.maxmind.com/" />
+                <attribute name="Built-By" value="paissad (paissad@gmail.com) for WaqtSalat project."/>
+                <section name="com/maxmind/geoip/*">
+                    <attribute name="Specification-Title" value="${file}" />
+                    <attribute name="Spedification-Version" value="${version}" />
+                    <attribute name="Specification-Vendor" value="http://www.maxmind.com/" />
+                    <attribute name="Implementation-Version" value="${version} ${TODAY} "/> 
+                </section>
+            </manifest>
+        </jar>
+    </target>
+
+</project>
