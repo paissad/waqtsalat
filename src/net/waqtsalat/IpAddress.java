@@ -38,36 +38,36 @@ import org.slf4j.LoggerFactory;
  */
 public class IpAddress {
 
-	// Different available methods/sites to get the public ip address !
+	/**
+	 * <a href="http://paissad.net/myip">http://paissad.net/myip</a>
+	 */
 	public static final String PAISSAD         = "http://paissad.net/myip";
+	
+	/**
+	 * <a href="http://checkip.dyndns.org">http://checkip.dyndns.org</a>
+	 */
 	public static final String DYNDNS          = "http://checkip.dyndns.org";
+	
+	/**
+	 * <a href="http://www.whatismyip.com/automation/n09230945.asp">http://www.whatismyip.com/automation/n09230945.asp</a>
+	 */
 	public static final String WHAT_IS_MY_IP   = "http://www.whatismyip.com/automation/n09230945.asp";
-	private static final String DEFAULT_METHOD = DYNDNS;
+	public static String DEFAULT_METHOD        = DYNDNS;
 
 	Logger logger = LoggerFactory.getLogger(getClass());
 
-	private String ipAddress     = "-1";
-	private String method        = DEFAULT_METHOD;
+	private String ip     = "-1";
+	private String method = DEFAULT_METHOD;
 
 	public IpAddress() {
 	}
 	//=======================================================================
 
 	/**
-	 * @param method The method used for retreiving the public ip address.
+	 * @param method The method used to retreive the public ip address.
 	 */
 	public IpAddress(String method) {
 		this.method = method;
-	}
-	//=======================================================================
-
-	/**
-	 * @param ipAddress Ip address.
-	 * @param method The method used for retreiving the public ip address.
-	 */
-	public IpAddress(String ipAddress, String method) {
-		this.ipAddress = ipAddress;
-		this.method    = method;
 	}
 	//=======================================================================
 
@@ -76,16 +76,16 @@ public class IpAddress {
 	 * @return Return a String representing the current ip address of the object.
 	 */
 	public String getIpAddress() {
-		return ipAddress;
+		return this.ip;
 	}
 	//=======================================================================
 
 	/**
 	 * Force/Change the ip address of the current object.
-	 * @param ipAddress Ip Address
+	 * @param ip Ip Address to set to.
 	 */
-	public void setIpAddress(String ipAddress) {
-		this.ipAddress = ipAddress;
+	public void setIpAddress(String ip) {
+		this.ip = ip;
 	}
 	//=======================================================================
 
@@ -94,13 +94,12 @@ public class IpAddress {
 	 * @return Return a String representing the current method used for this object.
 	 */
 	public String getMethod() {
-		return method;
+		return this.method;
 	}
 	//=======================================================================
 
 	/**
-	 * Force/Change the method to use while retreiving the ip address from a site.<br />
-	 * Default method is DYNDNS.
+	 * Force/Change the method to use in order to retreive the ip address from a site.<br />
 	 * @param method The method used for retreiving the public ip address.
 	 */
 	public void setMethod(String method) {
@@ -117,11 +116,11 @@ public class IpAddress {
 	//=======================================================================
 
 	/**
-	 * Retreive the public ip address of the object from a known site/method !<br />
-	 * Known methods/sites are:
+	 * Retreive the public ip address of the object from a known method.<br />
+	 * Known methods are:
 	 * <ul>
 	 * <li>PAISSAD    - <a href="http://paissad.net/myip">http://paissad.net/myip</a></li>
-	 * <li>WHATISMYIP - <a href="http://www.whatismyip.com/automation/n09230945.asp">http://www.whatismyip.com/automation/n09230945.asp</a></li>
+	 * <li>WHAT_IS_MY_IP - <a href="http://www.whatismyip.com/automation/n09230945.asp">http://www.whatismyip.com/automation/n09230945.asp</a></li>
 	 * <li>DYNDNS     - <a href="http://checkip.dyndns.org">http://checkip.dyndns.org</a></li>
 	 * </ul>
 	 * @return Return a String representing the ip address retreived with the specified method.
@@ -129,17 +128,18 @@ public class IpAddress {
 	 */
 	public String retreiveIpAddress() throws IOException {
 		try{
-			String ip = "-1"; 
-			URL url = new URL(this.method);
+			String ipTemp = "-1"; 
+			URL url       = new URL(this.method);
 
 			BufferedReader bf = new BufferedReader(new InputStreamReader(url.openStream()));
-			String ipRegex   = " *(((\\d{1,3}\\.){3}\\d{1,3}))";
-			StringBuffer sb  = new StringBuffer();
+			String ipRegex    = " *(((\\d{1,3}\\.){3}\\d{1,3}))";
+			StringBuffer sb   = new StringBuffer();
 			String inputLine;
 
 			while((inputLine = bf.readLine()) != null) {
 				sb.append(inputLine);
 			}
+
 			Pattern pattern = Pattern.compile(ipRegex);
 			Matcher matcher = pattern.matcher(sb.toString());
 
@@ -148,12 +148,12 @@ public class IpAddress {
 			else
 				logger.error("No Ip Address ...");
 
-			this.ipAddress = ip;
-			return this.ipAddress;
+			this.ip = ipTemp;
+			return this.ip;
 		}
 		catch(IOException ioe) {
 			ioe.printStackTrace();
-			throw new IOException();
+			throw new IOException("Error while retreiving public ip address!");
 		}
 	}
 	//=======================================================================

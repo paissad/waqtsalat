@@ -19,7 +19,6 @@
  * 
  */
 
-
 package net.waqtsalat;
 
 import java.io.IOException;
@@ -27,46 +26,51 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import com.maxmind.geoip.*;
+import com.maxmind.geoip.LookupService;
+import com.maxmind.geoip.Location;
+import com.maxmind.geoip.timeZone;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WaqtSalat {
 
-	//	public static final String DATABASE_FILE = "resources/geiop/GeoLiteCity.dat";
 	public static final String GEOIP_DATABASE_FILE = "GeoLiteCity.dat";
 	public static final int GEOIP_OPTIONS = LookupService.GEOIP_MEMORY_CACHE;
 
+	Logger logger = LoggerFactory.getLogger(getClass());
+
 	IpAddress ipAddress = null;
 	Location loc        = null;
-	
+
 	public WaqtSalat(IpAddress ipAddress) {
 		this.ipAddress = ipAddress;
 	}
-	
+
 	public WaqtSalat(Location loc) {
 		this.loc = loc;
 	}
-	
+
 	public WaqtSalat(IpAddress ipAddress, Location loc) {
 		this.ipAddress = ipAddress;
 		this.loc       = loc;
 	}
-	
-//	public WaqtSalat(String ip, File geoipDatabaseFile) {
-//		this.ip = ip;
-//		try{
-//			final LookupService service = new LookupService(geoipDatabaseFile);
-//		}
-//		catch(IOException ioe) { ioe.getMessage(); }
-//	}
+
+	//	public WaqtSalat(String ip, File geoipDatabaseFile) {
+	//		this.ip = ip;
+	//		try{
+	//			final LookupService service = new LookupService(geoipDatabaseFile);
+	//		}
+	//		catch(IOException ioe) { ioe.getMessage(); }
+	//	}
 
 	public static void main(String[] args) throws IOException {
 
 		//WaqtSalat ws = new WaqtSalat(ipAddress,location);
-		
-		IpAddress ipAddress = new IpAddress(IpAddress.DYNDNS);
-		String ip = ipAddress.retreiveIpAddress();
-		Location location = new LookupService(GEOIP_DATABASE_FILE).getLocation(ip);
-		
+
+		String ip          = new IpAddress().retreiveIpAddress();
+		Location location  = new LookupService(GEOIP_DATABASE_FILE).getLocation(ip);
+
 		String cityName    = location.city;
 		String countryName = location.countryName; 
 		double latitude    = location.latitude;
@@ -78,9 +82,9 @@ public class WaqtSalat {
 		String postalCode  = location.postalCode;
 		int dmaCode        = location.dma_code;
 		int metroCode      = location.metro_code;		
-		
+
 		Location attacker = new LookupService(GEOIP_DATABASE_FILE).getLocation("81.251.93.229");
-		
+
 		System.out.println(
 				"\nIp Address   = " + ip +
 				"\nCity         = " + cityName +
@@ -99,9 +103,9 @@ public class WaqtSalat {
 				"\n"
 		);
 
-		
-//		double latitude = -37.823689;
-//		double longitude = 145.121597;
+
+		//		double latitude = -37.823689;
+		//		double longitude = 145.121597;
 		double timezone = 1;
 		// Test Prayer times here
 		PrayTime prayers = new PrayTime();
@@ -141,7 +145,7 @@ public class WaqtSalat {
 	public void setLoc(Location loc) {
 		this.loc = loc;
 	}
-	
+
 }
 
 
