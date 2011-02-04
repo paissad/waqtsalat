@@ -32,6 +32,8 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
+import net.waqtsalat.WaqtSalat;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -46,7 +48,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DownloadUtils {
 
-	Logger logger = LoggerFactory.getLogger(getClass());
+	Logger logger = LoggerFactory.getLogger(WaqtSalat.class);
 
 	/**
 	 * Url to use.

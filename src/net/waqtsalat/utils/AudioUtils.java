@@ -32,6 +32,8 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.SourceDataLine;
 
+import net.waqtsalat.WaqtSalat;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +44,7 @@ import org.slf4j.LoggerFactory;
  */
 public class AudioUtils implements PlayerUtils {
 
-	Logger logger = LoggerFactory.getLogger(getClass());
+	Logger logger = LoggerFactory.getLogger(WaqtSalat.class);
 
 	protected File audioFile = null;
 	private boolean stop     = false;  // if set to true, then do no play the audio file !
@@ -147,13 +149,13 @@ public class AudioUtils implements PlayerUtils {
 					audioInputStream = AudioSystem.getAudioInputStream(audioFile);
 
 					AudioFormat audioFormat = audioInputStream.getFormat();
-					logger.trace("AUDIO FORMAT: " +  audioFormat.toString());
+					logger.trace("AUDIO FORMAT: {}", audioFormat.toString());
 
 					DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
-					logger.trace("DATALINE INFO: " +  info.toString());
+					logger.trace("DATALINE INFO: {}", info.toString());
 
 					line = (SourceDataLine) AudioSystem.getLine(info);
-					logger.trace("LINE: " + line.toString());
+					logger.trace("LINE: {}", line.toString());
 
 					stop = false;
 					line.open(audioFormat); // Open the line with the right audio format.

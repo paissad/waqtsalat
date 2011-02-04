@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import net.waqtsalat.WaqtSalat;
 import net.waqtsalat.utils.Utils;
 import net.waqtsalat.utils.DownloadUtils;
 import net.waqtsalat.utils.UncompressUtils;
@@ -38,9 +39,10 @@ import org.slf4j.LoggerFactory;
  */
 public class GeoipUtils {
 
-	public static final String GEOIP_DATABASE_SAVE_PATH   = "resources" + File.separator + "geoip";
-	private static final String GEOIP_DATABASE_FILENAME   = "GeoLiteCity.dat";
-	private static final String GEOIP_DATABASE_URL        = "http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz";
+	public static final String GEOIP_DATABASE_SAVE_PATH      = "resources" + File.separator + "geoip";
+	public static final String GEOIP_DATABASE_FILENAME       = "GeoLiteCity.dat";
+	public static final String GEOIP_DATABASE_COMPLETE_PATH  = GEOIP_DATABASE_SAVE_PATH + File.separator + GEOIP_DATABASE_FILENAME;
+	public static final String GEOIP_DATABASE_UPDATE_URL     = "http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz";
 
 	/**
 	 * Timestamp of the local GeoLiteCity.dat.gz file.
@@ -51,7 +53,7 @@ public class GeoipUtils {
 	 * Timestamp of the file GeoLiteCity.dat.gz from the remote url.
 	 */
 	private long remoteGeoipDatabaseTimestamp;  
-	Logger logger = LoggerFactory.getLogger(getClass());
+	Logger logger = LoggerFactory.getLogger(WaqtSalat.class);
 
 	/**
 	 * Sole constructor.
@@ -66,7 +68,7 @@ public class GeoipUtils {
 				this.localGeoipDatabaseTimestamp = 1;
 			}
 			try {
-				this.remoteGeoipDatabaseTimestamp = new Utils().getRemoteFileTimestamp(new URL(GEOIP_DATABASE_URL));
+				this.remoteGeoipDatabaseTimestamp = new Utils().getRemoteFileTimestamp(new URL(GEOIP_DATABASE_UPDATE_URL));
 			}
 			catch(IOException ioe) {
 				logger.error("Error while retreiving the remote timestamp for GeoIP database.");
@@ -94,7 +96,7 @@ public class GeoipUtils {
 	 */
 	public void downloadGeoipDatabase() {
 		try {
-			DownloadUtils util       = new DownloadUtils(new URL(GEOIP_DATABASE_URL));
+			DownloadUtils util       = new DownloadUtils(new URL(GEOIP_DATABASE_UPDATE_URL));
 			File database_Downloaded = util.downloadFile(
 					new File(GEOIP_DATABASE_SAVE_PATH + File.separator + util.getFileNameFromURL()));
 

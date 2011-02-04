@@ -32,6 +32,8 @@ import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
 
+import net.waqtsalat.WaqtSalat;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
@@ -56,7 +58,7 @@ public class UncompressUtils {
 	private static final String TAR_METHOD                   = "untar";
 	private static final boolean CLOSE_STREAM                = true;
 
-	private final Logger logger = LoggerFactory.getLogger(getClass());
+	Logger logger = LoggerFactory.getLogger(WaqtSalat.class);
 
 	/**
 	 * Compressed file (typically .gz, tar.gz, .bz2, .tar.bz2, .tar, ...)
@@ -359,7 +361,7 @@ public class UncompressUtils {
 	}
 	//=======================================================================
 
-	
+
 	/**
 	 * Creates a file from an InputStream.
 	 * @param is InputStream to read from.

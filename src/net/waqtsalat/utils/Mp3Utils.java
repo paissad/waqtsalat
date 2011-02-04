@@ -25,6 +25,8 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.File;
 
+import net.waqtsalat.WaqtSalat;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,12 +38,12 @@ import javazoom.jl.player.Player;
  */
 public class Mp3Utils extends AudioUtils implements PlayerUtils {
 
-	Logger logger = LoggerFactory.getLogger(getClass());
+	Logger logger = LoggerFactory.getLogger(WaqtSalat.class);
 
-	private File mp3File;
 	private Player player;
 
 	public Mp3Utils() {
+		super();
 	}
 	//=======================================================================
 
@@ -49,7 +51,7 @@ public class Mp3Utils extends AudioUtils implements PlayerUtils {
 	 * @param mp3File Mp3 file to use.
 	 */
 	public Mp3Utils(File mp3File) {
-		this.mp3File = mp3File;
+		super(mp3File);
 	}
 	//=======================================================================
 
@@ -67,7 +69,7 @@ public class Mp3Utils extends AudioUtils implements PlayerUtils {
 	public void play() {
 
 		try {
-			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(mp3File));
+			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(audioFile));
 			player = new Player(bis);
 		}
 		catch (Exception e) {
@@ -80,9 +82,9 @@ public class Mp3Utils extends AudioUtils implements PlayerUtils {
 		new Thread("mp3Player") {
 			public void run() {
 				try {
-					logger.debug("Playing mp3 file '{}'", mp3File.getAbsolutePath());
+					logger.debug("Playing mp3 file '{}'", audioFile.getAbsolutePath());
 					player.play();
-					logger.debug("Finished playing mp3 file '{}'", mp3File.getAbsolutePath());
+					logger.debug("Finished playing mp3 file '{}'", audioFile.getAbsolutePath());
 				}
 				catch (Exception e) {
 					logger.error("Error: '{}'", this.toString());
@@ -99,7 +101,7 @@ public class Mp3Utils extends AudioUtils implements PlayerUtils {
 	 * @return Return the mp3 file used for this object.
 	 */
 	public File getMp3File() {
-		return mp3File;
+		return audioFile;
 	}
 	//=======================================================================
 
@@ -108,7 +110,7 @@ public class Mp3Utils extends AudioUtils implements PlayerUtils {
 	 * @param mp3File mp3 file to use.
 	 */
 	public void setMp3File(File mp3File) {
-		this.mp3File = mp3File;
+		this.audioFile = mp3File;
 	}
 	//=======================================================================
 

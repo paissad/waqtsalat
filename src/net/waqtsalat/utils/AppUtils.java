@@ -21,6 +21,8 @@
 
 package net.waqtsalat.utils;
 
+import net.waqtsalat.WaqtSalat;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +35,7 @@ public class AppUtils {
 	public static final String APP_UPDATE_URL      = "http://www.waqtsalat.net/download";
 	public static final String APP_CURRENT_VERSION = "1.0";
 
-	Logger logger = LoggerFactory.getLogger(getClass());
+	Logger logger = LoggerFactory.getLogger(WaqtSalat.class);
 
 	//=======================================================================
 	

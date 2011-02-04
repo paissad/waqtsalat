@@ -21,8 +21,10 @@
 
 package net.waqtsalat;
 
+import java.util.HashMap;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.Map;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -42,32 +44,83 @@ public class IpAddress {
 	 * <a href="http://paissad.net/myip">http://paissad.net/myip</a>
 	 */
 	public static final String PAISSAD         = "http://paissad.net/myip";
-	
+
 	/**
 	 * <a href="http://checkip.dyndns.org">http://checkip.dyndns.org</a>
 	 */
 	public static final String DYNDNS          = "http://checkip.dyndns.org";
-	
+
 	/**
 	 * <a href="http://www.whatismyip.com/automation/n09230945.asp">http://www.whatismyip.com/automation/n09230945.asp</a>
 	 */
 	public static final String WHAT_IS_MY_IP   = "http://www.whatismyip.com/automation/n09230945.asp";
+
+	/**
+	 * Default method used to retreive the ip address. Default method is DYNDNS.
+	 */
 	public static String DEFAULT_METHOD        = DYNDNS;
 
-	Logger logger = LoggerFactory.getLogger(getClass());
+	Logger logger = LoggerFactory.getLogger(WaqtSalat.class);
 
 	private String ip     = "-1";
 	private String method = DEFAULT_METHOD;
+
+	//=======================================================================
 
 	public IpAddress() {
 	}
 	//=======================================================================
 
 	/**
-	 * @param method The method used to retreive the public ip address.
+	 * @param method The method to use to retreive the public ip address.
+	 * @see #DEFAULT_METHOD
+	 * @see #DYNDNS
+	 * @see #PAISSAD
+	 * @see #WHAT_IS_MY_IP
 	 */
 	public IpAddress(String method) {
 		this.method = method;
+	}
+	//=======================================================================
+
+	/**
+	 * Retreive the public ip address of the object from a known method.<br />
+	 * Known methods are:
+	 * <ul>
+	 * <li>PAISSAD    - <a href="http://paissad.net/myip">http://paissad.net/myip</a></li>
+	 * <li>WHAT_IS_MY_IP - <a href="http://www.whatismyip.com/automation/n09230945.asp">http://www.whatismyip.com/automation/n09230945.asp</a></li>
+	 * <li>DYNDNS     - <a href="http://checkip.dyndns.org">http://checkip.dyndns.org</a></li>
+	 * </ul>
+	 * @return Return a String representing the ip address retreived with the specified method.
+	 * @throws IOException
+	 */
+	public String retreiveIpAddress() throws IOException {
+		try{
+			URL url       = new URL(this.method);
+
+			BufferedReader bf = new BufferedReader(new InputStreamReader(url.openStream()));
+			String ipRegex    = " *(((\\d{1,3}\\.){3}\\d{1,3}))";
+			StringBuffer sb   = new StringBuffer();
+			String inputLine;
+
+			while((inputLine = bf.readLine()) != null) {
+				sb.append(inputLine);
+			}
+
+			Pattern pattern = Pattern.compile(ipRegex);
+			Matcher matcher = pattern.matcher(sb.toString());
+
+			if(matcher.find())
+				ip = matcher.group(2);
+			else
+				logger.error("No Ip Address ...");
+
+			return this.ip;
+		}
+		catch(IOException ioe) {
+			ioe.printStackTrace();
+			throw new IOException("Error while retreiving public ip address!");
+		}
 	}
 	//=======================================================================
 
@@ -108,53 +161,23 @@ public class IpAddress {
 	//=======================================================================
 
 	/**
-	 * @return Return a String representing the current ip address of the object.
+	 * Return the available methods we can use to retreive the public ip addresses.
+	 * @return Return a {@link Map} containing all available method names with their related values.
 	 */
-	public String toString() {
-		return getIpAddress();
+	public Map<String, String> getAvailableMethods() {
+		Map<String, String> methods = new HashMap<String, String>();
+		methods.put("DYNDNS", DYNDNS);
+		methods.put("PAISSAD", PAISSAD);
+		methods.put("WHAT_IS_MY_IP", WHAT_IS_MY_IP);
+		return methods;
 	}
 	//=======================================================================
 
 	/**
-	 * Retreive the public ip address of the object from a known method.<br />
-	 * Known methods are:
-	 * <ul>
-	 * <li>PAISSAD    - <a href="http://paissad.net/myip">http://paissad.net/myip</a></li>
-	 * <li>WHAT_IS_MY_IP - <a href="http://www.whatismyip.com/automation/n09230945.asp">http://www.whatismyip.com/automation/n09230945.asp</a></li>
-	 * <li>DYNDNS     - <a href="http://checkip.dyndns.org">http://checkip.dyndns.org</a></li>
-	 * </ul>
-	 * @return Return a String representing the ip address retreived with the specified method.
-	 * @throws IOException
+	 * @return Return a String representation of the current ip address of the object.
 	 */
-	public String retreiveIpAddress() throws IOException {
-		try{
-			String ipTemp = "-1"; 
-			URL url       = new URL(this.method);
-
-			BufferedReader bf = new BufferedReader(new InputStreamReader(url.openStream()));
-			String ipRegex    = " *(((\\d{1,3}\\.){3}\\d{1,3}))";
-			StringBuffer sb   = new StringBuffer();
-			String inputLine;
-
-			while((inputLine = bf.readLine()) != null) {
-				sb.append(inputLine);
-			}
-
-			Pattern pattern = Pattern.compile(ipRegex);
-			Matcher matcher = pattern.matcher(sb.toString());
-
-			if(matcher.find())
-				ip = matcher.group(2);
-			else
-				logger.error("No Ip Address ...");
-
-			this.ip = ipTemp;
-			return this.ip;
-		}
-		catch(IOException ioe) {
-			ioe.printStackTrace();
-			throw new IOException("Error while retreiving public ip address!");
-		}
+	public String toString() {
+		return getIpAddress();
 	}
 	//=======================================================================
 

@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SimplePlayer implements PlayerUtils {
 
-	Logger logger = LoggerFactory.getLogger(getClass());
+	Logger logger = LoggerFactory.getLogger(WaqtSalat.class);
 
 	private File audioFile   = null;
 	private AudioUtils audio = null;
@@ -61,7 +61,7 @@ public class SimplePlayer implements PlayerUtils {
 	 * @param audioFileName Name of the file to use.
 	 */
 	public SimplePlayer(String audioFileName) {
-		new SimplePlayer(new File(audioFileName));
+		this(new File(audioFileName));
 	}
 	//=======================================================================
 
