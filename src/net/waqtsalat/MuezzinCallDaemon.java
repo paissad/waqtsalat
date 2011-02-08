@@ -41,10 +41,10 @@ public class MuezzinCallDaemon {
 
 	Logger logger = LoggerFactory.getLogger(WaqtSalat.class);
 
-	ArrayList<String> prayNames = new PrayTime().getTimeNames(); // {Fajr, Sunrise, Dhuhr, Asr, Sunset, Maghrib, Isha}
+	ArrayList<String> _prayNames = new PrayTime().getTimeNames(); // {Fajr, Sunrise, Dhuhr, Asr, Sunset, Maghrib, Isha}
 
-	private static Set<Pray> prays;  // Only the 5 hours of the pray times.
-	private static ArrayList<String> times;
+	private static Set<Pray> _prays;  // Only the 5 hours of the pray times.
+	private static ArrayList<String> _times;
 	private boolean runAll;
 
 	//=======================================================================
@@ -56,15 +56,15 @@ public class MuezzinCallDaemon {
 	 */
 	public MuezzinCallDaemon(ArrayList<String> prayTimes) throws BadSizePrayTimesArray {
 
-		MuezzinCallDaemon.times = prayTimes;
-		normalizeArrayOfPrays(MuezzinCallDaemon.times);
+		_times = prayTimes;
+		normalizeArrayOfPrays(_times);
 
 		Comparator<Pray> comparator = new PrayComparator();
-		prays = new TreeSet<Pray>(comparator);
-		for (int i=0; i<prayNames.size(); i++) {
-			Pray pray = new Pray(i+1, prayNames.get(i));
-			pray.setTime(MuezzinCallDaemon.times.get(i));
-			prays.add(pray);
+		_prays = new TreeSet<Pray>(comparator);
+		for (int i=0; i<_prayNames.size(); i++) {
+			Pray pray = new Pray(i+1, _prayNames.get(i));
+			pray.setTime(_times.get(i));
+			_prays.add(pray);
 		}
 
 		runAll = true;
@@ -79,17 +79,17 @@ public class MuezzinCallDaemon {
 			@Override
 			public void run() {
 				runAll = true;
-				Iterator<Pray> iter = prays.iterator();
+				Iterator<Pray> iter = _prays.iterator();
 				while(iter.hasNext()) {
 					iter.next().start();
 				}
 
 				// update the pray times !
-				while(isSchedulerActive(prays)) {
+				while(isSchedulerActive(_prays)) {
 					try {
 						Thread.sleep(1L * 60L * 1000L);  // Update all times every minute.
 						udpatePrayTimes();
-						logger.trace("{}\n==================================================", prays.toString());
+						logger.trace("{}\n==================================================", _prays.toString());
 					} catch (InterruptedException e) {}
 				}
 			}
@@ -104,7 +104,7 @@ public class MuezzinCallDaemon {
 	 */
 	public void stop() {
 		runAll = false;
-		Iterator<Pray> iter = prays.iterator();
+		Iterator<Pray> iter = _prays.iterator();
 		if(runAll) {
 			while(iter.hasNext()) {
 				iter.next().stop();
@@ -117,10 +117,10 @@ public class MuezzinCallDaemon {
 	 * Update the pray times of the "Pray Daemons' of the Muezzin Call Daemon.
 	 */
 	private void udpatePrayTimes() {
-		Iterator<Pray> iter = prays.iterator();
+		Iterator<Pray> iter = _prays.iterator();
 		int i = 0;
 		while(iter.hasNext()) {
-			iter.next().setTime(times.get(i));
+			iter.next().setTime(_times.get(i));
 			i++;
 		}
 	}
@@ -142,7 +142,7 @@ public class MuezzinCallDaemon {
 	//=======================================================================
 
 	public String toString() {
-		Iterator<Pray> it = MuezzinCallDaemon.prays.iterator();
+		Iterator<Pray> it = _prays.iterator();
 		String s = new String();
 		while(it.hasNext()) {
 			s+= it.next().toString();
@@ -163,11 +163,11 @@ public class MuezzinCallDaemon {
 		}
 
 		// At this step, the list 'times' has a size of 5.
-		if(prayNames.size() == 7) {
-			this.prayNames.remove(1);    // Remove Sunrise name!
-			this.prayNames.remove(4-1);  // Remove Sunset name!
+		if(_prayNames.size() == 7) {
+			_prayNames.remove(1);    // Remove Sunrise name!
+			_prayNames.remove(4-1);  // Remove Sunset name!
 		}
-		else if (prayNames.size() != 5 ){
+		else if (_prayNames.size() != 5 ){
 			throw new BadSizePrayTimesArray();
 		}
 	}
@@ -204,7 +204,7 @@ public class MuezzinCallDaemon {
 	 * @param times the times to set
 	 */
 	public static void setTimes(ArrayList<String> times) {
-		MuezzinCallDaemon.times = times;
+		_times = times;
 	}
 
 }

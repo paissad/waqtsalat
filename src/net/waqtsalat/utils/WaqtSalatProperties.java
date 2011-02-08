@@ -21,51 +21,62 @@
 
 package net.waqtsalat.utils;
 
-import java.util.Observable;
-
-import net.waqtsalat.WaqtSalat;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
+import java.util.Properties;
 
 /**
- * Contains some utilities such as update checking for the application ...
  * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
  */
-public class AppUtils extends Observable {
+public class WaqtSalatProperties {
+	private final Properties properties = new Properties();
 
-	Logger logger = LoggerFactory.getLogger(WaqtSalat.class);
+	private static final String ENCODING = "UTF-8";
 
-	public static final String APP_UPDATE_URL      = "http://www.waqtsalat.net/download";
-	public static final String APP_CURRENT_VERSION = "1.0";
-
-	//=======================================================================
-
-	/**
-	 * Sole constructor.
-	 */
-	public AppUtils() {
+	public void loadFromByteArray(byte[] data) throws IOException {
+		try {
+			String utf = new String(data, ENCODING);
+			StringReader reader = new StringReader(utf);
+			properties.clear();
+			properties.load(reader);
+			reader.close();
+		} catch (UnsupportedEncodingException e) {
+			throw new IOException("Could not decode " + ENCODING);
+		}		
 	}
 	//=======================================================================
 
-	/**
-	 * Update the application.
-	 */
-	public void updateApplication() {
-		if(isUpdateAvailable()) {
+	public void clear() {
+		properties.clear();
+	}
+	//=======================================================================
 
+	public String get(String key) {
+		Object obj = properties.get(key);
+		if (obj != null) {
+			return trimAndRemoveQuotes("" + obj);
+		} else {
+			return "";
 		}
 	}
 	//=======================================================================
 
-	/**
-	 * Look for available update for the application.
-	 * @return Return true if an update is available, false otherwise.
-	 */
-	public boolean isUpdateAvailable() {
-		return false;
+	private static String trimAndRemoveQuotes(String in) {
+		in = in.trim();
+		if (in.startsWith("\"")) {
+			in = in.substring(1);
+		}
+		if (in.endsWith("\"")) {
+			in = in.substring(0, in.length() - 1);
+		}
+		return in;
 	}
 	//=======================================================================
 
+	public boolean containsKey(String key) {
+		return properties.containsKey(key);
+	}
+	//=======================================================================
 
 }

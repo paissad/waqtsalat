@@ -21,6 +21,7 @@
 
 package net.waqtsalat.utils;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -31,11 +32,11 @@ import java.net.URLConnection;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Observable;
 
 import net.waqtsalat.WaqtSalat;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,18 +47,26 @@ import org.slf4j.LoggerFactory;
  * Method to check for redirections of an url ...
  * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
  */
-public class DownloadUtils {
+public class DownloadUtils extends Observable {
 
 	Logger logger = LoggerFactory.getLogger(WaqtSalat.class);
 
-	/**
-	 * Url to use.
-	 */
+	/** Url to use. */
 	private URL url;
-	/**
-	 * If the url has an redirection, 'redirect' will catch it !
-	 */
+	/** If the url has an redirection, 'redirect' will catch it ! */
 	private URL redirect = null;
+
+	private Object stateLock = new Object();
+
+	private enum State {
+		NOTHING_KNOWN, DOWNLOAD_IN_PROGRESS, DOWNLOAD_FINISHED, ERROR
+	}
+	private State state = State.NOTHING_KNOWN;
+
+	private Throwable errorStateCause;
+	private int _bytesDownloaded = 0;
+	private int _totalBytes = 0;
+	private boolean _downloadCancelled = false;
 
 	//=======================================================================
 
@@ -77,10 +86,10 @@ public class DownloadUtils {
 	 * @return The file that has been downloaded.
 	 * @throws IOException
 	 */
-	public File downloadFile() throws IOException {
+	public File download() throws IOException {
 
 		try {
-			String outputFilename = getFileNameFromURL();
+			String outputFileName = getFileNameFromURL();
 
 			// Let's play with redirections. 
 			URL tempURL = new URL(url.toString());
@@ -88,15 +97,21 @@ public class DownloadUtils {
 			while(util.checkForRedirect()) {
 				url = util.getRedirectURL();
 				util = new DownloadUtils(url);
-				outputFilename = util.getFileNameFromURL();
+				outputFileName = util.getFileNameFromURL();
 			}
 
-			File outputFile = new File(outputFilename);
-			return downloadFile(outputFile);
+			File outputFile = new File(outputFileName);
+			return download(outputFile);
 		}
 		catch (IOException ioe) {
+			setState(State.ERROR);
 			throw new IOException();
 		}
+	}
+	//=======================================================================
+
+	public File download(String outputFileName) throws IOException {
+		return download(new File(outputFileName));
 	}
 	//=======================================================================
 
@@ -105,15 +120,15 @@ public class DownloadUtils {
 	 * Default timeout for the connection is 30 seconds.<br />
 	 * Default timeout for reading the url is 1 hour.<br />
 	 * 
-	 * @param outputFile Where to save the file.
+	 * @param outputFile Where to save the downloaded file.
 	 * @return The file that has been downloaded.
 	 * @throws IOException
 	 */
-	public File downloadFile(File outputFile) throws IOException {
-
+	public File download(File outputFile) throws IOException {
 		try {	
-			Logger logger          = LoggerFactory.getLogger(getClass());
+			Logger logger          = LoggerFactory.getLogger(WaqtSalat.class);
 			logger.info("Downloading file ...");
+			setState(State.DOWNLOAD_IN_PROGRESS);
 
 			File downloadedFile    = File.createTempFile(outputFile.getName(), ".download", outputFile.getParentFile());
 			URLConnection urlc     = url.openConnection();
@@ -125,33 +140,42 @@ public class DownloadUtils {
 			urlc.setRequestProperty("User-Agent", userAgent);
 			String contentType     = urlc.getContentType();
 			String contentEncoding = urlc.getContentEncoding();
-			int contentLength      = urlc.getContentLength();
+			_totalBytes            = urlc.getContentLength();
 			urlc.setConnectTimeout(30000);
 			urlc.setReadTimeout(3600000);
 
 			logger.debug("User-Agent               : {}", userAgent);
 			logger.debug("Content type             : {}", contentType);
-			logger.debug("Content length           : {}", contentLength);
+			logger.debug("Content length           : {}", _totalBytes);
 			logger.debug("Content encoding         : {}", contentEncoding);
 			logger.debug("Connection timeout (sec) : {}", urlc.getConnectTimeout()/1000);
 			logger.debug("Read timeout (sec)       : {}", urlc.getReadTimeout()/1000);
 			logger.debug("Temporary file           : {}", downloadedFile.getAbsolutePath());
 			logger.debug("Remote file              : {}", url.toString());
 
+			BufferedInputStream bis  = new BufferedInputStream(urlc.getInputStream());
 			BufferedOutputStream bos = new BufferedOutputStream (new FileOutputStream(downloadedFile));
 
 			File outputFileTemp = File.createTempFile(outputFile.getName(), ".temp", outputFile.getParentFile());
 			outputFileTemp.delete();
 
 			try {
-				int copied = IOUtils.copy(urlc.getInputStream(), bos);
-				logger.debug("Bytes copied             : {}", copied);
-				if(copied != contentLength) {
+				int BUFFER_SIZE = 4096;
+				byte[] data = new byte[BUFFER_SIZE];
+				int length;
+				while((length = bis.read(data)) != -1 && !_downloadCancelled) {
+					bos.write(data, 0, length);
+					_bytesDownloaded += length;
+					setChanged();
+					notifyObservers();
+				}
+				bos.flush();
+
+				logger.debug("Bytes copied             : {}", _bytesDownloaded);
+				if(_bytesDownloaded != _totalBytes) {
+					setState(State.ERROR);
 					logger.error("Data did not match, error occured during the download!");
 				}
-
-				bos.write(2048);
-				bos.close();
 
 				if (outputFile.exists()) {
 					FileUtils.moveFile(outputFile, outputFileTemp);
@@ -161,25 +185,30 @@ public class DownloadUtils {
 				logger.info("Download finished successfully ! '{}'",outputFile.getAbsolutePath());
 			}
 			catch(IOException ioe) {
+				setState(State.ERROR);
 				if (!outputFile.exists() && outputFileTemp.exists()) {
 					FileUtils.moveFile(outputFileTemp, outputFile);
 				}
-				if (bos != null)
-					bos.close();
 				ioe.printStackTrace();
 				throw new IOException();
 			}
 			finally {
+				if (bis != null)
+					bis.close();
 				if (bos != null)
 					bos.close();
 				if (downloadedFile.exists())
 					downloadedFile.delete();
 				if (outputFileTemp.exists())
 					outputFileTemp.delete();
+				if (getState() != State.ERROR)
+					setState(State.DOWNLOAD_FINISHED);
 			}
+
 			return outputFile;
 		}
 		catch(IOException ioe) {
+			setState(State.ERROR);
 			ioe.printStackTrace();
 			throw new IOException("The download failed.");
 		}
@@ -216,7 +245,7 @@ public class DownloadUtils {
 	 * @return Return true if a redirection is found, false otherwise.
 	 * @throws IOException
 	 */
-	public boolean checkForRedirect() throws IOException {
+	private boolean checkForRedirect() throws IOException {
 
 		try {
 			URLConnection urlc           = url.openConnection();
@@ -243,17 +272,8 @@ public class DownloadUtils {
 	 * Get the url which is the redirection.
 	 * @return Return the url of the redirection.
 	 */
-	public URL getRedirectURL() {
+	private URL getRedirectURL() {
 		return redirect;
-	}
-	//=======================================================================
-
-	/**
-	 * Get the url which is the redirection.
-	 * @return Return the url of the redirection in a String format.
-	 */
-	public String getRedirectString() {
-		return redirect.toString();
 	}
 	//=======================================================================
 
@@ -266,5 +286,69 @@ public class DownloadUtils {
 		outputFilename = outputFilename.replaceFirst(".*/", ""); // get the filename
 		return outputFilename;
 	}
+	//=======================================================================
+
+	private synchronized void setState(State value) {
+		synchronized (stateLock) {
+			state = value;
+			if (state == State.DOWNLOAD_FINISHED) {
+				_bytesDownloaded = _totalBytes;
+			} else if (state != State.DOWNLOAD_IN_PROGRESS) {
+				_bytesDownloaded = 0;
+				_totalBytes = 0;
+			}
+			if (state != State.ERROR) {
+				errorStateCause = null;
+			}
+		}
+
+		setChanged();
+		notifyObservers();
+	}
+	//=======================================================================
+
+	/**
+	 * @param url the url where to download the file from.
+	 */
+	public void setUrl(URL url) {
+		this.url = url;
+	}
+
+	public State getState() {
+		synchronized (stateLock) {
+			return state;
+		}
+	}
+
+	public Throwable getErrorStateCause() {
+		synchronized (stateLock) {
+			return errorStateCause;
+		}
+	}
+
+	public int getBytesDownloaded() {
+		synchronized (stateLock) {
+			return _bytesDownloaded;
+		}
+	}
+
+	public int getTotalBytes() {
+		synchronized (stateLock) {
+			return _totalBytes;
+		}
+	}
+
+	public void cancelDownload() {
+		synchronized (stateLock) {
+			_downloadCancelled = true;
+		}
+	}
+
+	public boolean isDownloadCancelled() {
+		synchronized (stateLock) {
+			return _downloadCancelled;
+		}
+	}
+	//=======================================================================
 
 }

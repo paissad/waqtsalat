@@ -33,6 +33,8 @@ import net.waqtsalat.utils.UncompressUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.maxmind.geoip.LookupService;
+
 /**
  * Some utilities such as looking for updates, or downloading GeoIP database.
  * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
@@ -43,6 +45,10 @@ public class GeoipUtils {
 	public static final String GEOIP_DATABASE_FILENAME       = "GeoLiteCity.dat";
 	public static final String GEOIP_DATABASE_COMPLETE_PATH  = GEOIP_DATABASE_SAVE_PATH + File.separator + GEOIP_DATABASE_FILENAME;
 	public static final String GEOIP_DATABASE_UPDATE_URL     = "http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz";
+
+	public static final int GEOIP_OPTIONS = LookupService.GEOIP_MEMORY_CACHE;
+	public static final double LATITUDE_MAKKAH  = 21.42738;
+	public static final double LONGITUDE_MAKKAH = 39.81484;
 
 	/**
 	 * Timestamp of the local GeoLiteCity.dat.gz file.
@@ -97,7 +103,7 @@ public class GeoipUtils {
 	public void downloadGeoipDatabase() {
 		try {
 			DownloadUtils util       = new DownloadUtils(new URL(GEOIP_DATABASE_UPDATE_URL));
-			File database_Downloaded = util.downloadFile(
+			File database_Downloaded = util.download(
 					new File(GEOIP_DATABASE_SAVE_PATH + File.separator + util.getFileNameFromURL()));
 
 			File database_Uncompressed = new UncompressUtils(

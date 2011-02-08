@@ -32,6 +32,21 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/WaqtSalat/lib/_docs/cron4j-2.2.2-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/commons-configuration-1.6.jar" sourcepath="/Users/paissad/.m2/repository/commons-configuration/commons-configuration/1.6/commons-configuration-1.6-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/WaqtSalat/lib/_docs/commons-configuration-1.6-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/commons-lang-2.6.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/WaqtSalat/lib/_docs/commons-lang-2.6-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/commons-collections-3.2.1.jar" sourcepath="lib/_sources/commons-collections-3.2.1-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/WaqtSalat/lib/_docs/commons-collections-3.2.1-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -33,6 +33,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Contains some utilities that many other classes may use<br>
+ * Such as checking the OS, updates ...
  * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
  */
 public class Utils {
@@ -118,6 +120,35 @@ public class Utils {
 	public boolean checkUpdate(String localVersion, String remoteVersion) {
 		return (localVersion.compareTo(remoteVersion) < 0) ? true : false;
 	}
-	//=======================================================================
+	//======================================================================
 
+	/**
+	 * @return Return true if the platform is windows, false otherwise.
+	 */
+	public boolean isWindows(){
+		if(System.getProperty("os.name").startsWith("Windows"))
+			return true;
+		return false;
+	}
+	//======================================================================
+	
+	/**
+	 * @return Return true if the platform is Linux, false otherwise.
+	 */
+	public boolean isLinux(){
+		if(System.getProperty("os.name").startsWith("Linux"))
+			return true;
+		return false;
+	}
+	//======================================================================
+	
+	/**
+	 * @return Return true if the platform is Mac, false otherwise.
+	 */
+	public boolean isMac(){
+		if(System.getProperty("os.name").startsWith("Mac OS"))
+			return true;
+		return false;
+	}
+	//======================================================================
 }

@@ -21,10 +21,12 @@
 
 package net.waqtsalat;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.Map;
+import java.util.Set;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -34,30 +36,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Encapsulates informations about the Ip Address.<br />
+ * Encapsulates informations about the Ip Address.<br>
  * Contains methods to retreive automatically the Ip Address.
  * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>) 
  */
 public class IpAddress {
 
-	/**
-	 * <a href="http://paissad.net/myip">http://paissad.net/myip</a>
-	 */
+	/** <a href="http://paissad.net/myip">http://paissad.net/myip</a> */
 	public static final String PAISSAD         = "http://paissad.net/myip";
 
-	/**
-	 * <a href="http://checkip.dyndns.org">http://checkip.dyndns.org</a>
-	 */
+	/** <a href="http://checkip.dyndns.org">http://checkip.dyndns.org</a> */
 	public static final String DYNDNS          = "http://checkip.dyndns.org";
 
-	/**
-	 * <a href="http://www.whatismyip.com/automation/n09230945.asp">http://www.whatismyip.com/automation/n09230945.asp</a>
-	 */
+	/** <a href="http://www.whatismyip.com/automation/n09230945.asp">http://www.whatismyip.com/automation/n09230945.asp</a> */
 	public static final String WHAT_IS_MY_IP   = "http://www.whatismyip.com/automation/n09230945.asp";
 
-	/**
-	 * Default method used to retreive the ip address. Default method is DYNDNS.
-	 */
+	/** Default method used to retreive the ip address. Default method is DYNDNS. */
 	public static String DEFAULT_METHOD        = DYNDNS;
 
 	Logger logger = LoggerFactory.getLogger(WaqtSalat.class);
@@ -79,12 +73,13 @@ public class IpAddress {
 	 * @see #WHAT_IS_MY_IP
 	 */
 	public IpAddress(String method) {
+		assert isValidMethod();
 		this.method = method;
 	}
 	//=======================================================================
 
 	/**
-	 * Retreive the public ip address of the object from a known method.<br />
+	 * Retreive the public ip address of the object from a known method.<br>
 	 * Known methods are:
 	 * <ul>
 	 * <li>PAISSAD    - <a href="http://paissad.net/myip">http://paissad.net/myip</a></li>
@@ -152,11 +147,21 @@ public class IpAddress {
 	//=======================================================================
 
 	/**
-	 * Force/Change the method to use in order to retreive the ip address from a site.<br />
+	 * Force/Change the method to use in order to retreive the ip address from a site.<br>
 	 * @param method The method used for retreiving the public ip address.
 	 */
 	public void setMethod(String method) {
+		assert isValidMethod();
 		this.method = method;
+	}
+	//=======================================================================
+
+	/**
+	 * @return Return true if the method name specified for this object is a valid one.
+	 */
+	public boolean isValidMethod() {
+		Set<String> availableMethods = getAvailableMethods().keySet();
+		return availableMethods.contains(this.method);
 	}
 	//=======================================================================
 
@@ -178,6 +183,27 @@ public class IpAddress {
 	 */
 	public String toString() {
 		return getIpAddress();
+	}
+	//=======================================================================
+
+	/**
+	 * Get the name of the default method, not the value but the method name !<br>
+	 * @return The name of the default method.
+	 */
+	public String getDefaultMethodName() {
+		for(Field f : this.getClass().getFields()) {
+			try {
+				if(f.get(this).equals(DEFAULT_METHOD))
+					return f.getName();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+				return null;
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+		return null;
 	}
 	//=======================================================================
 
