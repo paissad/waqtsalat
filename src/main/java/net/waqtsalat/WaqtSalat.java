@@ -48,6 +48,7 @@ public class WaqtSalat {
 
 		WsParseCommandLine parser = new WsParseCommandLine(args);
 		boolean _help     = parser.isHelp();
+		boolean _verbose  = parser.isVerbose();
 		int _verboseLevel = parser.getVerboseLevel();
 		boolean _auto     = parser.isAutomatic();
 		String _ip        = parser.getIp();
@@ -55,8 +56,9 @@ public class WaqtSalat {
 		double _longitude = parser.getLongitude();
 		boolean _play     = parser.isPlay();
 
-		System.out.println("longitude -> " + _longitude);
-		System.out.println("latitude ->  " + _latitude);
+		// TODO: remove this ...
+		//System.out.println("longitude -> " + _longitude);
+		//System.out.println("latitude ->  " + _latitude);
 
 		String cityName;
 		String countryName;
@@ -77,6 +79,8 @@ public class WaqtSalat {
 			parser.printUsage();
 			System.exit(0);
 		}
+		if(_verbose)
+			System.out.println("Verbosity level: " + _verboseLevel);
 
 		if(_longitude != -1 || _latitude != -1) {  // latitude & longitude have the priority over automatic mode.
 			if(_longitude == -1 || _latitude == -1) {
@@ -109,28 +113,25 @@ public class WaqtSalat {
 			areaCode     = location.area_code;
 			postalCode   = location.postalCode;
 			dmaCode      = location.dma_code;
-			metroCode    = location.metro_code;		
-
-			// TODO: remove this too
-			Location attacker = new LookupService(GeoipUtils.GEOIP_DATABASE_COMPLETE_PATH).getLocation("81.251.93.229");
+			metroCode    = location.metro_code;
 
 			// TODO: Do not forget to remove this since it's only for debugging purpose.
 			if(_verboseLevel > 1)
 				System.out.println(""
-						+ "\nIp Address   = " + _ip
-						+ "\nCity         = " + cityName
-						+ "\nCountry      = " + countryName
-						+ "\nCountry Code = " + countryCode
-						+ "\nLatitude     = " + _latitude
-						+ "\nLongitude    = " + _longitude
-						+ "\nRegion       = " + region
-						+ "\nTimezone     = " + tmz
-						+ "\nArea Code    = " + areaCode
-						+ "\nPostal Code  = " + postalCode
-						+ "\nDma Code     = " + dmaCode
-						+ "\nMetro Code   = " + metroCode
-						+ "\n---------------------------"
-						+"\nDistance     = " + location.distance(attacker)
+						+ "\n--------------------------------------"
+						+ "\n| Ip Address   = " + _ip
+						+ "\n| City         = " + cityName
+						+ "\n| Country      = " + countryName
+						+ "\n| Country Code = " + countryCode
+						+ "\n| Latitude     = " + _latitude
+						+ "\n| Longitude    = " + _longitude
+						+ "\n| Region       = " + region
+						+ "\n| Timezone     = " + tmz
+						+ "\n| Area Code    = " + areaCode
+						+ "\n| Postal Code  = " + postalCode
+						+ "\n| Dma Code     = " + dmaCode
+						+ "\n| Metro Code   = " + metroCode
+						+ "\n--------------------------------------"
 						+ "\n"
 				);
 			// End of TODO
@@ -154,12 +155,10 @@ public class WaqtSalat {
 		prayerTimes = prayers.getPrayerTimes(cal, _latitude, _longitude, timezone);
 		prayerNames = prayers.getTimeNames();
 
-		if(_verboseLevel > 0) {
-			System.out.println("+=======================+");
-			for (int i = 0; i < prayerTimes.size(); i++)
-				System.out.println(String.format("| %-14s:%6s |", prayerNames.get(i), prayerTimes.get(i)));
-			System.out.println("+=======================+");
-		}
+		System.out.println("+=======================+");
+		for (int i = 0; i < prayerTimes.size(); i++)
+			System.out.println(String.format("| %-14s:%6s |", prayerNames.get(i), prayerTimes.get(i)));
+		System.out.println("+=======================+");
 
 		// OVERWRITE THE LIST OF MUEZZIN CALL TIME FOR TESTING PURPOSE !
 		prayerTimes.set(0, "17:56");
@@ -219,7 +218,5 @@ public class WaqtSalat {
 		this.loc       = loc;
 	}
 	//=======================================================================
-	
+
 }
-
-

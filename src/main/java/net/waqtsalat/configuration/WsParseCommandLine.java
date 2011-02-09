@@ -135,16 +135,13 @@ public class WsParseCommandLine {
 		_serverHost    = (String)   parser.getOptionValue(serverHostOpt, conf.getServerHostname());
 		_serverPort    = ((Integer) parser.getOptionValue(serverPortOpt, conf.getServerPort())).intValue();	
 
-		while (true) {
+		while (true && _verboseLevel < 2) {
 			_verbose = (Boolean) parser.getOptionValue(verboseOpt);
 
 			if (_verbose == null)
 				break;
 			else
-				if(_verboseLevel < 2)   // We set the max verbose level to 2.
-					_verboseLevel++;
-				else
-					break;
+				_verboseLevel++;
 		}
 
 		//printOptions();
