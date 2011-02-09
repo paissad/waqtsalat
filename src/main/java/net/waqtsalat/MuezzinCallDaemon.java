@@ -51,11 +51,15 @@ public class MuezzinCallDaemon {
 	/**
 	 * Default and sole constructor.
 	 * 
-	 * @param prayTimes An {@link ArrayList} containing the times of pray. (in the correct order).
-	 * @throws BadSizePrayTimesArray If the array specified as argument for the constructor is not equal to 5 or 7.
+	 * @param prayTimes
+	 *            An {@link ArrayList} containing the times of pray. (in the
+	 *            correct order).
+	 * @throws BadSizePrayTimesArray
+	 *             If the array specified as argument for the constructor is not
+	 *             equal to 5 or 7.
 	 */
 	public MuezzinCallDaemon(ArrayList<String> prayTimes)
-	throws BadSizePrayTimesArray {
+			throws BadSizePrayTimesArray {
 
 		_times = prayTimes;
 		normalizeArrayOfPrays(_times);
@@ -74,7 +78,8 @@ public class MuezzinCallDaemon {
 	// =======================================================================
 
 	/**
-	 * Start the daemon. (The muezzin call for each pray time is scheduled for playing).
+	 * Start the daemon. (The muezzin call for each pray time is scheduled for
+	 * playing).
 	 */
 	public void start() {
 		Thread t = new Thread("Muezzin Call Daemon") {
@@ -89,10 +94,14 @@ public class MuezzinCallDaemon {
 				// update the pray times !
 				while (isSchedulerActive(_prays)) {
 					try {
-						Thread.sleep(1L * 60L * 1000L); // Update every pray time every minute.
+						Thread.sleep(1L * 60L * 1000L); // Update every pray
+														// time every minute.
 						udpatePrayTimes();
-						logger.trace("{}\n==================================================", _prays.toString());
-					} catch (InterruptedException e) {}
+						logger.trace(
+								"{}\n==================================================",
+								_prays.toString());
+					} catch (InterruptedException e) {
+					}
 				}
 			}
 		};
@@ -132,7 +141,8 @@ public class MuezzinCallDaemon {
 	// =======================================================================
 
 	/**
-	 * Check whether or not a pray instance has its daemon scheduler active or not.
+	 * Check whether or not a pray instance has its daemon scheduler active or
+	 * not.
 	 * 
 	 * @param prays
 	 * @return Return true if there is at least one pray object who has its
@@ -161,7 +171,7 @@ public class MuezzinCallDaemon {
 	// =======================================================================
 
 	private void normalizeArrayOfPrays(ArrayList<String> times)
-	throws BadSizePrayTimesArray {
+			throws BadSizePrayTimesArray {
 		int size = times.size();
 		if (size == 7) {
 			times.remove(1); // Remove Sunrise time.
@@ -194,7 +204,7 @@ public class MuezzinCallDaemon {
 		private BadSizePrayTimesArray() {
 			super();
 			System.err
-			.println("The size of the array of pray times must be equal to 5.");
+					.println("The size of the array of pray times must be equal to 5.");
 		}
 
 		private BadSizePrayTimesArray(String arg) {
@@ -215,7 +225,8 @@ public class MuezzinCallDaemon {
 	}
 
 	/**
-	 * @param times the times to set
+	 * @param times
+	 *            the times to set
 	 */
 	public static void setTimes(ArrayList<String> times) {
 		_times = times;

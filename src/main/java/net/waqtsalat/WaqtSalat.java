@@ -48,7 +48,8 @@ public class WaqtSalat {
 
 		WsParseCommandLine parser = new WsParseCommandLine(args);
 		boolean _help = parser.isHelp();
-		@SuppressWarnings("unused")  // TODO
+		@SuppressWarnings("unused")
+		// TODO
 		boolean _verbose = parser.isVerbose();
 		int _verboseLevel = parser.getVerboseLevel();
 		boolean _auto = parser.isAutomatic();
@@ -80,8 +81,10 @@ public class WaqtSalat {
 			System.exit(0);
 		}
 		// TODO: remove this ...
-		/*if (_verbose)
-			System.out.println("Verbosity level: " + _verboseLevel);*/
+		/*
+		 * if (_verbose) System.out.println("Verbosity level: " +
+		 * _verboseLevel);
+		 */
 
 		if (_longitude != -1 || _latitude != -1) { // latitude & longitude have
 			// the priority over
@@ -170,8 +173,7 @@ public class WaqtSalat {
 		prayerNames = prayers.getTimeNames();
 
 		System.out.println("+=========================+");
-		System.out.println(String.format("| %-14s|%8s |",
-				"Prays","Times"));
+		System.out.println(String.format("| %-14s|%8s |", "Prays", "Times"));
 		System.out.println("+=========================+");
 		for (int i = 0; i < prayerTimes.size(); i++)
 			System.out.println(String.format("| %-14s:%8s |",
@@ -186,7 +188,7 @@ public class WaqtSalat {
 				muezzinCallDaemon = new MuezzinCallDaemon(prayerTimes);
 				muezzinCallDaemon.start();
 
-				if(_verboseLevel > 0)
+				if (_verboseLevel > 0)
 					System.out.println(muezzinCallDaemon);
 			} catch (BadSizePrayTimesArray e) {
 				logger.error("Error while creating/launching muezzin call daemon !!!");
@@ -194,6 +196,7 @@ public class WaqtSalat {
 			}
 		}
 
+		// TODO
 		logger.info("BLAH BLAH ...");
 		// System.exit(0);
 	}
