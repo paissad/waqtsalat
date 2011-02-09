@@ -26,9 +26,6 @@ import java.io.IOException;
 import java.net.URL;
 
 import net.waqtsalat.WaqtSalat;
-import net.waqtsalat.utils.Utils;
-import net.waqtsalat.utils.DownloadUtils;
-import net.waqtsalat.utils.UncompressUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,17 +34,20 @@ import com.maxmind.geoip.LookupService;
 
 /**
  * Some utilities such as looking for updates, or downloading GeoIP database.
+ * 
  * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
  */
 public class GeoipUtils {
 
-	public static final String GEOIP_DATABASE_SAVE_PATH      = "resources" + File.separator + "geoip";
-	public static final String GEOIP_DATABASE_FILENAME       = "GeoLiteCity.dat";
-	public static final String GEOIP_DATABASE_COMPLETE_PATH  = GEOIP_DATABASE_SAVE_PATH + File.separator + GEOIP_DATABASE_FILENAME;
-	public static final String GEOIP_DATABASE_UPDATE_URL     = "http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz";
+	public static final String GEOIP_DATABASE_SAVE_PATH = "resources"
+			+ File.separator + "geoip";
+	public static final String GEOIP_DATABASE_FILENAME = "GeoLiteCity.dat";
+	public static final String GEOIP_DATABASE_COMPLETE_PATH = GEOIP_DATABASE_SAVE_PATH
+			+ File.separator + GEOIP_DATABASE_FILENAME;
+	public static final String GEOIP_DATABASE_UPDATE_URL = "http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz";
 
 	public static final int GEOIP_OPTIONS = LookupService.GEOIP_MEMORY_CACHE;
-	public static final double LATITUDE_MAKKAH  = 21.42738;
+	public static final double LATITUDE_MAKKAH = 21.42738;
 	public static final double LONGITUDE_MAKKAH = 39.81484;
 
 	/**
@@ -58,7 +58,7 @@ public class GeoipUtils {
 	/**
 	 * Timestamp of the file GeoLiteCity.dat.gz from the remote url.
 	 */
-	private long remoteGeoipDatabaseTimestamp;  
+	private long remoteGeoipDatabaseTimestamp;
 	Logger logger = LoggerFactory.getLogger(WaqtSalat.class);
 
 	/**
@@ -66,35 +66,40 @@ public class GeoipUtils {
 	 */
 	public GeoipUtils() {
 		try {
-			File geoipLocalFile = new File(GEOIP_DATABASE_SAVE_PATH + File.separator + GEOIP_DATABASE_FILENAME);
-			if(geoipLocalFile.exists())
-				this.localGeoipDatabaseTimestamp = new Utils().getLocalFileTimestamp(geoipLocalFile);
+			File geoipLocalFile = new File(GEOIP_DATABASE_SAVE_PATH
+					+ File.separator + GEOIP_DATABASE_FILENAME);
+			if (geoipLocalFile.exists())
+				this.localGeoipDatabaseTimestamp = new Utils()
+						.getLocalFileTimestamp(geoipLocalFile);
 			else {
 				logger.info("GeoIP database not yet present in the system, then obviously, update is available!");
 				this.localGeoipDatabaseTimestamp = 1;
 			}
 			try {
-				this.remoteGeoipDatabaseTimestamp = new Utils().getRemoteFileTimestamp(new URL(GEOIP_DATABASE_UPDATE_URL));
-			}
-			catch(IOException ioe) {
+				this.remoteGeoipDatabaseTimestamp = new Utils()
+						.getRemoteFileTimestamp(new URL(
+								GEOIP_DATABASE_UPDATE_URL));
+			} catch (IOException ioe) {
 				logger.error("Error while retreiving the remote timestamp for GeoIP database.");
 			}
-		}
-		catch (IOException ioe) {
+		} catch (IOException ioe) {
 			ioe.printStackTrace();
-			logger.error("Error while creating an instance of {}", getClass().toString());
+			logger.error("Error while creating an instance of {}", getClass()
+					.toString());
 		}
 	}
-	//=======================================================================
+
+	// =======================================================================
 
 	/**
 	 * Update the GeoIP database if available.
 	 */
 	public void updateGeoipDatabase() {
-		if(isUpdateGeoipAvailable())
+		if (isUpdateGeoipAvailable())
 			downloadGeoipDatabase();
 	}
-	//=======================================================================
+
+	// =======================================================================
 
 	/**
 	 * Download the GeoIP database file, uncompress it and update its timestamp.<br />
@@ -102,40 +107,46 @@ public class GeoipUtils {
 	 */
 	public void downloadGeoipDatabase() {
 		try {
-			DownloadUtils util       = new DownloadUtils(new URL(GEOIP_DATABASE_UPDATE_URL));
-			File database_Downloaded = util.download(
-					new File(GEOIP_DATABASE_SAVE_PATH + File.separator + util.getFileNameFromURL()));
+			DownloadUtils util = new DownloadUtils(new URL(
+					GEOIP_DATABASE_UPDATE_URL));
+			File database_Downloaded = util.download(new File(
+					GEOIP_DATABASE_SAVE_PATH + File.separator
+							+ util.getFileNameFromURL()));
 
 			File database_Uncompressed = new UncompressUtils(
 					database_Downloaded).uncompressSmart();
 
 			// Update the timestamp of the GeoIP database.
-			database_Uncompressed.setLastModified(this.remoteGeoipDatabaseTimestamp);
+			database_Uncompressed
+					.setLastModified(this.remoteGeoipDatabaseTimestamp);
 
-			// Remove the default compressed file, since it is unused and does use space disk for nothing.
-			if(database_Downloaded.exists())
+			// Remove the default compressed file, since it is unused and does
+			// use space disk for nothing.
+			if (database_Downloaded.exists())
 				database_Downloaded.delete();
-		}
-		catch(IOException ioe) {
+		} catch (IOException ioe) {
 			ioe.printStackTrace();
 			logger.error("Download of geoip database FAILED.");
 		}
 	}
-	//=======================================================================
+
+	// =======================================================================
 
 	/**
 	 * Check for available update for the GeoIP database.
+	 * 
 	 * @return Return true if an update is available, false otherwise.
 	 */
 	public boolean isUpdateGeoipAvailable() {
 		boolean update = new Utils().checkUpdate(
-				this.localGeoipDatabaseTimestamp, this.remoteGeoipDatabaseTimestamp);
-		if(update) 
+				this.localGeoipDatabaseTimestamp,
+				this.remoteGeoipDatabaseTimestamp);
+		if (update)
 			logger.info("An update is available for the GeoIP database.");
-		else 
+		else
 			logger.info("No update available yet for the GeoIP database.");
 		return update;
 	}
-	//=======================================================================
+	// =======================================================================
 
 }

@@ -21,14 +21,17 @@
 
 package net.waqtsalat;
 
+import it.sauronsoftware.cron4j.Scheduler;
+
 import java.io.File;
 
-import it.sauronsoftware.cron4j.Scheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Encapsulates a pray with all its "options" such like its name, its time, its muezzin call sound and so on ...
+ * Encapsulates a pray with all its "options" such like its name, its time, its
+ * muezzin call sound and so on ...
+ * 
  * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
  */
 public class Pray {
@@ -37,7 +40,8 @@ public class Pray {
 
 	private static final String FS = File.separator;
 
-	private int rank;  // For example, Fadjr may be considered having rank 1, Isha -> rank 5.
+	private int rank; // For example, Fadjr may be considered having rank 1,
+						// Isha -> rank 5.
 	private String prayName;
 	private String time;
 	private boolean playMuezzin;
@@ -46,41 +50,46 @@ public class Pray {
 	private String cronDate;
 	private Thread t;
 
-	//=======================================================================
+	// =======================================================================
 
 	public Pray() {
-		scheduler         = new Scheduler();
+		scheduler = new Scheduler();
 		this.scheduler.setDaemon(true);
-		this.playMuezzin  = false;
+		this.playMuezzin = false;
 		this.muezzinSound = "resources" + FS + "sounds" + FS + "adhan.mp3";
 	}
-	//=======================================================================
+
+	// =======================================================================
 
 	public Pray(int rank) {
 		this();
 		this.rank = rank;
 	}
-	//=======================================================================
+
+	// =======================================================================
 
 	public Pray(String prayName) {
 		this();
 		this.prayName = prayName;
 	}
-	//=======================================================================
+
+	// =======================================================================
 
 	public Pray(int rank, String prayName) {
 		this();
-		this.rank     = rank;
+		this.rank = rank;
 		this.prayName = prayName;
 	}
-	//=======================================================================
+
+	// =======================================================================
 
 	/**
 	 * Start the daemon scheduler.
-	 */	
+	 */
 	public void start() {
 		t = new Thread("Pray Daemon for " + prayName) {
 			String schedulerID = new String();
+
 			public void run() {
 				logger.trace("Starting {}.", Thread.currentThread().getName());
 				playMuezzin = true;
@@ -90,111 +99,130 @@ public class Pray {
 				} catch (BadTimeFormatForCronJob e) {
 					logger.warn("Error while creating the Pray instance. Bad time format during computation !");
 					e.printStackTrace();
-				}	
+				}
 
-				logger.trace("Starting scheduler {}. ({})", Thread.currentThread().getName(), prayName + ": cron date -> " + cronDate);
+				logger.trace("Starting scheduler {}. ({})", Thread
+						.currentThread().getName(), prayName
+						+ ": cron date -> " + cronDate);
 				try {
 					schedulerID = scheduler.schedule(cronDate, new Runnable() {
 						@Override
 						public void run() {
-							new SimplePlayer(muezzinSound).play();	
+							new SimplePlayer(muezzinSound).play();
 						}
 					});
 					scheduler.start();
-				}catch(Exception e) {
-					logger.error("Error while creating/starting the scheduler for pray daemon ! ({})", prayName);
+				} catch (Exception e) {
+					logger.error(
+							"Error while creating/starting the scheduler for pray daemon ! ({})",
+							prayName);
 					e.printStackTrace();
-					if(scheduler.isStarted())
+					if (scheduler.isStarted())
 						scheduler.stop();
 					playMuezzin = false;
 					return;
 				}
 
-				while(scheduler.isStarted() && playMuezzin) {
+				while (scheduler.isStarted() && playMuezzin) {
 					try {
 						Thread.sleep(5000L);
 						update(schedulerID, time);
+					} catch (InterruptedException ie) {
+					} catch (BadTimeFormatForCronJob e) {
+						e.printStackTrace();
+						return;
 					}
-					catch (InterruptedException ie) {}
-					catch (BadTimeFormatForCronJob e) { e.printStackTrace(); return; }
 				}
 			}
 		};
 		t.start();
 	}
-	//=======================================================================
+
+	// =======================================================================
 
 	/**
-	 * Update the daemon scheduler (Change the cron date if the scheduler is started).
-	 * @param prayTime The new time to use for this Pray object.
+	 * Update the daemon scheduler (Change the cron date if the scheduler is
+	 * started).
+	 * 
+	 * @param prayTime
+	 *            The new time to use for this Pray object.
 	 * @param schedulerID
-	 * @throws BadTimeFormatForCronJob 
+	 * @throws BadTimeFormatForCronJob
 	 */
-	private synchronized void update(String schedulerID, String prayTime) throws BadTimeFormatForCronJob {
-		if(scheduler.isStarted() && t.isAlive()) {
-			if(!time.equals(prayTime)) {
+	private synchronized void update(String schedulerID, String prayTime)
+			throws BadTimeFormatForCronJob {
+		if (scheduler.isStarted() && t.isAlive()) {
+			if (!time.equals(prayTime)) {
 				setTime(prayTime);
 				cronDate = cronDateFromTime(time);
 				scheduler.reschedule(schedulerID, cronDate);
 			}
 		}
 	}
-	//=======================================================================
+
+	// =======================================================================
 
 	/**
 	 * Stop the scheduler.
 	 */
 	public void stop() {
-		if(scheduler.isStarted()) {
-			logger.trace("Stopping scheduler for muezzin call daemon ({}).", prayName);
+		if (scheduler.isStarted()) {
+			logger.trace("Stopping scheduler for muezzin call daemon ({}).",
+					prayName);
 			scheduler.stop();
 			playMuezzin = false;
-		}
-		else {
+		} else {
 			logger.error("No muezzin call daemon to stop ({}).", prayName);
 		}
 	}
-	//=======================================================================
+
+	// =======================================================================
 
 	/**
 	 * Computes the string pattern for the scheduler.<br>
-	 * Creates a cron job date from a specified time like this for example "16:54".<br>
+	 * Creates a cron job date from a specified time like this for example
+	 * "16:54".<br>
 	 * Creates something like this "54 16 * * *"
-	 * @param time The time to compute in a cron job date String format.
+	 * 
+	 * @param time
+	 *            The time to compute in a cron job date String format.
 	 * @return Return a {@link String} which represents the cron job date.
 	 * @throws BadTimeFormatForCronJob
 	 */
-	public synchronized String cronDateFromTime(String time) throws BadTimeFormatForCronJob {
-		if(time != null && !time.isEmpty()) {
+	public synchronized String cronDateFromTime(String time)
+			throws BadTimeFormatForCronJob {
+		if (time != null && !time.isEmpty()) {
 			String[] minHour = time.split(":");
-			if(minHour.length < 2) {
-				logger.error("Impossible to compute cronJobTime, abnormal time format: {}.", time);
-				throw new BadTimeFormatForCronJob("Error while computing cron job date.");
+			if (minHour.length < 2) {
+				logger.error(
+						"Impossible to compute cronJobTime, abnormal time format: {}.",
+						time);
+				throw new BadTimeFormatForCronJob(
+						"Error while computing cron job date.");
 			}
 			cronDate = minHour[1] + " " + minHour[0] + " * * *";
 			return cronDate;
-		}
-		else {
-			throw new BadTimeFormatForCronJob("The time to compute into a cron date cannot be null or empty !!!");
+		} else {
+			throw new BadTimeFormatForCronJob(
+					"The time to compute into a cron date cannot be null or empty !!!");
 		}
 	}
-	//=======================================================================
+
+	// =======================================================================
 
 	public String toString() {
-		return
-		"\nrank         : " + rank +
-		"\nprayName     : " + prayName +
-		"\nprayTime     : " + time +
-		"\ncron date    : " + cronDate +
-		"\nmuezzin call : " + muezzinSound +
-		"\nplay muezzin : " + playMuezzin +
-		"\n-------------------------------------------------"
-		;
+		return "\nrank         : " + rank + "\nprayName     : " + prayName
+				+ "\nprayTime     : " + time + "\ncron date    : " + cronDate
+				+ "\nmuezzin call : " + muezzinSound + "\nplay muezzin : "
+				+ playMuezzin
+				+ "\n-------------------------------------------------";
 	}
-	//=======================================================================
+
+	// =======================================================================
 
 	/**
-	 * An exception that will be thrown when try to create a cron job from a bad time format.<br>
+	 * An exception that will be thrown when try to create a cron job from a bad
+	 * time format.<br>
 	 * The handled format is "13:45" for example.
 	 */
 	class BadTimeFormatForCronJob extends Exception {
@@ -209,8 +237,8 @@ public class Pray {
 			super(arg);
 		}
 	}
-	//=======================================================================
 
+	// =======================================================================
 
 	// SETTERS AND GETTERS --------------------------------------------------
 
@@ -256,7 +284,9 @@ public class Pray {
 
 	/**
 	 * Set the muezzin call.
-	 * @param muezzinSound Muezzin call to use/play.
+	 * 
+	 * @param muezzinSound
+	 *            Muezzin call to use/play.
 	 */
 	public void setMuezzinSound(String muezzinSound) {
 		this.muezzinSound = muezzinSound;
@@ -264,6 +294,7 @@ public class Pray {
 
 	/**
 	 * Get the muezzin call which will be played.
+	 * 
 	 * @return Return the muezzin call used by this object.
 	 */
 	public String getMuezzinSound() {

@@ -21,13 +21,13 @@
 
 package net.waqtsalat.configuration;
 
+import java.io.File;
+
 import net.waqtsalat.IpAddress;
 import net.waqtsalat.Pray;
 import net.waqtsalat.WaqtSalat;
 import net.waqtsalat.utils.GeoipUtils;
 import net.waqtsalat.utils.Utils;
-
-import java.io.File;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.ConversionException;
@@ -56,90 +56,102 @@ public class WsConfiguration {
 	private static final int DEFAULT_PORT = 6001;
 	private static final int DEFAULT_PROXY_PORT = -1;
 
-	private static final String DEFAULT_CONFIGURATION_FILENAME     = "waqtsalat.conf";
-	private static final String DEFAULT_CONFIGURATION_PATH_MAC     = System.getProperty("user.home") + "/Library/Application Support/WaqtSalat/";
-	private static final String DEFAULT_CONFIGURATION_PATH_WINDOWS = System.getProperty("user.home") + File.separator;
-	private static final String DEFAULT_CONFIGURATION_PATH_LINUX_1 = System.getProperty("user.home") + "/.";
+	private static final String DEFAULT_CONFIGURATION_FILENAME = "waqtsalat.conf";
+	private static final String DEFAULT_CONFIGURATION_PATH_MAC = System
+			.getProperty("user.home")
+			+ "/Library/Application Support/WaqtSalat/";
+	private static final String DEFAULT_CONFIGURATION_PATH_WINDOWS = System
+			.getProperty("user.home") + File.separator;
+	private static final String DEFAULT_CONFIGURATION_PATH_LINUX_1 = System
+			.getProperty("user.home") + "/.";
 	private static final String DEFAULT_CONFIGURATION_PATH_LINUX_2 = "/etc/";
 
 	private static String _confFileName = "";
 	private PropertiesConfiguration configuration = new PropertiesConfiguration();
 
-	//=======================================================================
+	// =======================================================================
 
 	public WsConfiguration(String confFileName) throws ConfigurationException {
 		_confFileName = (confFileName == null) ? "" : confFileName;
 
-		if(_confFileName.isEmpty()) {
-			//WaqtSalat.logger.warn("The configuration filename cannot be empty or null !");
+		if (_confFileName.isEmpty()) {
+			// WaqtSalat.logger.warn("The configuration filename cannot be empty or null !");
 			setDefaultConfFileName();
 		}
 
-		if(new File(_confFileName).exists())
+		if (new File(_confFileName).exists())
 			configuration.load(_confFileName);
 		else
-			WaqtSalat.logger.warn("Configuration file does not exist: '{}'", _confFileName);
+			WaqtSalat.logger.warn("Configuration file does not exist: '{}'",
+					_confFileName);
 	}
-	//=======================================================================
+
+	// =======================================================================
 
 	public String setDefaultConfFileName() {
 		Utils platform = new Utils();
-		if(platform.isLinux()) {
-			if(new File(DEFAULT_CONFIGURATION_PATH_LINUX_1 + DEFAULT_CONFIGURATION_FILENAME).exists())
+		if (platform.isLinux()) {
+			if (new File(DEFAULT_CONFIGURATION_PATH_LINUX_1
+					+ DEFAULT_CONFIGURATION_FILENAME).exists())
 				_confFileName = DEFAULT_CONFIGURATION_PATH_LINUX_1;
-			else if(new File(DEFAULT_CONFIGURATION_PATH_LINUX_2 + DEFAULT_CONFIGURATION_FILENAME).exists())
+			else if (new File(DEFAULT_CONFIGURATION_PATH_LINUX_2
+					+ DEFAULT_CONFIGURATION_FILENAME).exists())
 				_confFileName = DEFAULT_CONFIGURATION_PATH_LINUX_2;
-		}
-		else if(platform.isWindows() 
-				&& new File(DEFAULT_CONFIGURATION_PATH_WINDOWS + DEFAULT_CONFIGURATION_FILENAME).exists()) {
+		} else if (platform.isWindows()
+				&& new File(DEFAULT_CONFIGURATION_PATH_WINDOWS
+						+ DEFAULT_CONFIGURATION_FILENAME).exists()) {
 			_confFileName = DEFAULT_CONFIGURATION_PATH_WINDOWS;
-		}
-		else if(platform.isMac()
-				&& new File(DEFAULT_CONFIGURATION_PATH_MAC + DEFAULT_CONFIGURATION_FILENAME).exists()) {
+		} else if (platform.isMac()
+				&& new File(DEFAULT_CONFIGURATION_PATH_MAC
+						+ DEFAULT_CONFIGURATION_FILENAME).exists()) {
 			_confFileName = DEFAULT_CONFIGURATION_PATH_MAC;
 		}
 
 		_confFileName += DEFAULT_CONFIGURATION_FILENAME;
 		return _confFileName;
 	}
-	//=======================================================================
+
+	// =======================================================================
 
 	private String getString(String key, String def) {
 		String value = configuration.getString(key, def);
-		if(value != null)
+		if (value != null)
 			value = value.trim();
 		return value;
 	}
-	//=======================================================================
+
+	// =======================================================================
 
 	private int getInt(String key, int def) {
 		try {
 			return configuration.getInt(key, def);
-		}catch(ConversionException e) {
+		} catch (ConversionException e) {
 			return def;
 		}
 	}
-	//=======================================================================
+
+	// =======================================================================
 
 	private double getDouble(String key, double def) {
 		try {
 			return configuration.getDouble(key, def);
-		}catch(ConversionException e) {
+		} catch (ConversionException e) {
 			return def;
 		}
 	}
-	//=======================================================================
+
+	// =======================================================================
 
 	private boolean getBoolean(String key, boolean def) {
 		try {
 			return configuration.getBoolean(key, def);
-		}
-		catch(ConversionException e) {
+		} catch (ConversionException e) {
 			return def;
 		}
 	}
-	//=======================================================================
-	
+
+	// =======================================================================
+
 	public String getConfFileName() {
 		return _confFileName;
 	}
@@ -181,7 +193,7 @@ public class WsConfiguration {
 	}
 
 	public void setLongitude(double value) {
-		configuration.setProperty(KEY_LONGITUDE, value);		
+		configuration.setProperty(KEY_LONGITUDE, value);
 	}
 
 	public boolean isPlay() {
@@ -230,7 +242,8 @@ public class WsConfiguration {
 	}
 
 	public String getGeoipDatabase() {
-		return getString(KEY_GEOIP_DATABASE, GeoipUtils.GEOIP_DATABASE_COMPLETE_PATH);
+		return getString(KEY_GEOIP_DATABASE,
+				GeoipUtils.GEOIP_DATABASE_COMPLETE_PATH);
 	}
 
 	public void setGeoipDatabase(String value) {
@@ -244,6 +257,6 @@ public class WsConfiguration {
 	public void setLanguage(String value) {
 		configuration.setProperty(KEY_LANGUAGE, value);
 	}
-	//=======================================================================
+	// =======================================================================
 
 }

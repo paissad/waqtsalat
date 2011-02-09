@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Contains some utilities that many other classes may use<br>
  * Such as checking the OS, updates ...
+ * 
  * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
  */
 public class Utils {
@@ -43,47 +44,57 @@ public class Utils {
 
 	/**
 	 * Get the timestamp of a remote file from a given url.
-	 * @param url ({@link URL}) Url to use for the check.
+	 * 
+	 * @param url
+	 *            ({@link URL}) Url to use for the check.
 	 * @return Return the timestamp of the remote file.
 	 * @throws IOException
 	 */
 	public long getRemoteFileTimestamp(URL url) throws IOException {
 		try {
-			logger.trace("Trying to get the timestamp of remote file '{}'", url.toString());
+			logger.trace("Trying to get the timestamp of remote file '{}'",
+					url.toString());
 			URLConnection urlc = url.openConnection();
 			long timestamp = urlc.getLastModified();
 			logger.trace("Remote timestamp is: {}", new Date(timestamp));
 			return timestamp;
-		}
-		catch(IOException ioe) {
-			throw new IOException("Error while retreiving the timestamp of the remote file!");
+		} catch (IOException ioe) {
+			throw new IOException(
+					"Error while retreiving the timestamp of the remote file!");
 		}
 	}
-	//=======================================================================
+
+	// =======================================================================
 
 	/**
 	 * Get the local timestamp of a local file.
-	 * @param file File to check the the last modification time (timestamp).
+	 * 
+	 * @param file
+	 *            File to check the the last modification time (timestamp).
 	 * @throws IOException
 	 * @return Return the timestamp of the last modification time.
 	 */
-	public long getLocalFileTimestamp(File file) throws IOException { 
+	public long getLocalFileTimestamp(File file) throws IOException {
 		try {
-			logger.trace("Trying to get the timestamp of file '{}'.", file.getAbsolutePath());
+			logger.trace("Trying to get the timestamp of file '{}'.",
+					file.getAbsolutePath());
 			assertFileIsValid(file);
 			long timestamp = file.lastModified();
 			logger.trace("Local timestamp is: {}", new Date(timestamp));
 			return timestamp;
-		}
-		catch(IOException ioe) {
-			throw new IOException("Error while retreiving the timestamp of '" + file.getAbsolutePath() + "' !");
+		} catch (IOException ioe) {
+			throw new IOException("Error while retreiving the timestamp of '"
+					+ file.getAbsolutePath() + "' !");
 		}
 	}
-	//=======================================================================
+
+	// =======================================================================
 
 	/**
 	 * Check whether or not a file is valid and readable.
-	 * @param file File to check whether it is valid or not.
+	 * 
+	 * @param file
+	 *            File to check whether it is valid or not.
 	 * @throws IOException
 	 */
 	private void assertFileIsValid(File file) throws IOException {
@@ -95,60 +106,74 @@ public class Utils {
 
 		if (!file.canRead()) {
 			ioe.printStackTrace();
-			throw new IOException("'" + file + "' is not readable."); 
+			throw new IOException("'" + file + "' is not readable.");
 		}
 	}
-	//=======================================================================
+
+	// =======================================================================
 
 	/**
-	 * Check whether or not an update is available for a file by comparing the timestamps of the files. 
-	 * @param localTimestamp Local timestamp
-	 * @param remoteTimestamp Remote timestamp (candidate for the update)
-	 * @return Return <code>true</code> if remoteTimestamp > localTimestamp, <code>false</code> otherwise.
+	 * Check whether or not an update is available for a file by comparing the
+	 * timestamps of the files.
+	 * 
+	 * @param localTimestamp
+	 *            Local timestamp
+	 * @param remoteTimestamp
+	 *            Remote timestamp (candidate for the update)
+	 * @return Return <code>true</code> if remoteTimestamp > localTimestamp,
+	 *         <code>false</code> otherwise.
 	 */
 	public boolean checkUpdate(long localTimestamp, long remoteTimestamp) {
 		return (localTimestamp < remoteTimestamp) ? true : false;
 	}
-	//=======================================================================
+
+	// =======================================================================
 
 	/**
 	 * Compare 2 versions lexicographically.
-	 * @param localVersion Local version of the software.
-	 * @param remoteVersion Remote version of the software.
-	 * @return Return <code>true</code> if a remote version is newer, <code>false</code> otherwise. 
+	 * 
+	 * @param localVersion
+	 *            Local version of the software.
+	 * @param remoteVersion
+	 *            Remote version of the software.
+	 * @return Return <code>true</code> if a remote version is newer,
+	 *         <code>false</code> otherwise.
 	 */
 	public boolean checkUpdate(String localVersion, String remoteVersion) {
 		return (localVersion.compareTo(remoteVersion) < 0) ? true : false;
 	}
-	//======================================================================
+
+	// ======================================================================
 
 	/**
 	 * @return Return true if the platform is windows, false otherwise.
 	 */
-	public boolean isWindows(){
-		if(System.getProperty("os.name").startsWith("Windows"))
+	public boolean isWindows() {
+		if (System.getProperty("os.name").startsWith("Windows"))
 			return true;
 		return false;
 	}
-	//======================================================================
-	
+
+	// ======================================================================
+
 	/**
 	 * @return Return true if the platform is Linux, false otherwise.
 	 */
-	public boolean isLinux(){
-		if(System.getProperty("os.name").startsWith("Linux"))
+	public boolean isLinux() {
+		if (System.getProperty("os.name").startsWith("Linux"))
 			return true;
 		return false;
 	}
-	//======================================================================
-	
+
+	// ======================================================================
+
 	/**
 	 * @return Return true if the platform is Mac, false otherwise.
 	 */
-	public boolean isMac(){
-		if(System.getProperty("os.name").startsWith("Mac OS"))
+	public boolean isMac() {
+		if (System.getProperty("os.name").startsWith("Mac OS"))
 			return true;
 		return false;
 	}
-	//======================================================================
+	// ======================================================================
 }

@@ -22,18 +22,18 @@
 package net.waqtsalat.utils;
 
 import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 
+import javazoom.jl.player.Player;
 import net.waqtsalat.WaqtSalat;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javazoom.jl.player.Player;
-
 /**
  * Contains some utilities such as playing a MP3 file.
+ * 
  * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
  */
 public class Mp3Utils extends AudioUtils implements PlayerUtils {
@@ -45,22 +45,26 @@ public class Mp3Utils extends AudioUtils implements PlayerUtils {
 	public Mp3Utils() {
 		super();
 	}
-	//=======================================================================
+
+	// =======================================================================
 
 	/**
-	 * @param mp3File Mp3 file to use.
+	 * @param mp3File
+	 *            Mp3 file to use.
 	 */
 	public Mp3Utils(File mp3File) {
 		super(mp3File);
 	}
-	//=======================================================================
+
+	// =======================================================================
 
 	@Override
 	public void stop() {
 		if (player != null)
 			player.close();
 	}
-	//=======================================================================
+
+	// =======================================================================
 
 	/**
 	 * Play the MP3 file to the sound card.
@@ -69,11 +73,12 @@ public class Mp3Utils extends AudioUtils implements PlayerUtils {
 	public void play() {
 
 		try {
-			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(audioFile));
+			BufferedInputStream bis = new BufferedInputStream(
+					new FileInputStream(audioFile));
 			player = new Player(bis);
-		}
-		catch (Exception e) {
-			logger.error("Problem playing file '{}'", audioFile.getAbsolutePath());
+		} catch (Exception e) {
+			logger.error("Problem playing file '{}'",
+					audioFile.getAbsolutePath());
 			e.printStackTrace();
 			return;
 		}
@@ -82,11 +87,12 @@ public class Mp3Utils extends AudioUtils implements PlayerUtils {
 		new Thread("mp3Player") {
 			public void run() {
 				try {
-					logger.debug("Playing mp3 file '{}'", audioFile.getAbsolutePath());
+					logger.debug("Playing mp3 file '{}'",
+							audioFile.getAbsolutePath());
 					player.play();
-					logger.debug("Finished playing mp3 file '{}'", audioFile.getAbsolutePath());
-				}
-				catch (Exception e) {
+					logger.debug("Finished playing mp3 file '{}'",
+							audioFile.getAbsolutePath());
+				} catch (Exception e) {
 					logger.error("Error: '{}'", this.toString());
 					e.printStackTrace();
 				}
@@ -94,24 +100,29 @@ public class Mp3Utils extends AudioUtils implements PlayerUtils {
 		}.start();
 
 	}
-	//=======================================================================
+
+	// =======================================================================
 
 	/**
 	 * Get the mp3 file used for this object.
+	 * 
 	 * @return Return the mp3 file used for this object.
 	 */
 	public File getMp3File() {
 		return audioFile;
 	}
-	//=======================================================================
+
+	// =======================================================================
 
 	/**
 	 * Set the mp3 file to use for this object.
-	 * @param mp3File mp3 file to use.
+	 * 
+	 * @param mp3File
+	 *            mp3 file to use.
 	 */
 	public void setMp3File(File mp3File) {
 		this.audioFile = mp3File;
 	}
-	//=======================================================================
+	// =======================================================================
 
 }

@@ -25,6 +25,7 @@ import java.util.Comparator;
 
 /**
  * Comparator for the Pray object types.
+ * 
  * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
  */
 public class PrayComparator implements Comparator<Pray> {
@@ -33,14 +34,15 @@ public class PrayComparator implements Comparator<Pray> {
 	public int compare(Pray pray1, Pray pray2) {
 		String prayTime1 = pray1.getTime();
 		String prayTime2 = pray2.getTime();
-		if(prayTime1 != null && prayTime2 != null)
-			return prayTime1.compareTo(prayTime2); // We only compare the hours of each pray time.
+		if (prayTime1 != null && prayTime2 != null)
+			return prayTime1.compareTo(prayTime2); // We only compare the hours
+													// of each pray time.
 
 		// We assume that the pray names are null, then the pray ranks aren't.
 		else {
 			Integer prayRank1 = pray1.getRank();
 			Integer prayRank2 = pray2.getRank();
-			return  prayRank1.compareTo(prayRank2);
+			return prayRank1.compareTo(prayRank2);
 		}
 	}
 }

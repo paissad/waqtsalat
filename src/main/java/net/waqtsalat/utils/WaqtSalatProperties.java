@@ -43,14 +43,16 @@ public class WaqtSalatProperties {
 			reader.close();
 		} catch (UnsupportedEncodingException e) {
 			throw new IOException("Could not decode " + ENCODING);
-		}		
+		}
 	}
-	//=======================================================================
+
+	// =======================================================================
 
 	public void clear() {
 		properties.clear();
 	}
-	//=======================================================================
+
+	// =======================================================================
 
 	public String get(String key) {
 		Object obj = properties.get(key);
@@ -60,7 +62,8 @@ public class WaqtSalatProperties {
 			return "";
 		}
 	}
-	//=======================================================================
+
+	// =======================================================================
 
 	private static String trimAndRemoveQuotes(String in) {
 		in = in.trim();
@@ -72,11 +75,12 @@ public class WaqtSalatProperties {
 		}
 		return in;
 	}
-	//=======================================================================
+
+	// =======================================================================
 
 	public boolean containsKey(String key) {
 		return properties.containsKey(key);
 	}
-	//=======================================================================
+	// =======================================================================
 
 }

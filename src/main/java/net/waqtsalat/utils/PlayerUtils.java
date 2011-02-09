@@ -33,7 +33,7 @@ public interface PlayerUtils {
 	 * Stop playing an audio file.
 	 */
 	public void stop();
-	
+
 	/**
 	 * Start playing an audio file.
 	 */
