@@ -25,6 +25,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import net.waqtsalat.MuezzinCallDaemon.BadSizePrayTimesArray;
 import net.waqtsalat.configuration.WsParseCommandLine;
@@ -62,15 +66,8 @@ public class WaqtSalat {
 		// System.out.println("longitude -> " + _longitude);
 		// System.out.println("latitude ->  " + _latitude);
 
-		String cityName;
-		String countryName;
-		String region;
-		String countryCode;
-		String tmz;
-		int areaCode;
-		String postalCode;
-		int dmaCode;
-		int metroCode;
+		// Geoip Location informations ...
+		Map<String, Object> geoipLocDatas = new LinkedHashMap<String, Object>(); 
 
 		ArrayList<String> prayerTimes = new ArrayList<String>();
 		ArrayList<String> prayerNames = new ArrayList<String>();
@@ -105,44 +102,42 @@ public class WaqtSalat {
 					logger.error("The ip address cannot be '-1', an error occured.");
 			}
 
-			Location location = new LookupService(
-					GeoipUtils.GEOIP_DATABASE_COMPLETE_PATH).getLocation(_ip);
+			Location location = new LookupService(GeoipUtils.GEOIP_DATABASE_COMPLETE_PATH).getLocation(_ip);
 
-			cityName = location.city;
-			countryName = location.countryName;
-			_latitude = location.latitude;
-			_longitude = location.longitude;
-			region = location.region;
-			countryCode = location.countryCode;
-			tmz = timeZone.timeZoneByCountryAndRegion(countryCode, region);
-			areaCode = location.area_code;
-			postalCode = location.postalCode;
-			dmaCode = location.dma_code;
-			metroCode = location.metro_code;
+			geoipLocDatas.put("City", location.city);
+			geoipLocDatas.put("Country", location.countryName);
+			geoipLocDatas.put("Country Code", location.countryCode);
+			geoipLocDatas.put("Latitude", location.latitude);
+			geoipLocDatas.put("Longitude", location.longitude);
+			geoipLocDatas.put("Region", location.region);
+			geoipLocDatas.put("Timezone",
+					timeZone.timeZoneByCountryAndRegion(
+							(String)geoipLocDatas.get("Country Code"), (String)geoipLocDatas.get("Region")));
+			geoipLocDatas.put("Area Code", location.area_code);
+			geoipLocDatas.put("Postal Code", location.postalCode);
+			geoipLocDatas.put("Dma Code", location.dma_code);
+			geoipLocDatas.put("Metro Code", location.metro_code);
 
-			// TODO: Do not forget to remove this since it's only for debugging
-			// purpose.
-			if (_verboseLevel > 1) {
+			_latitude  = ((Float) geoipLocDatas.get("Latitude")).doubleValue();
+			_longitude = ((Float) geoipLocDatas.get("Longitude")).doubleValue();
+
+			if (_verboseLevel > 1) { // Print the geoip informations ...
+				String format1 = "| %1$-14s | %2$-22s |\n";
+				String format2 = "| %1$-14s : %2$-22s |\n";
 				String s = "";
-				s += String.format("\n+-----------------------------------------+");
-				s += String.format("\n| %-16s | %-20s |", "GEOGRAPHIC DATAS", "VALUES");
-				s += String.format("\n+-----------------------------------------+");
-				s += String.format("\n| %-16s : %-20s |", "Ip Address", _ip);
-				s += String.format("\n| %-16s : %-20s |", "City", cityName);
-				s += String.format("\n| %-16s : %-20s |", "Country", countryName);
-				s += String.format("\n| %-16s : %-20s |", "Country Code", countryCode);
-				s += String.format("\n| %-16s : %-20s |", "latitude", _latitude);
-				s += String.format("\n| %-16s : %-20s |", "longitude", _longitude);
-				s += String.format("\n| %-16s : %-20s |", "Region", region);
-				s += String.format("\n| %-16s : %-20s |", "Timezone", tmz);
-				s += String.format("\n| %-16s : %-20s |", "Area Code", areaCode);
-				s += String.format("\n| %-16s : %-20s |", "Postal Code", postalCode);
-				s += String.format("\n| %-16s : %-20s |", "Dma Code", dmaCode);
-				s += String.format("\n| %-16s : %-20s |", "Metro Code", metroCode);
-				s += String.format("\n+-----------------------------------------+");
+				s += String.format("+-----------------------------------------+\n");
+				s += String.format(format1, "GEOIP DATAS", "VALUES");
+				s += String.format("+-----------------------------------------+\n");
+				Set<String> st = geoipLocDatas.keySet();
+				Iterator<String> it = st.iterator();
+				while(it.hasNext()) {
+					String key = it.next();
+					s += String.format(format2, key, geoipLocDatas.get(key));
+				}
+
+				s += String.format("+-----------------------------------------+");
 				System.out.println(s);
 			}
-			// End of TODO
 		}
 
 		double timezone = 1;
