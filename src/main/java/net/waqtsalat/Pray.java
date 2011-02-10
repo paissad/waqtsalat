@@ -211,11 +211,15 @@ public class Pray {
 	// =======================================================================
 
 	public String toString() {
-		return "\nrank         : " + rank + "\nprayName     : " + prayName
-				+ "\nprayTime     : " + time + "\ncron date    : " + cronDate
-				+ "\nmuezzin call : " + muezzinSound + "\nplay muezzin : "
-				+ playMuezzin
-				+ "\n-------------------------------------------------";
+		String s = "";
+		s += String.format("\n+----------------------------------------------");
+		s += String.format("\n| %-14s : %-40s", "rank", rank);
+		s += String.format("\n| %-14s : %-40s", "prayname", prayName);
+		s += String.format("\n| %-14s : %-40s", "time", time);
+		s += String.format("\n| %-14s : %-40s", "cron date", cronDate);
+		s += String.format("\n| %-14s : %-40s", "muezzin call", muezzinSound);
+		s += String.format("\n+----------------------------------------------");
+		return s;
 	}
 
 	// =======================================================================

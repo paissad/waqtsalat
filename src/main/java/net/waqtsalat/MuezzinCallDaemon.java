@@ -59,7 +59,7 @@ public class MuezzinCallDaemon {
 	 *             equal to 5 or 7.
 	 */
 	public MuezzinCallDaemon(ArrayList<String> prayTimes)
-			throws BadSizePrayTimesArray {
+	throws BadSizePrayTimesArray {
 
 		_times = prayTimes;
 		normalizeArrayOfPrays(_times);
@@ -95,7 +95,7 @@ public class MuezzinCallDaemon {
 				while (isSchedulerActive(_prays)) {
 					try {
 						Thread.sleep(1L * 60L * 1000L); // Update every pray
-														// time every minute.
+						// time every minute.
 						udpatePrayTimes();
 						logger.trace(
 								"{}\n==================================================",
@@ -171,7 +171,7 @@ public class MuezzinCallDaemon {
 	// =======================================================================
 
 	private void normalizeArrayOfPrays(ArrayList<String> times)
-			throws BadSizePrayTimesArray {
+	throws BadSizePrayTimesArray {
 		int size = times.size();
 		if (size == 7) {
 			times.remove(1); // Remove Sunrise time.
@@ -204,7 +204,7 @@ public class MuezzinCallDaemon {
 		private BadSizePrayTimesArray() {
 			super();
 			System.err
-					.println("The size of the array of pray times must be equal to 5.");
+			.println("The size of the array of pray times must be equal to 5.");
 		}
 
 		private BadSizePrayTimesArray(String arg) {

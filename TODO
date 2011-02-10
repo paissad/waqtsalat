@@ -1,3 +1,6 @@
 * Add the possibility to have the pray times into a XML file.
 * Add the possibility to have the pray times bind to port (the program would run as a server)
 * Make the GUI.
+* When the application is running in server mode, make it possible to have a syndication rss feed ...
+* Add option for choosing the muezzin call sound to play
+

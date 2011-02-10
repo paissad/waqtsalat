@@ -122,34 +122,26 @@ public class WaqtSalat {
 
 			// TODO: Do not forget to remove this since it's only for debugging
 			// purpose.
-			if (_verboseLevel > 1)
-				System.out.println(""
-						+ "\n--------------------------------------"
-						+ "\n| Ip Address   = "
-						+ _ip
-						+ "\n| City         = "
-						+ cityName
-						+ "\n| Country      = "
-						+ countryName
-						+ "\n| Country Code = "
-						+ countryCode
-						+ "\n| Latitude     = "
-						+ _latitude
-						+ "\n| Longitude    = "
-						+ _longitude
-						+ "\n| Region       = "
-						+ region
-						+ "\n| Timezone     = "
-						+ tmz
-						+ "\n| Area Code    = "
-						+ areaCode
-						+ "\n| Postal Code  = "
-						+ postalCode
-						+ "\n| Dma Code     = "
-						+ dmaCode
-						+ "\n| Metro Code   = "
-						+ metroCode
-						+ "\n--------------------------------------" + "\n");
+			if (_verboseLevel > 1) {
+				String s = "";
+				s += String.format("\n+-----------------------------------------+");
+				s += String.format("\n| %-16s | %-20s |", "GEOGRAPHIC DATAS", "VALUES");
+				s += String.format("\n+-----------------------------------------+");
+				s += String.format("\n| %-16s : %-20s |", "Ip Address", _ip);
+				s += String.format("\n| %-16s : %-20s |", "City", cityName);
+				s += String.format("\n| %-16s : %-20s |", "Country", countryName);
+				s += String.format("\n| %-16s : %-20s |", "Country Code", countryCode);
+				s += String.format("\n| %-16s : %-20s |", "latitude", _latitude);
+				s += String.format("\n| %-16s : %-20s |", "longitude", _longitude);
+				s += String.format("\n| %-16s : %-20s |", "Region", region);
+				s += String.format("\n| %-16s : %-20s |", "Timezone", tmz);
+				s += String.format("\n| %-16s : %-20s |", "Area Code", areaCode);
+				s += String.format("\n| %-16s : %-20s |", "Postal Code", postalCode);
+				s += String.format("\n| %-16s : %-20s |", "Dma Code", dmaCode);
+				s += String.format("\n| %-16s : %-20s |", "Metro Code", metroCode);
+				s += String.format("\n+-----------------------------------------+");
+				System.out.println(s);
+			}
 			// End of TODO
 		}
 
@@ -172,13 +164,13 @@ public class WaqtSalat {
 				timezone);
 		prayerNames = prayers.getTimeNames();
 
-		System.out.println("+=========================+");
-		System.out.println(String.format("| %-14s|%8s |", "Prays", "Times"));
-		System.out.println("+=========================+");
+		System.out.println("+===========================+");
+		System.out.println(String.format("| %-14s | %-8s |", "PRAYS", "TIMES"));
+		System.out.println("+===========================+");
 		for (int i = 0; i < prayerTimes.size(); i++)
-			System.out.println(String.format("| %-14s:%8s |",
+			System.out.println(String.format("| %-14s : %-8s |",
 					prayerNames.get(i), prayerTimes.get(i)));
-		System.out.println("+=========================+");
+		System.out.println("+===========================+");
 
 		// Play the muezzin call at each pray time.
 		if (_play) {
@@ -188,8 +180,10 @@ public class WaqtSalat {
 				muezzinCallDaemon = new MuezzinCallDaemon(prayerTimes);
 				muezzinCallDaemon.start();
 
-				if (_verboseLevel > 0)
+				if (_verboseLevel > 0) {
+					System.out.print("\nMuezzin call daemon informations ...");
 					System.out.println(muezzinCallDaemon);
+				}
 			} catch (BadSizePrayTimesArray e) {
 				logger.error("Error while creating/launching muezzin call daemon !!!");
 				e.printStackTrace();
