@@ -47,7 +47,7 @@ public class Utils {
 	 * 
 	 * @param url
 	 *            ({@link URL}) Url to use for the check.
-	 * @return Return the timestamp of the remote file.
+	 * @return The timestamp of the remote file.
 	 * @throws IOException
 	 */
 	public long getRemoteFileTimestamp(URL url) throws IOException {
@@ -60,7 +60,7 @@ public class Utils {
 			return timestamp;
 		} catch (IOException ioe) {
 			throw new IOException(
-					"Error while retreiving the timestamp of the remote file!");
+			"Error while retreiving the timestamp of the remote file!");
 		}
 	}
 
@@ -72,7 +72,7 @@ public class Utils {
 	 * @param file
 	 *            File to check the the last modification time (timestamp).
 	 * @throws IOException
-	 * @return Return the timestamp of the last modification time.
+	 * @return The timestamp of the last modification time.
 	 */
 	public long getLocalFileTimestamp(File file) throws IOException {
 		try {
@@ -120,7 +120,7 @@ public class Utils {
 	 *            Local timestamp
 	 * @param remoteTimestamp
 	 *            Remote timestamp (candidate for the update)
-	 * @return Return <code>true</code> if remoteTimestamp > localTimestamp,
+	 * @return <code>True</code> if remoteTimestamp greater than localTimestamp,
 	 *         <code>false</code> otherwise.
 	 */
 	public boolean checkUpdate(long localTimestamp, long remoteTimestamp) {
@@ -136,7 +136,7 @@ public class Utils {
 	 *            Local version of the software.
 	 * @param remoteVersion
 	 *            Remote version of the software.
-	 * @return Return <code>true</code> if a remote version is newer,
+	 * @return <code>True</code> if a remote version is newer,
 	 *         <code>false</code> otherwise.
 	 */
 	public boolean checkUpdate(String localVersion, String remoteVersion) {
@@ -146,7 +146,7 @@ public class Utils {
 	// ======================================================================
 
 	/**
-	 * @return Return true if the platform is windows, false otherwise.
+	 * @return <code>true</code> if the platform is windows, <code>false</code> otherwise.
 	 */
 	public boolean isWindows() {
 		if (System.getProperty("os.name").startsWith("Windows"))
@@ -157,7 +157,7 @@ public class Utils {
 	// ======================================================================
 
 	/**
-	 * @return Return true if the platform is Linux, false otherwise.
+	 * @return <code>true</code> if the platform is Linux, <code>false</code> otherwise.
 	 */
 	public boolean isLinux() {
 		if (System.getProperty("os.name").startsWith("Linux"))
@@ -168,12 +168,32 @@ public class Utils {
 	// ======================================================================
 
 	/**
-	 * @return Return true if the platform is Mac, false otherwise.
+	 * @return <code>true</code> if the platform is Mac, <code>false</code> otherwise.
 	 */
 	public boolean isMac() {
 		if (System.getProperty("os.name").startsWith("Mac OS"))
 			return true;
 		return false;
+	}
+	// ======================================================================
+
+	/**
+	 * Test whether or not we have an internet connection.<br>
+	 * <span style="color: rgb(51, 204, 0);">This routine is not reliable at all, but can suit for most common cases.</span>
+	 * 
+	 * @return <code>true</code> if internet connection is available, <code>false</code> otherwise.
+	 */
+	public boolean isInternetReachable() { //TODO: Try to improve this method ...
+		try {
+			URL url = new URL("http://google.com");
+			URLConnection urlc = url.openConnection();
+			urlc.setConnectTimeout(20 * 1000); // timeout of 20 sec
+			urlc.getContent();
+		}catch(Exception e) {
+			e.getMessage();
+			return false;
+		}
+		return true;
 	}
 	// ======================================================================
 }

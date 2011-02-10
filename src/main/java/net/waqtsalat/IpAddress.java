@@ -32,6 +32,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.waqtsalat.utils.Utils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,6 +107,11 @@ public class IpAddress {
 	 * @throws IOException
 	 */
 	public String retreiveIpAddress() throws IOException {
+
+		Utils connection = new Utils();
+		if(!connection.isInternetReachable())
+			WaqtSalat.logger.warn("It seems like you do not have an internet connection.");
+
 		try {
 			URL url = new URL(this.method);
 

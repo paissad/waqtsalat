@@ -81,7 +81,7 @@ public class WsParseCommandLine {
 
 	public WsParseCommandLine(String[] args) {
 
-		assert args != null;
+		assert args != null : "args can be empty, but not null.";
 		_args = args;
 		String[] argsTmp = _args;
 
@@ -193,6 +193,7 @@ public class WsParseCommandLine {
 
 						+ "     -h,--help            : Print this help and exit.\n"
 						+ "     -v,--verbose         : Enable verbose mode.\n"
+						+ "                          : You can use '-v' twice to set a verbose level of 2, or '-vv', or '-v -v' or '-verbose -v' ...\n"
 						+ "     -g,--debug           : Enable debug mode.\n"
 						+ "     --play               : Run the application in backgound in order to play the muezzin call at each pray time.\n"
 						+ "     -a,--automatic       : Enable automatic mode, this means that the program will try to \n"
@@ -223,7 +224,7 @@ public class WsParseCommandLine {
 				.println(""
 						+ "      Example of use:\n"
 						+ "             waqtsalat\n"
-						+ "             waqtsalat -a\n"
+						+ "             waqtsalat -a -vv\n"
 						+ "             waqtsalat -c /path/to/my/waqtsalat.conf --daemon --automatic\n"
 						+ "             waqtsalat --lat 43.032 --long 76.2223423 --play\n");
 	}

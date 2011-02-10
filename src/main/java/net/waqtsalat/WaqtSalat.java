@@ -49,7 +49,7 @@ public class WaqtSalat {
 	public static Logger logger = LoggerFactory.getLogger(WaqtSalat.class);
 
 	public static void main(String[] args) throws IOException {
-
+		
 		WsParseCommandLine parser = new WsParseCommandLine(args);
 		boolean _help = parser.isHelp();
 		@SuppressWarnings("unused")
