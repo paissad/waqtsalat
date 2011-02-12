@@ -1,38 +1,44 @@
 ===========
 Description
 ===========
-WaqtSalat is a free open-source project written in Java, with the purpose of indicating muslim prayers times in many cities and/or countries.
+WaqtSalat is a free & open-source software written in Java, with the purpose of indicating muslim prayers times in many cities and/or countries.
 WaqtSalat is based on another project praytimes.org which is also open-source.
 		
 ================
 Current features
 ================
-Get automatically the city/country where the software is running and then calculates the pray times for the related city. (Geolocalization)
+Get automatically the city/country where the software is running and then calculates the pray times for the related city. (Geolocation)
 Possibility to set a muezzin call.
 Other features might be available in the future.
 
 ============
 Requirements
 ============
-A Java Runtime Environment (JRE 1.6.xx or newer).
+A Java Development Kit (JDK 1.6.xx or newer)
+A build tool, 'ant' or 'maven'.
 
 =======
 install
 =======
-Refer to the INSTALL file to see the instructions.
+For the instructions, refer to the INSTALL file.
 
 =====
 Usage
 =====
+java -jar waqtsalat.jar
+
+How to get help:
+java -jar waqtsalat.jar --help 
 
 ============
 Known issues
 ============
+Not all options are implemented yet.
 
 ======
 Thanks
 ======
-Thanks to contributors of praytimes.org
+Thanks to contributors, testers, praytimes.org and everyone involved in this project.
 
 =====
 Links

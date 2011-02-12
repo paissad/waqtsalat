@@ -68,7 +68,8 @@
         </jar>
         <delete dir="${build.classes}" quiet="true" />
 
-        <tar destfile="dist/waqtsalat-${version}.tar.gz" compression="gzip">
+        <mkdir dir="${dist}" />
+        <tar destfile="${dist}/waqtsalat-${version}.tar.gz" compression="gzip">
             <tarfileset 
                 dir="." 
                 prefix="waqtsalat-${version}" 

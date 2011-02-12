@@ -53,8 +53,7 @@ public class WaqtSalat {
 		WsParseCommandLine parser = new WsParseCommandLine(args);
 		boolean _help = parser.isHelp();
 		@SuppressWarnings("unused")
-		// TODO
-		boolean _verbose = parser.isVerbose();
+		boolean _verbose = parser.isVerbose(); 		// TODO
 		int _verboseLevel = parser.getVerboseLevel();
 		boolean _auto = parser.isAutomatic();
 		String _ip = parser.getIp();
