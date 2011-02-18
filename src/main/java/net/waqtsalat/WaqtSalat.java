@@ -199,17 +199,18 @@ public class WaqtSalat implements Observer {
 		int timeStyle = DateFormat.LONG;
 		Locale aLocale = Locale.getDefault();
 		synchronized (stateLock) {
-		}System.out.println(DateFormat.getDateTimeInstance(dateStyle, timeStyle, aLocale).format(new Date()));
-		System.out.println("+=================================+");
-		System.out.println(String.format(
-				"| %-20s | %-8s |", 
-				Messages.getString("output.PRAYS"), 
-				Messages.getString("output.TIMES")));
-		System.out.println("+=================================+");
-		for (int i = 0; i < _prayerTimes.size(); i++)
-			System.out.println(String.format("| %-20s : %-8s |",
-					ComputePrayTimes.getPrayernames().get(i), _prayerTimes.get(i)));
-		System.out.println("+=================================+");
+			System.out.println(DateFormat.getDateTimeInstance(dateStyle, timeStyle, aLocale).format(new Date()));
+			System.out.println("+=================================+");
+			System.out.println(String.format(
+					"| %-20s | %-8s |", 
+					Messages.getString("output.PRAYS"), 
+					Messages.getString("output.TIMES")));
+			System.out.println("+=================================+");
+			for (int i = 0; i < _prayerTimes.size(); i++)
+				System.out.println(String.format("| %-20s : %-8s |",
+						ComputePrayTimes.getPrayernames().get(i), _prayerTimes.get(i)));
+			System.out.println("+=================================+");
 
+		}
 	}
 }
