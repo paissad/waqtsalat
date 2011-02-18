@@ -7,10 +7,13 @@
     <property name="output.jar" value="waqtsalat.jar" />
     <property name="Name" value="WaqtSalat" />
     <property name="lib.dir" value="lib" />
+
     <property name="mavenJava" value="src/main/java" />
     <property name="mavenResources" value="src/main/resources" />
+    <property name="mavenTarget" value="target" />
+
     <property name="build.src" value="${mavenJava}:${mavenResources}" />
-    <property name="build.classes" value="classes" />
+    <property name="build.classes" value="${mavenTarget}" />
     <property name="main-class" value="net.waqtsalat.WaqtSalat" />
 
     <property name="javadoc.outdir" value="doc" />
@@ -23,7 +26,6 @@
     <tstamp>
         <format property="TODAY" pattern="EEEE, d-MMM-yyyy HH:mm:ss, Z" locale="en,UK" />
     </tstamp>
-
     <!-- end of properties -->
 
     <path id="lib.path.ref">
@@ -63,10 +65,10 @@
 
             <zipgroupfileset refid="libs.ref" />
 
+            <fileset dir="${mavenJava}" includes="**/*.properties" excludes="**/*.java" />
             <fileset dir="${mavenResources}" includes="**/*.properties" excludes="**/*.java" />
             <!--<fileset dir="." includes="resources/**" />-->
         </jar>
-        <delete dir="${build.classes}" quiet="true" />
 
         <mkdir dir="${dist}" />
         <tar destfile="${dist}/waqtsalat-${version}.tar.gz" compression="gzip">
@@ -75,6 +77,7 @@
                 prefix="waqtsalat-${version}" 
                 includes="LICENSE, README, CHANGELOG, COPYING, AUTHORS, NEWS, INSTALL, TODO, ${output.jar}, waqtsalat.conf, resources/**" /> 
         </tar>
+        <delete dir="${build.classes}" quiet="true" />
     </target>
 
     <!-- target: javadoc -->

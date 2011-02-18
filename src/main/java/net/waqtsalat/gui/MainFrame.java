@@ -32,6 +32,8 @@ import javax.swing.JTabbedPane;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 
+import net.waqtsalat.Messages;
+
 /**
  * 
  * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
@@ -76,31 +78,44 @@ public class MainFrame extends JFrame {
 		gbl_topPanel.rowWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
 		topPanel.setLayout(gbl_topPanel);
 		
+		JPanel headerPanel = new JPanel();
+		GridBagConstraints gbc_headerPanel = new GridBagConstraints();
+		gbc_headerPanel.insets = new Insets(0, 0, 5, 0);
+		gbc_headerPanel.fill = GridBagConstraints.BOTH;
+		gbc_headerPanel.gridx = 0;
+		gbc_headerPanel.gridy = 0;
+		topPanel.add(headerPanel, gbc_headerPanel);
+		GridBagLayout gbl_headerPanel = new GridBagLayout();
+		gbl_headerPanel.columnWidths = new int[]{0};
+		gbl_headerPanel.rowHeights = new int[]{0};
+		gbl_headerPanel.columnWeights = new double[]{Double.MIN_VALUE};
+		gbl_headerPanel.rowWeights = new double[]{Double.MIN_VALUE};
+		headerPanel.setLayout(gbl_headerPanel);
+		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		GridBagConstraints gbc_tabbedPane = new GridBagConstraints();
-		gbc_tabbedPane.insets = new Insets(0, 0, 5, 0);
 		gbc_tabbedPane.fill = GridBagConstraints.BOTH;
 		gbc_tabbedPane.gridx = 0;
-		gbc_tabbedPane.gridy = 0;
+		gbc_tabbedPane.gridy = 1;
 		topPanel.add(tabbedPane, gbc_tabbedPane);
 		
 		JPanel panel = new JPanel();
-		tabbedPane.addTab("General", null, panel, null);
+		tabbedPane.addTab(Messages.getString("Tab.General"), null, panel, null);
 		
 		JPanel panel_1 = new JPanel();
-		tabbedPane.addTab("Location", null, panel_1, null);
+		tabbedPane.addTab(Messages.getString("Tab.Location"), null, panel_1, null);
 		
 		JPanel panel_2 = new JPanel();
-		tabbedPane.addTab("Pray Times", null, panel_2, null);
+		tabbedPane.addTab(Messages.getString("Tab.PrayTimes"), null, panel_2, null);
 		
 		JPanel panel_3 = new JPanel();
-		tabbedPane.addTab("Alerts", null, panel_3, null);
+		tabbedPane.addTab(Messages.getString("Tab.Alerts"), null, panel_3, null);
 		
 		JPanel panel_4 = new JPanel();
-		tabbedPane.addTab("Preferences", null, panel_4, null);
+		tabbedPane.addTab(Messages.getString("Tab.Preferences"), null, panel_4, null);
 		
 		JPanel panel_5 = new JPanel();
-		tabbedPane.addTab("Advanced", null, panel_5, null);
+		tabbedPane.addTab(Messages.getString("Tab.Advanced"), null, panel_5, null);
 
 	}
 

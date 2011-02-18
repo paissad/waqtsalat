@@ -24,6 +24,8 @@ package net.waqtsalat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -35,16 +37,16 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
  */
-public class MuezzinCallDaemon {
+public class MuezzinCallDaemon implements Observer {
 
 	Logger logger = LoggerFactory.getLogger(WaqtSalat.class);
 
 	// {Fajr, Sunrise, Dhuhr, Asr, Sunset, Maghrib, Isha}
 	ArrayList<String> _prayNames = new PrayTime().getTimeNames();
 
-	private static Set<Pray> _prays; // Only the 5 hours of the pray times.
-	private static ArrayList<String> _times;
-	private boolean runAll;
+	private static Set<Pray> _prays; // Only the 5 hours of prayers.
+	private static ArrayList<String> _currentTimes;
+	private boolean _runAll;
 
 	// =======================================================================
 
@@ -58,21 +60,20 @@ public class MuezzinCallDaemon {
 	 *             If the array specified as argument for the constructor is not
 	 *             equal to 5 or 7.
 	 */
-	public MuezzinCallDaemon(ArrayList<String> prayTimes)
-	throws BadSizePrayTimesArray {
+	public MuezzinCallDaemon(ArrayList<String> prayTimes) throws BadSizePrayTimesArray {
 
-		_times = prayTimes;
-		normalizeArrayOfPrays(_times);
+		_currentTimes  = prayTimes;
+		normalizeArrayOfPrays(_currentTimes);
 
 		Comparator<Pray> comparator = new PrayComparator();
 		_prays = new TreeSet<Pray>(comparator);
 		for (int i = 0; i < _prayNames.size(); i++) {
 			Pray pray = new Pray(i + 1, _prayNames.get(i));
-			pray.setTime(_times.get(i));
+			pray.setTime(_currentTimes.get(i));
 			_prays.add(pray);
 		}
 
-		runAll = true;
+		_runAll = true;
 	}
 
 	// =======================================================================
@@ -85,27 +86,24 @@ public class MuezzinCallDaemon {
 		Thread t = new Thread("Muezzin Call Daemon") {
 			@Override
 			public void run() {
-				runAll = true;
+				_runAll = true;
 				Iterator<Pray> iter = _prays.iterator();
 				while (iter.hasNext()) {
-					iter.next().start();
+					iter.next().start(); // Start one pray daemon.
 				}
 
 				// update the pray times !
 				while (isSchedulerActive(_prays)) {
 					try {
-						Thread.sleep(1L * 60L * 1000L); // Update every pray
-						// time every minute.
-						udpatePrayTimes();
-						logger.trace(
-								"{}\n==================================================",
-								_prays.toString());
+						Thread.sleep(1L * 60L * 1000L); // Update every pray time every minute.
+						updatePrayTimes();
+						logger.trace("{}\n==================================================", _prays.toString());
 					} catch (InterruptedException e) {
 					}
 				}
 			}
 		};
-		// t.setDaemon(true);
+		t.setDaemon(false);
 		t.start();
 	}
 
@@ -115,40 +113,46 @@ public class MuezzinCallDaemon {
 	 * Stop the daemon. (The muezzin call of each pray time is stopped).
 	 */
 	public void stop() {
-		runAll = false;
+		_runAll = false;
 		Iterator<Pray> iter = _prays.iterator();
-		if (runAll) {
+		if (_runAll) {
 			while (iter.hasNext()) {
 				iter.next().stop();
 			}
 		}
 	}
+	// =======================================================================
 
+	@Override
+	public synchronized void update(Observable o, Object prayerTimes) {
+		setTimes(ComputePrayTimes.getPrayerTimes());
+		updatePrayTimes();
+	}
 	// =======================================================================
 
 	/**
 	 * Update the pray times of the "Pray Daemons' of the Muezzin Call Daemon.
 	 */
-	private void udpatePrayTimes() {
+	private synchronized void updatePrayTimes() {
 		Iterator<Pray> iter = _prays.iterator();
 		int i = 0;
 		while (iter.hasNext()) {
-			iter.next().setTime(_times.get(i));
+			Pray pray = iter.next();
+			pray.setTime(_currentTimes.get(i));
 			i++;
 		}
 	}
-
 	// =======================================================================
 
 	/**
 	 * Check whether or not a pray instance has its daemon scheduler active or
 	 * not.
 	 * 
-	 * @param prays
+	 * @param prays The <code>set</code> of {@link Pray}.
 	 * @return Return true if there is at least one pray object who has its
 	 *         daemon scheduler active.
 	 */
-	public boolean isSchedulerActive(Set<Pray> prays) {
+	public synchronized boolean isSchedulerActive(Set<Pray> prays) {
 		Iterator<Pray> iter = prays.iterator();
 		while (iter.hasNext()) {
 			if (iter.next().getScheduler().isStarted())
@@ -170,8 +174,7 @@ public class MuezzinCallDaemon {
 
 	// =======================================================================
 
-	private void normalizeArrayOfPrays(ArrayList<String> times)
-	throws BadSizePrayTimesArray {
+	private void normalizeArrayOfPrays(ArrayList<String> times) throws BadSizePrayTimesArray {
 		int size = times.size();
 		if (size == 7) {
 			times.remove(1); // Remove Sunrise time.
@@ -203,8 +206,8 @@ public class MuezzinCallDaemon {
 
 		private BadSizePrayTimesArray() {
 			super();
-			System.err
-			.println("The size of the array of pray times must be equal to 5.");
+			System.err.println(
+					"The size of the array of pray times must be equal to 5.");
 		}
 
 		private BadSizePrayTimesArray(String arg) {
@@ -217,19 +220,27 @@ public class MuezzinCallDaemon {
 	// SETTERS AND GETTERS --------------------------------------------------
 
 	public void setRunAll(boolean runAll) {
-		this.runAll = runAll;
+		_runAll = runAll;
 	}
 
 	public boolean isRunAll() {
-		return runAll;
+		return _runAll;
 	}
 
 	/**
+	 * After setting the pray times using this method, all {@link Pray} objects
+	 * will be notified of the change.<br>
+	 * Indeed, the <code>Pray</code> objects implement the {@link Observer}
+	 * interface.
+	 * 
 	 * @param times
-	 *            the times to set
+	 *            The pray times to set.
 	 */
-	public static void setTimes(ArrayList<String> times) {
-		_times = times;
+	public void setTimes(ArrayList<String> times) {
+		if (!_currentTimes.equals(times)) {
+			_currentTimes = times;
+		}
 	}
+	// =======================================================================
 
 }
