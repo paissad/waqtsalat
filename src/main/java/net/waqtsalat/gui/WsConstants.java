@@ -23,6 +23,10 @@ package net.waqtsalat.gui;
 
 import java.awt.Color;
 import java.awt.Toolkit;
+import java.io.File;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 /**
  * This interface contains some preferred/fixed values for the GUI.
@@ -31,16 +35,33 @@ import java.awt.Toolkit;
  */
 public interface WsConstants {
 
-	// No need to use 'public static final' with an interface.
+	// No need to use 'public static final' with an Interface.
 
-	int PREFERED_WIDTH  = 600;
-	int PREFERED_HEIGHT = 500;
-	int MENU_PREFERED_HEIGHT = 25;
+	String FS = File.separator;
+
+	int MAINFRAME_PREFERED_WIDTH  = 650;
+	int MAINFRAME_PREFERED_HEIGHT = 500;
+	int MENUBAR_PREFERED_HEIGHT   = 25;
+	int IMAGE_HEADER_PANEL_HEIGHT = 50;
 	int SHORTCUT_KEY_MASK = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
 	// Colours ...
 	Color COLOR_BACKGROUND_MAINFRAME = Color.LIGHT_GRAY;
 	Color COLOR_BACKGROUND_MENUBAR = Color.DARK_GRAY;
 	Color COLOR_BACKGROUND_MENU = Color.DARK_GRAY;
+
+	ImageIcon HEADER_IMAGE_SUNSET = new ImageIcon(ClassLoader.getSystemResource("images" +FS+ "sunset_red.jpg"));
+
+	//About dialog ...
+	int ABOUT_WINDOW_PREFERED_WIDTH  = 100;
+	int ABOUT_WINDOW_PREFERED_HEIGHT = 100;
+
+	// Icons ...
+	Icon TAB_ICON_GENERAL     = new ImageIcon(ClassLoader.getSystemResource("icons" +FS+ ""));
+	Icon TAB_ICON_LOCATION    = new ImageIcon(ClassLoader.getSystemResource("icons" +FS+ "earth.png"));
+	Icon TAB_ICON_PREFERENCES = new ImageIcon(ClassLoader.getSystemResource("icons" +FS+ "preferences.png"));
+	Icon TAB_ICON_PRAYTIMES   = new ImageIcon(ClassLoader.getSystemResource("icons" +FS+ ""));
+	Icon TAB_ICON_ALERTS      = new ImageIcon(ClassLoader.getSystemResource("icons" +FS+ "alert.png"));
+	Icon TAB_ICON_ADVANCED    = new ImageIcon(ClassLoader.getSystemResource("icons" +FS+ ""));
 
 }

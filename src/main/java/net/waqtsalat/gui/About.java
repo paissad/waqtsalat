@@ -52,7 +52,7 @@ public class About extends JDialog {
 		getContentPane().setLayout(new GridBagLayout());
 		setAlwaysOnTop(true);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setPreferredSize(new Dimension(WsConstants.PREFERED_WIDTH, WsConstants.PREFERED_HEIGHT));
+		setPreferredSize(new Dimension(WsConstants.ABOUT_WINDOW_PREFERED_WIDTH, WsConstants.ABOUT_WINDOW_PREFERED_HEIGHT));
 		setMinimumSize(getPreferredSize());
 		setLocationRelativeTo(getParent());
 

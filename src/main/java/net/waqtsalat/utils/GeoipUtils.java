@@ -39,11 +39,12 @@ import com.maxmind.geoip.LookupService;
  */
 public class GeoipUtils {
 
-	public static final String GEOIP_DATABASE_SAVE_PATH = "resources"
-			+ File.separator + "geoip";
+	private static final String FS = File.separator;
+	public static final String GEOIP_DATABASE_SAVE_PATH = "extras" + FS
+			+ "geoip";
 	public static final String GEOIP_DATABASE_FILENAME = "GeoLiteCity.dat";
 	public static final String GEOIP_DATABASE_COMPLETE_PATH = GEOIP_DATABASE_SAVE_PATH
-			+ File.separator + GEOIP_DATABASE_FILENAME;
+			+ FS + GEOIP_DATABASE_FILENAME;
 	public static final String GEOIP_DATABASE_UPDATE_URL = "http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz";
 
 	public static final int GEOIP_OPTIONS = LookupService.GEOIP_MEMORY_CACHE;
@@ -66,8 +67,8 @@ public class GeoipUtils {
 	 */
 	public GeoipUtils() {
 		try {
-			File geoipLocalFile = new File(GEOIP_DATABASE_SAVE_PATH
-					+ File.separator + GEOIP_DATABASE_FILENAME);
+			File geoipLocalFile = new File(GEOIP_DATABASE_SAVE_PATH + FS
+					+ GEOIP_DATABASE_FILENAME);
 			if (geoipLocalFile.exists())
 				this.localGeoipDatabaseTimestamp = new Utils()
 						.getLocalFileTimestamp(geoipLocalFile);
@@ -110,8 +111,7 @@ public class GeoipUtils {
 			DownloadUtils util = new DownloadUtils(new URL(
 					GEOIP_DATABASE_UPDATE_URL));
 			File database_Downloaded = util.download(new File(
-					GEOIP_DATABASE_SAVE_PATH + File.separator
-							+ util.getFileNameFromURL()));
+					GEOIP_DATABASE_SAVE_PATH + FS + util.getFileNameFromURL()));
 
 			File database_Uncompressed = new UncompressUtils(
 					database_Downloaded).uncompressSmart();

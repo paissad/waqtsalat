@@ -26,16 +26,19 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
-import java.util.LinkedHashMap;
-import java.util.Map;
+
+import javax.swing.SwingUtilities;
 
 import net.waqtsalat.MuezzinCallDaemon.BadSizePrayTimesArray;
 import net.waqtsalat.configuration.WsParseCommandLine;
 import net.waqtsalat.utils.GeoipUtils;
+import net.waqtsalat.gui.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,118 +69,137 @@ public class WaqtSalat implements Observer {
 
 	public WaqtSalat(String[] args) throws IOException {
 
-		WsParseCommandLine parser = new WsParseCommandLine(args);
-		boolean _help = parser.isHelp();
-		int _verboseLevel = parser.getVerboseLevel();
-		boolean _auto = parser.isAutomatic();
-		String _ip = parser.getIp();
-		double _latitude = parser.getLatitude();
-		double _longitude = parser.getLongitude();
-		boolean _play = parser.isPlay();
-
-		// Geoip Location informations ...
-		Map<String, Object> geoipLocDatas = new LinkedHashMap<String, Object>(); 
-
-		// Print the help if is specified and then exit.
-		if (_help) {
-			parser.printUsage();
-			System.exit(0);
+		// STILL IN TESTING PURPOSE, NOT YET FINISHED !!!
+		ArrayList<String> al = new ArrayList<String>();
+		for (int i=0; i<args.length; i++)
+			al.add(args[i]);
+		if (al.contains("--gui")) {
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					try {
+						MainFrame mainFrame = new MainFrame();
+						mainFrame.setVisible(true);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			});
 		}
+		else { // Console mode.
 
-		if (_longitude != -1 || _latitude != -1) { // latitude & longitude have
-			// the priority over
-			// automatic mode.
-			if (_longitude == -1 || _latitude == -1) {
-				logger.error("You must set both longitude and latitudes !!!");
+			WsParseCommandLine parser = new WsParseCommandLine(args);
+			boolean _help = parser.isHelp();
+			int _verboseLevel = parser.getVerboseLevel();
+			boolean _auto = parser.isAutomatic();
+			String _ip = parser.getIp();
+			double _latitude = parser.getLatitude();
+			double _longitude = parser.getLongitude();
+			boolean _play = parser.isPlay();
+
+			// Geoip Location informations ...
+			Map<String, Object> geoipLocDatas = new LinkedHashMap<String, Object>(); 
+
+			// Print the help if is specified and then exit.
+			if (_help) {
 				parser.printUsage();
-				System.exit(1);
-			}
-		} else if (_ip != null || _auto) {
-			if (_ip != null && !_ip.isEmpty()) { // then come automatic mode ...
-				logger.info("Using forced ip address: {}", _ip);
-			} else if (_auto) {
-				logger.info("Public Ip Address ...");
-				_ip = new IpAddress().retreiveIpAddress();
-				logger.debug("Ip Address: {}", _ip);
-				if (_ip.equals("-1"))
-					logger.error("The Ip address cannot be '-1', an error occured.");
+				System.exit(0);
 			}
 
-			Location location = new LookupService(GeoipUtils.GEOIP_DATABASE_COMPLETE_PATH).getLocation(_ip);
-
-			geoipLocDatas.put("City", location.city);
-			geoipLocDatas.put("Country", location.countryName);
-			geoipLocDatas.put("Country_Code", location.countryCode);
-			geoipLocDatas.put("Latitude", location.latitude);
-			geoipLocDatas.put("Longitude", location.longitude);
-			geoipLocDatas.put("Region", location.region);
-			geoipLocDatas.put("Time_Zone",
-					timeZone.timeZoneByCountryAndRegion(
-							(String)geoipLocDatas.get("Country_Code"), (String)geoipLocDatas.get("Region")));
-			geoipLocDatas.put("Area_Code", location.area_code);
-			geoipLocDatas.put("Postal_Code", location.postalCode);
-			geoipLocDatas.put("Dma_Code", location.dma_code);
-			geoipLocDatas.put("Metro_Code", location.metro_code);
-
-			_latitude  = ((Float) geoipLocDatas.get("Latitude")).doubleValue();
-			_longitude = ((Float) geoipLocDatas.get("Longitude")).doubleValue();
-
-			if (_verboseLevel > 1) { // Print the Geoip informations ...
-				String format1 = "| %1$-20s | %2$-22s |\n";
-				String format2 = "| %1$-20s : %2$-22s |\n";
-				String s = "";
-				s += String.format("+-----------------------------------------------+\n");
-				s += String.format(
-						format1,
-						Messages.getString("output.GEOIP_DATAS"),
-						Messages.getString("output.VALUES"));
-				s += String.format("+-----------------------------------------------+\n");
-				Set<String> st = geoipLocDatas.keySet();
-				Iterator<String> it = st.iterator();
-				while(it.hasNext()) {
-					String key = it.next();
-					s += String.format(format2, Messages.getString(key), geoipLocDatas.get(key));
+			if (_longitude != -1 || _latitude != -1) { // latitude & longitude have
+				// the priority over
+				// automatic mode.
+				if (_longitude == -1 || _latitude == -1) {
+					logger.error("You must set both longitude and latitudes !!!");
+					parser.printUsage();
+					System.exit(1);
+				}
+			} else if (_ip != null || _auto) {
+				if (_ip != null && !_ip.isEmpty()) { // then come automatic mode ...
+					logger.info("Using forced ip address: {}", _ip);
+				} else if (_auto) {
+					logger.info("Public Ip Address ...");
+					_ip = new IpAddress().retreiveIpAddress();
+					logger.debug("Ip Address: {}", _ip);
+					if (_ip.equals("-1"))
+						logger.error("The Ip address cannot be '-1', an error occured.");
 				}
 
-				s += String.format("+-----------------------------------------------+");
-				System.out.println(s);
-			}
-		} // End of Geoip stuff ...
+				Location location = new LookupService(GeoipUtils.GEOIP_DATABASE_COMPLETE_PATH).getLocation(_ip);
 
-		// TODO: do not forget to set timezone to either default or automatic from ip address!
-		//ComputePrayTimes _computePrayTimes = new ComputePrayTimes(_latitude, _longitude, 1);
-		_computePrayTimes.addObserver(this);
-		Thread _thread1 = new Thread(_computePrayTimes, "Prayer Times Computer");
-		_thread1.start();
-		synchronized (stateLock) {
-			quiet = true;
-			_computePrayTimes.setLatitude(_latitude);
-			_computePrayTimes.setLongitude(_longitude);
-			quiet = false;
-		}
+				geoipLocDatas.put("City", location.city);
+				geoipLocDatas.put("Country", location.countryName);
+				geoipLocDatas.put("Country_Code", location.countryCode);
+				geoipLocDatas.put("Latitude", location.latitude);
+				geoipLocDatas.put("Longitude", location.longitude);
+				geoipLocDatas.put("Region", location.region);
+				geoipLocDatas.put("Time_Zone",
+						timeZone.timeZoneByCountryAndRegion(
+								(String)geoipLocDatas.get("Country_Code"), (String)geoipLocDatas.get("Region")));
+				geoipLocDatas.put("Area_Code", location.area_code);
+				geoipLocDatas.put("Postal_Code", location.postalCode);
+				geoipLocDatas.put("Dma_Code", location.dma_code);
+				geoipLocDatas.put("Metro_Code", location.metro_code);
 
-		printPrays();
+				_latitude  = ((Float) geoipLocDatas.get("Latitude")).doubleValue();
+				_longitude = ((Float) geoipLocDatas.get("Longitude")).doubleValue();
 
-		// Play the muezzin call at each pray time.
-		if (_play) {
-			MuezzinCallDaemon muezzinCallDaemon;
-			try {
-				muezzinCallDaemon = new MuezzinCallDaemon(_prayerTimes);
-				_computePrayTimes.addObserver(muezzinCallDaemon);
-				muezzinCallDaemon.start();
+				if (_verboseLevel > 1) { // Print the Geoip informations ...
+					String format1 = "| %1$-20s | %2$-22s |\n";
+					String format2 = "| %1$-20s : %2$-22s |\n";
+					String s = "";
+					s += String.format("+-----------------------------------------------+\n");
+					s += String.format(
+							format1,
+							Messages.getString("output.GEOIP_DATAS"),
+							Messages.getString("output.VALUES"));
+					s += String.format("+-----------------------------------------------+\n");
+					Set<String> st = geoipLocDatas.keySet();
+					Iterator<String> it = st.iterator();
+					while(it.hasNext()) {
+						String key = it.next();
+						s += String.format(format2, Messages.getString(key), geoipLocDatas.get(key));
+					}
 
-				if (_verboseLevel > 0) {
-					System.out.print("\nMuezzin call daemon informations ...");
-					System.out.println(muezzinCallDaemon);
+					s += String.format("+-----------------------------------------------+");
+					System.out.println(s);
 				}
+			} // End of Geoip stuff ...
 
-			} catch (BadSizePrayTimesArray e) {
-				logger.error("Error while creating/launching muezzin call daemon !!!");
-				e.printStackTrace();
+			// TODO: do not forget to set timezone to either default or automatic from ip address!
+			//ComputePrayTimes _computePrayTimes = new ComputePrayTimes(_latitude, _longitude, 1);
+			_computePrayTimes.addObserver(this);
+			Thread _thread1 = new Thread(_computePrayTimes, "Prayer Times Computer");
+			_thread1.start();
+			synchronized (stateLock) {
+				quiet = true;
+				_computePrayTimes.setLatitude(_latitude);
+				_computePrayTimes.setLongitude(_longitude);
+				quiet = false;
 			}
-		}
-		else {
-			_computePrayTimes.stop();
+
+			printPrays();
+
+			// Play the muezzin call at each pray time.
+			if (_play) {
+				MuezzinCallDaemon muezzinCallDaemon;
+				try {
+					muezzinCallDaemon = new MuezzinCallDaemon(_prayerTimes);
+					_computePrayTimes.addObserver(muezzinCallDaemon);
+					muezzinCallDaemon.start();
+
+					if (_verboseLevel > 0) {
+						System.out.print("\nMuezzin call daemon informations ...");
+						System.out.println(muezzinCallDaemon);
+					}
+
+				} catch (BadSizePrayTimesArray e) {
+					logger.error("Error while creating/launching muezzin call daemon !!!");
+					e.printStackTrace();
+				}
+			}
+			else {
+				_computePrayTimes.stop();
+			}
 		}
 	}
 	// =======================================================================

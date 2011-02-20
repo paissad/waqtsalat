@@ -22,7 +22,6 @@
 package net.waqtsalat.gui;
 
 import java.awt.Desktop;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -39,7 +38,7 @@ import javax.swing.KeyStroke;
 import net.waqtsalat.Messages;
 
 /**
- * This class represents/builds the menu bar of the GUI.
+ * This class represents/builds the menubar of the GUI.
  * 
  * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
  */
@@ -60,7 +59,7 @@ public class WsMenuBar extends JMenuBar {
 
 	public WsMenuBar() {
 
-		setPreferredSize(new Dimension(WsConstants.PREFERED_WIDTH, WsConstants.MENU_PREFERED_HEIGHT));
+		//setPreferredSize(new Dimension(, WsConstants.MENU_PREFERED_HEIGHT));
 		setMinimumSize(getPreferredSize());
 		setBackground(WsConstants.COLOR_BACKGROUND_MENUBAR);
 

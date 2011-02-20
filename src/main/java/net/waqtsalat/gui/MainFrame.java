@@ -21,16 +21,15 @@
 
 package net.waqtsalat.gui;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 import javax.swing.JFrame;
-import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
-
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
 
 import net.waqtsalat.Messages;
 
@@ -47,24 +46,20 @@ public class MainFrame extends JFrame {
 		this.setTitle("WaqtSalat");
 		this.setBackground(WsConstants.COLOR_BACKGROUND_MAINFRAME);
 		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-		this.setPreferredSize(new Dimension(WsConstants.PREFERED_WIDTH, WsConstants.PREFERED_HEIGHT));
-		this.setSize(getPreferredSize());
+		this.setPreferredSize(new Dimension(WsConstants.MAINFRAME_PREFERED_WIDTH, WsConstants.MAINFRAME_PREFERED_HEIGHT));
 		this.setResizable(true);
 		this.setMinimumSize(getPreferredSize());
 		this.setJMenuBar(new WsMenuBar());
 		this.setLocationRelativeTo(null);
 		this.pack();
-		
-		JMenuBar menuBar = new WsMenuBar();
-		setJMenuBar(menuBar);
-		
+
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0};
 		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
 		getContentPane().setLayout(gridBagLayout);
-		
+
 		JPanel topPanel = new JPanel();
 		GridBagConstraints gbc_topPanel = new GridBagConstraints();
 		gbc_topPanel.fill = GridBagConstraints.BOTH;
@@ -77,45 +72,40 @@ public class MainFrame extends JFrame {
 		gbl_topPanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
 		gbl_topPanel.rowWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
 		topPanel.setLayout(gbl_topPanel);
-		
-		JPanel headerPanel = new JPanel();
-		GridBagConstraints gbc_headerPanel = new GridBagConstraints();
-		gbc_headerPanel.insets = new Insets(0, 0, 5, 0);
-		gbc_headerPanel.fill = GridBagConstraints.BOTH;
-		gbc_headerPanel.gridx = 0;
-		gbc_headerPanel.gridy = 0;
-		topPanel.add(headerPanel, gbc_headerPanel);
-		GridBagLayout gbl_headerPanel = new GridBagLayout();
-		gbl_headerPanel.columnWidths = new int[]{0};
-		gbl_headerPanel.rowHeights = new int[]{0};
-		gbl_headerPanel.columnWeights = new double[]{Double.MIN_VALUE};
-		gbl_headerPanel.rowWeights = new double[]{Double.MIN_VALUE};
-		headerPanel.setLayout(gbl_headerPanel);
-		
+
+		// Panel which contains the image ...
+		JPanel imgHeaderPanel = new JPanel();
+		GridBagConstraints gbc_imgHeaderPanel = new GridBagConstraints();
+		gbc_imgHeaderPanel.insets = new Insets(0, 0, 5, 0);
+		gbc_imgHeaderPanel.fill = GridBagConstraints.BOTH;
+		gbc_imgHeaderPanel.gridx = 0;
+		gbc_imgHeaderPanel.gridy = 0;
+		topPanel.add(imgHeaderPanel, gbc_imgHeaderPanel);
+		imgHeaderPanel.setLayout(new BorderLayout(0, 0));
+		imgHeaderPanel.add(new ImageLabel(WsConstants.HEADER_IMAGE_SUNSET));
+
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		GridBagConstraints gbc_tabbedPane = new GridBagConstraints();
 		gbc_tabbedPane.fill = GridBagConstraints.BOTH;
 		gbc_tabbedPane.gridx = 0;
 		gbc_tabbedPane.gridy = 1;
 		topPanel.add(tabbedPane, gbc_tabbedPane);
-		
-		JPanel panel = new JPanel();
-		tabbedPane.addTab(Messages.getString("Tab.General"), null, panel, null);
-		
-		JPanel panel_1 = new JPanel();
-		tabbedPane.addTab(Messages.getString("Tab.Location"), null, panel_1, null);
-		
-		JPanel panel_2 = new JPanel();
-		tabbedPane.addTab(Messages.getString("Tab.PrayTimes"), null, panel_2, null);
-		
-		JPanel panel_3 = new JPanel();
-		tabbedPane.addTab(Messages.getString("Tab.Alerts"), null, panel_3, null);
-		
-		JPanel panel_4 = new JPanel();
-		tabbedPane.addTab(Messages.getString("Tab.Preferences"), null, panel_4, null);
-		
-		JPanel panel_5 = new JPanel();
-		tabbedPane.addTab(Messages.getString("Tab.Advanced"), null, panel_5, null);
+
+		// Declarations of the tabs ...
+		JPanel generalPanel     = new GeneralTab();
+		JPanel locationPanel    = new LocationTab();
+		JPanel praytimesPanel   = new PrayTimesTab();
+		JPanel alertsPanel      = new AlertsTab();
+		JPanel preferencesPanel = new PreferencesTab();
+		JPanel advancedPanel    = new AdvancedTab();
+
+		// Add each tab to the JTabbedPane ...
+		tabbedPane.addTab(Messages.getString("Tab.General"), WsConstants.TAB_ICON_GENERAL, generalPanel, null);
+		tabbedPane.addTab(Messages.getString("Tab.Location"), WsConstants.TAB_ICON_LOCATION, locationPanel, null);
+		tabbedPane.addTab(Messages.getString("Tab.PrayTimes"), WsConstants.TAB_ICON_PRAYTIMES, praytimesPanel, null);
+		tabbedPane.addTab(Messages.getString("Tab.Alerts"), WsConstants.TAB_ICON_ALERTS, alertsPanel, null);
+		tabbedPane.addTab(Messages.getString("Tab.Preferences"), WsConstants.TAB_ICON_PREFERENCES, preferencesPanel, null);
+		tabbedPane.addTab(Messages.getString("Tab.Advanced"), WsConstants.TAB_ICON_ADVANCED, advancedPanel, null);
 
 	}
 

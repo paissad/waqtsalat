@@ -66,18 +66,18 @@
             <zipgroupfileset refid="libs.ref" />
 
             <fileset dir="${mavenJava}" includes="**/*.properties" excludes="**/*.java" />
-            <fileset dir="${mavenResources}" includes="**/*.properties" excludes="**/*.java" />
+            <fileset dir="${mavenResources}" includes="**/*" excludes="**/*.java,**/*.class" />
             <!--<fileset dir="." includes="resources/**" />-->
         </jar>
+        <delete dir="${build.classes}" quiet="true" />
 
         <mkdir dir="${dist}" />
         <tar destfile="${dist}/waqtsalat-${version}.tar.gz" compression="gzip">
             <tarfileset 
                 dir="." 
                 prefix="waqtsalat-${version}" 
-                includes="LICENSE, README, CHANGELOG, COPYING, AUTHORS, NEWS, INSTALL, TODO, ${output.jar}, waqtsalat.conf, resources/**" /> 
+                includes="LICENSE, README, CHANGELOG, COPYING, AUTHORS, NEWS, INSTALL, TODO, ${output.jar}, waqtsalat.conf, extras/**" /> 
         </tar>
-        <delete dir="${build.classes}" quiet="true" />
     </target>
 
     <!-- target: javadoc -->
