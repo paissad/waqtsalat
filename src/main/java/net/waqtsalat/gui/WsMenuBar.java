@@ -25,7 +25,9 @@ import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+
 import java.io.IOException;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -53,12 +55,15 @@ public class WsMenuBar extends JMenuBar {
 	private JMenuItem _about;
 	private JMenuItem _help;
 
-	private Desktop desk = Desktop.getDesktop();
+	private Desktop desk = null;
 
 	// =======================================================================
 
 	public WsMenuBar() {
 
+		if (Desktop.isDesktopSupported()) {
+			 desk = Desktop.getDesktop();
+		}
 		//setPreferredSize(new Dimension(, WsConstants.MENU_PREFERED_HEIGHT));
 		setMinimumSize(getPreferredSize());
 		setBackground(WsConstants.COLOR_BACKGROUND_MENUBAR);
@@ -119,7 +124,7 @@ public class WsMenuBar extends JMenuBar {
 
 	//TODO: change this method ...
 	private void helpActionPerformed() {
-		if(desk.isSupported(Desktop.Action.BROWSE)) {
+		if(desk != null && desk.isSupported(Desktop.Action.BROWSE)) {
 			try {
 				desk.browse(new URI("http://dev.paissad.net/projects/waqtsalat/wiki"));
 			} catch (IOException e) {
@@ -129,7 +134,7 @@ public class WsMenuBar extends JMenuBar {
 			}
 		}
 		else {
-
+			// No action ...
 		}
 	}
 	// =======================================================================
