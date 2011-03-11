@@ -95,7 +95,8 @@ public class MainFrame extends JFrame {
 		JPanel generalPanel     = new GeneralTab();
 		JPanel locationPanel    = new LocationTab();
 		JPanel praytimesPanel   = new PrayTimesTab();
-		JPanel alertsPanel      = new AlertsTab();
+		AlertsTab alertsPanel      = new AlertsTab();
+//		JPanel alertsPanel      = new AlertsTab();
 		JPanel preferencesPanel = new PreferencesTab();
 		JPanel advancedPanel    = new AdvancedTab();
 
@@ -106,7 +107,7 @@ public class MainFrame extends JFrame {
 		tabbedPane.addTab(Messages.getString("Tab.Alerts"), WsConstants.TAB_ICON_ALERTS, alertsPanel, null);
 		tabbedPane.addTab(Messages.getString("Tab.Preferences"), WsConstants.TAB_ICON_PREFERENCES, preferencesPanel, null);
 		tabbedPane.addTab(Messages.getString("Tab.Advanced"), WsConstants.TAB_ICON_ADVANCED, advancedPanel, null);
-
+		
 	}
 
 }

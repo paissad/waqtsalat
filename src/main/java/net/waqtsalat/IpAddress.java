@@ -33,13 +33,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.waqtsalat.utils.Utils;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static net.waqtsalat.WaqtSalat.logger;
 
 /**
  * Encapsulates informations about the Ip Address.<br>
- * Contains methods to retreive automatically the Ip Address.
+ * Contains methods to retrieve automatically the Ip Address.
  * 
  * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
  */
@@ -58,11 +56,9 @@ public class IpAddress {
 	public static final String WHAT_IS_MY_IP = "http://www.whatismyip.com/automation/n09230945.asp";
 
 	/**
-	 * Default method used to retreive the ip address. Default method is DYNDNS.
+	 * Default method used to retrieve the ip address. Default method is DYNDNS.
 	 */
 	public static String DEFAULT_METHOD = DYNDNS;
-
-	Logger logger = LoggerFactory.getLogger(WaqtSalat.class);
 
 	private String ip = "-1";
 	private String method = DEFAULT_METHOD;
@@ -76,7 +72,7 @@ public class IpAddress {
 
 	/**
 	 * @param method
-	 *            The method to use to retreive the public ip address.
+	 *            The method to use to retrieve the public ip address.
 	 * @see #DEFAULT_METHOD
 	 * @see #DYNDNS
 	 * @see #PAISSAD
@@ -90,7 +86,7 @@ public class IpAddress {
 	// =======================================================================
 
 	/**
-	 * Retreive the public ip address of the object from a known method.<br>
+	 * Retrieves the public ip address of the object from a known method.<br>
 	 * Known methods are:
 	 * <ul>
 	 * <li>PAISSAD - <a
@@ -102,7 +98,7 @@ public class IpAddress {
 	 * href="http://checkip.dyndns.org">http://checkip.dyndns.org</a></li>
 	 * </ul>
 	 * 
-	 * @return Return a String representing the ip address retreived with the
+	 * @return A <code>String</code> representing the ip address retrieved with the
 	 *         specified method.
 	 * @throws IOException
 	 */
@@ -135,8 +131,7 @@ public class IpAddress {
 
 			return this.ip;
 		} catch (IOException ioe) {
-			ioe.printStackTrace();
-			throw new IOException("Error while retreiving public ip address!");
+			throw new IOException("Error while retreiving public ip address !");
 		}
 	}
 
@@ -155,7 +150,7 @@ public class IpAddress {
 	// =======================================================================
 
 	/**
-	 * Force/Change the ip address of the current object.
+	 * Forces/Changes the ip address of the current object.
 	 * 
 	 * @param ip
 	 *            Ip Address to set to.
@@ -167,9 +162,9 @@ public class IpAddress {
 	// =======================================================================
 
 	/**
-	 * Get the current method used to retreive the ip address of this object.
+	 * Get the current method used to retrieve the ip address of this object.
 	 * 
-	 * @return Return a String representing the current method used for this
+	 * @return A <code>String</code> representing the current method used for this
 	 *         object.
 	 */
 	public String getMethod() {
@@ -179,11 +174,11 @@ public class IpAddress {
 	// =======================================================================
 
 	/**
-	 * Force/Change the method to use in order to retreive the ip address from a
+	 * Forces/Changes the method to use in order to retrieve the ip address from a
 	 * site.<br>
 	 * 
 	 * @param method
-	 *            The method used for retreiving the public ip address.
+	 *            The method used for retrieving the public ip address.
 	 */
 	public void setMethod(String method) {
 		assert isValidMethod();
@@ -193,8 +188,8 @@ public class IpAddress {
 	// =======================================================================
 
 	/**
-	 * @return Return true if the method name specified for this object is a
-	 *         valid one.
+	 * @return <code>true</code> if the method name specified for this object is a
+	 *         valid one, <code>false</code> otherwise.
 	 */
 	public boolean isValidMethod() {
 		Set<String> availableMethods = getAvailableMethods().keySet();
@@ -204,10 +199,10 @@ public class IpAddress {
 	// =======================================================================
 
 	/**
-	 * Return the available methods we can use to retreive the public ip
+	 * Get the available methods we can use to retrieve the public ip
 	 * addresses.
 	 * 
-	 * @return Return a {@link Map} containing all available method names with
+	 * @return A {@link Map} containing all available method names with
 	 *         their related values.
 	 */
 	public Map<String, String> getAvailableMethods() {
@@ -221,7 +216,7 @@ public class IpAddress {
 	// =======================================================================
 
 	/**
-	 * @return Return a String representation of the current ip address of the
+	 * @return A <code>String</code> representation of the current ip address of the
 	 *         object.
 	 */
 	public String toString() {

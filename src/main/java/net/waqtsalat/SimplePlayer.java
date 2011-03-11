@@ -27,8 +27,7 @@ import net.waqtsalat.utils.AudioUtils;
 import net.waqtsalat.utils.Mp3Utils;
 import net.waqtsalat.utils.PlayerUtils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static net.waqtsalat.WaqtSalat.logger;
 
 /**
  * A simple player for MP3 & common audio files.
@@ -37,11 +36,9 @@ import org.slf4j.LoggerFactory;
  */
 public class SimplePlayer implements PlayerUtils {
 
-	Logger logger = LoggerFactory.getLogger(WaqtSalat.class);
-
-	private File audioFile = null;
-	private AudioUtils audio = null;
-	private Mp3Utils mp3 = null;
+	private File _audioFile   = null;
+	private AudioUtils _audio = null;
+	private Mp3Utils _mp3     = null;
 
 	// =======================================================================
 
@@ -50,12 +47,12 @@ public class SimplePlayer implements PlayerUtils {
 	 *            File to use.
 	 */
 	public SimplePlayer(File audioFile) {
-		this.audioFile = audioFile;
+		_audioFile = audioFile;
 
 		if (audioFile.getName().toLowerCase().endsWith(".mp3"))
-			mp3 = new Mp3Utils(audioFile);
+			_mp3 = new Mp3Utils(audioFile);
 		else
-			audio = new AudioUtils(audioFile);
+			_audio = new AudioUtils(audioFile);
 	}
 
 	// =======================================================================
@@ -74,10 +71,10 @@ public class SimplePlayer implements PlayerUtils {
 	 * Stop playing the audio file.
 	 */
 	public void stop() {
-		if (audio != null)
-			audio.stop();
-		else if (mp3 != null)
-			mp3.stop();
+		if (_audio != null)
+			_audio.stop();
+		else if (_mp3 != null)
+			_mp3.stop();
 		else
 			logger.error("Damn, what the hell do you want to stop !?");
 	}
@@ -89,16 +86,14 @@ public class SimplePlayer implements PlayerUtils {
 	 */
 	public void play() {
 		try {
-			if (audio != null) {
-				// logger.trace("Playing audio file '{}'",
-				// this.audioFile.getAbsolutePath());
-				audio.play();
-			} else if (mp3 != null) {
-				// logger.trace("Playing mp3 file '{}'",
-				// this.audioFile.getAbsolutePath());
-				mp3.play();
+			if (_audio != null) {
+				logger.trace("Playing audio file '{}'", _audioFile.getAbsolutePath());
+				_audio.play();
+			} else if (_mp3 != null) {
+				logger.trace("Playing mp3 file '{}'", _audioFile.getAbsolutePath());
+				_mp3.play();
 			} else {
-				throw new Exception("PLAYER CANNOT BE NULL");
+				throw new Exception("PLAYER CANNOT BE NULL !!!");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -108,27 +103,11 @@ public class SimplePlayer implements PlayerUtils {
 	// =======================================================================
 
 	public File getAudioFile() {
-		return audioFile;
+		return _audioFile;
 	}
 
 	public void setAudioFile(File audioFile) {
-		this.audioFile = audioFile;
-	}
-
-	public AudioUtils getAudio() {
-		return audio;
-	}
-
-	public void setAudio(AudioUtils audio) {
-		this.audio = audio;
-	}
-
-	public Mp3Utils getMp3() {
-		return mp3;
-	}
-
-	public void setMp3(Mp3Utils mp3) {
-		this.mp3 = mp3;
+		_audioFile = audioFile;
 	}
 
 	// =======================================================================

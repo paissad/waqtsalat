@@ -21,21 +21,16 @@
 
 package net.waqtsalat.utils;
 
+import static net.waqtsalat.WaqtSalat.logger;
+
+import java.applet.Applet;
+import java.applet.AudioClip;
 import java.io.File;
-import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 
 import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.SourceDataLine;
-
-import net.waqtsalat.WaqtSalat;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Contains some utilities related to audio files such as playing an audio file
@@ -45,11 +40,8 @@ import org.slf4j.LoggerFactory;
  */
 public class AudioUtils implements PlayerUtils {
 
-	Logger logger = LoggerFactory.getLogger(WaqtSalat.class);
-
-	protected File audioFile = null;
-	private boolean stop = false; // if set to true, then do no play the audio
-									// file !
+	protected File _audioFile = null;
+	private AudioClip _audioClip = null;
 
 	/**
 	 * Constructs an {@link AudioUtils} object.
@@ -66,7 +58,13 @@ public class AudioUtils implements PlayerUtils {
 	 *            File to use.
 	 */
 	public AudioUtils(File audioFile) {
-		this.audioFile = audioFile;
+		_audioFile = audioFile;
+		try {
+			_audioClip = Applet.newAudioClip(_audioFile.toURI().toURL());
+		} catch (MalformedURLException mue) {
+			mue.printStackTrace();
+			_audioClip = null;
+		}
 	}
 
 	// =======================================================================
@@ -78,44 +76,34 @@ public class AudioUtils implements PlayerUtils {
 	 *            Name of the file to use.
 	 */
 	public AudioUtils(String audioFileName) {
-		this.audioFile = new File(audioFileName);
+		_audioFile = new File(audioFileName);
 	}
 
 	// =======================================================================
 
-	/**
-	 * Get the audio file for this object.
-	 * 
-	 * @return File of this object.
-	 */
 	public File getAudioFile() {
-		return this.audioFile;
+		return _audioFile;
 	}
 
-	// =======================================================================
-
-	/**
-	 * Set the audio file to use.
-	 * 
-	 * @param audioFile
-	 *            Audio file to use.
-	 */
 	public void setAudioFile(File audioFile) {
-		this.audioFile = audioFile;
+		_audioFile = audioFile;
 	}
 
 	// =======================================================================
 
 	/**
-	 * Get all audio types supported by the system.
+	 * Gets all audio types supported by the system.
 	 * 
-	 * @return Return a String array containing the supported audio formats.
+	 * @return An array of <code>String</code> containing the supported audio
+	 *         formats.
 	 */
 	public static String[] getSupportedTargetTypes() {
 
 		ArrayList<String> list = new ArrayList<String>();
 		for (AudioFileFormat.Type t : AudioSystem.getAudioFileTypes())
-			list.add(t.getExtension());
+			list.add(t.getExtension().toLowerCase());
+		if (list.contains("aif")) // let's add manually, the aiff extension 
+			list.add("aiff");
 
 		return list.toArray(new String[list.size()]);
 	}
@@ -130,7 +118,7 @@ public class AudioUtils implements PlayerUtils {
 	 * If no appropriate type is found, null is returned.
 	 * 
 	 * @param extension
-	 * @return Return a String array containing supported extensions.
+	 * @return An array of <code>String</code> containing supported extensions.
 	 */
 	public static AudioFileFormat.Type getSupportedExtensions(String extension) {
 		AudioFileFormat.Type[] aTypes = AudioSystem.getAudioFileTypes();
@@ -146,75 +134,19 @@ public class AudioUtils implements PlayerUtils {
 
 	@Override
 	public void stop() {
-		stop = true;
+		if (_audioClip != null)
+			_audioClip.stop();
 	}
 
 	// =======================================================================
 
 	@Override
 	public void play() {
-
-		// run in new thread to play in background
-		new Thread("audioPlayer") {
-			public void run() {
-
-				AudioInputStream audioInputStream = null;
-				SourceDataLine line = null;
-				try {
-					audioInputStream = AudioSystem
-							.getAudioInputStream(audioFile);
-
-					AudioFormat audioFormat = audioInputStream.getFormat();
-					logger.trace("AUDIO FORMAT: {}", audioFormat.toString());
-
-					DataLine.Info info = new DataLine.Info(
-							SourceDataLine.class, audioFormat);
-					logger.trace("DATALINE INFO: {}", info.toString());
-
-					line = (SourceDataLine) AudioSystem.getLine(info);
-					logger.trace("LINE: {}", line.toString());
-
-					stop = false;
-					line.open(audioFormat); // Open the line with the right
-											// audio format.
-					line.start(); // Start the line (send the stream to the
-									// sound card).
-
-					// Now, we have to write to the line (like any other kind of
-					// InputStream)
-					int BUFFER = 4096;
-					byte[] data = new byte[BUFFER];
-					int bytesRead = 0;
-					logger.debug("Playing audio file '{}'",
-							audioFile.getAbsolutePath());
-					while ((bytesRead = audioInputStream.read(data, 0,
-							data.length)) != -1 && !stop) {
-						line.write(data, 0, bytesRead);
-					}
-
-					line.close();
-					stop = true;
-					logger.debug("Finished playing audio file '{}'",
-							audioFile.getAbsolutePath());
-
-				} catch (Exception e) {
-					logger.error("Problem while playing audio file"
-							+ audioFile.getAbsolutePath());
-					e.printStackTrace();
-					try {
-						if (audioInputStream != null)
-							audioInputStream.close();
-
-					} catch (IOException ioe) {
-						ioe.printStackTrace();
-					}
-					if (line != null)
-						line.close();
-					return;
-				}
-			}
-		}.start();
-
+		logger.debug("Playing audio file '{}'.",
+				_audioFile.getAbsolutePath());
+		_audioClip.play();
+		logger.debug("Finished playing audio file '{}'.",
+				_audioFile.getAbsolutePath());
 	}
 	// =======================================================================
 

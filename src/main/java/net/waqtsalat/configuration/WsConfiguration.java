@@ -243,7 +243,7 @@ public class WsConfiguration {
 
 	public String getGeoipDatabase() {
 		return getString(KEY_GEOIP_DATABASE,
-				GeoipUtils.GEOIP_DATABASE_COMPLETE_PATH);
+				GeoipUtils.GEOIP_DATABASE_FULL_PATH);
 	}
 
 	public void setGeoipDatabase(String value) {

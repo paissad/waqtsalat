@@ -37,8 +37,8 @@ import javax.swing.SwingUtilities;
 
 import net.waqtsalat.MuezzinCallDaemon.BadSizePrayTimesArray;
 import net.waqtsalat.configuration.WsParseCommandLine;
+import net.waqtsalat.gui.MainFrame;
 import net.waqtsalat.utils.GeoipUtils;
-import net.waqtsalat.gui.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,7 +114,7 @@ public class WaqtSalat implements Observer {
 					System.exit(1);
 				}
 			} else if (_ip != null || _auto) {
-				if (_ip != null && !_ip.isEmpty()) { // then come automatic mode ...
+				if (_ip != null && !_ip.isEmpty()) { // then come automatic mode ... (geoip)
 					logger.info("Using forced ip address: {}", _ip);
 				} else if (_auto) {
 					logger.info("Public Ip Address ...");
@@ -124,7 +124,7 @@ public class WaqtSalat implements Observer {
 						logger.error("The Ip address cannot be '-1', an error occured.");
 				}
 
-				Location location = new LookupService(GeoipUtils.GEOIP_DATABASE_COMPLETE_PATH).getLocation(_ip);
+				Location location = new LookupService(GeoipUtils.GEOIP_DATABASE_FULL_PATH).getLocation(_ip);
 
 				geoipLocDatas.put("City", location.city);
 				geoipLocDatas.put("Country", location.countryName);

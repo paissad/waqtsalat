@@ -23,130 +23,250 @@ package net.waqtsalat.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 
-import net.waqtsalat.WaqtSalat;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static net.waqtsalat.WaqtSalat.logger;
 
 import com.maxmind.geoip.LookupService;
 
 /**
- * Some utilities such as looking for updates, or downloading GeoIP database.
+ * Some utilities such as looking for updates, or download of GeoIP database.
  * 
  * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
  */
 public class GeoipUtils {
 
 	private static final String FS = File.separator;
-	public static final String GEOIP_DATABASE_SAVE_PATH = "extras" + FS
-			+ "geoip";
-	public static final String GEOIP_DATABASE_FILENAME = "GeoLiteCity.dat";
-	public static final String GEOIP_DATABASE_COMPLETE_PATH = GEOIP_DATABASE_SAVE_PATH
-			+ FS + GEOIP_DATABASE_FILENAME;
-	public static final String GEOIP_DATABASE_UPDATE_URL = "http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz";
+	private static final String GEOIP_SAVE_PATH            = "extras" +FS+ "geoip";
+
+	public static final String GEOIP_DATABASE_FILENAME     = "GeoLiteCity.dat";
+	public static final String GEOIP_DATABASE_FULL_PATH    = GEOIP_SAVE_PATH +FS+ GEOIP_DATABASE_FILENAME;
+	public static final String GEOIP_DATABASE_UPDATE_URL   = "http://geolite.maxmind.com/download/geoip/database/" + GEOIP_DATABASE_FILENAME + ".gz";
+
+	public static final String GEOIP_WORLDCITIES_FILENAME  = "worldcitiespop.txt";
+	public static final String GEOIP_WORLDCITIES_FULL_PATH = GEOIP_SAVE_PATH +FS+ GEOIP_WORLDCITIES_FILENAME;
+	public static final String GEOIP_WORLDCITIES_URL       = "http://www.maxmind.com/download/worldcities/" + GEOIP_WORLDCITIES_FILENAME + ".gz";	
 
 	public static final int GEOIP_OPTIONS = LookupService.GEOIP_MEMORY_CACHE;
 	public static final double LATITUDE_MAKKAH = 21.42738;
 	public static final double LONGITUDE_MAKKAH = 39.81484;
 
 	/**
-	 * Timestamp of the local GeoLiteCity.dat.gz file.
+	 * The 'DB' (DataBase) type is for GeoIp Database (GeoLiteCity.dat)<br>
+	 * The 'WC' (World-Cities) type is for the GeoIp worldcities.txt file.
+	 * 
+	 * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
 	 */
-	private long localGeoipDatabaseTimestamp;
+	public static enum GEOIP_TYPE {
+		DB, WC
+	};
 
-	/**
-	 * Timestamp of the file GeoLiteCity.dat.gz from the remote url.
-	 */
-	private long remoteGeoipDatabaseTimestamp;
-	Logger logger = LoggerFactory.getLogger(WaqtSalat.class);
+	// =======================================================================
 
 	/**
 	 * Sole constructor.
 	 */
 	public GeoipUtils() {
-		try {
-			File geoipLocalFile = new File(GEOIP_DATABASE_SAVE_PATH + FS
-					+ GEOIP_DATABASE_FILENAME);
-			if (geoipLocalFile.exists())
-				this.localGeoipDatabaseTimestamp = new Utils()
-						.getLocalFileTimestamp(geoipLocalFile);
-			else {
-				logger.info("GeoIP database not yet present in the system, then obviously, update is available!");
-				this.localGeoipDatabaseTimestamp = 1;
-			}
-			try {
-				this.remoteGeoipDatabaseTimestamp = new Utils()
-						.getRemoteFileTimestamp(new URL(
-								GEOIP_DATABASE_UPDATE_URL));
-			} catch (IOException ioe) {
-				logger.error("Error while retreiving the remote timestamp for GeoIP database.");
-			}
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-			logger.error("Error while creating an instance of {}", getClass()
-					.toString());
-		}
 	}
 
 	// =======================================================================
 
 	/**
-	 * Update the GeoIP database if available.
-	 */
-	public void updateGeoipDatabase() {
-		if (isUpdateGeoipAvailable())
-			downloadGeoipDatabase();
-	}
-
-	// =======================================================================
-
-	/**
-	 * Download the GeoIP database file, uncompress it and update its timestamp.<br />
-	 * By default, it is GeoLiteCity.dat
-	 */
-	public void downloadGeoipDatabase() {
-		try {
-			DownloadUtils util = new DownloadUtils(new URL(
-					GEOIP_DATABASE_UPDATE_URL));
-			File database_Downloaded = util.download(new File(
-					GEOIP_DATABASE_SAVE_PATH + FS + util.getFileNameFromURL()));
-
-			File database_Uncompressed = new UncompressUtils(
-					database_Downloaded).uncompressSmart();
-
-			// Update the timestamp of the GeoIP database.
-			database_Uncompressed
-					.setLastModified(this.remoteGeoipDatabaseTimestamp);
-
-			// Remove the default compressed file, since it is unused and does
-			// use space disk for nothing.
-			if (database_Downloaded.exists())
-				database_Downloaded.delete();
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-			logger.error("Download of geoip database FAILED.");
-		}
-	}
-
-	// =======================================================================
-
-	/**
-	 * Check for available update for the GeoIP database.
+	 * Update one GeoIp entity. (GeoLiteCity.dat or worldcitiespop.txt)
 	 * 
-	 * @return Return true if an update is available, false otherwise.
+	 * @param type
+	 *            A type which is a value of {@link GEOIP_TYPE}.
+	 * @throws BadGeoipTypeException
+	 *             When the specified type in argument is unknown.
 	 */
-	public boolean isUpdateGeoipAvailable() {
-		boolean update = new Utils().checkUpdate(
-				this.localGeoipDatabaseTimestamp,
-				this.remoteGeoipDatabaseTimestamp);
-		if (update)
-			logger.info("An update is available for the GeoIP database.");
-		else
-			logger.info("No update available yet for the GeoIP database.");
-		return update;
+	public void updateGeoip(GEOIP_TYPE type) throws BadGeoipTypeException {
+		if(isUpdateAvailable(type))
+			download(type);
 	}
+
+	// =======================================================================
+
+	/**
+	 * Download one type of GeoIp stuff (GeoLiteCity.dat, worldcitiespop.txt)
+	 * 
+	 * @param type
+	 *            A type which is a value of {@link GEOIP_TYPE}.
+	 * @throws BadGeoipTypeException
+	 *             When the specified type in argument is unknown.
+	 * @throws BadGeoipTypeException
+	 */
+	public void download(GEOIP_TYPE type) throws BadGeoipTypeException {
+		if(isCorrectType(type)) {
+			DownloadUtils util = null;
+			File file_downloaded = null;
+			File file_decompressed = null;
+
+			try {
+				long remoteFileTimestamp = getRemoteGeoipTimestamp(type);
+				if (type.equals(GEOIP_TYPE.DB)) {
+					util = new DownloadUtils(new URL(GEOIP_DATABASE_UPDATE_URL));
+				}
+				else if (type.equals(GEOIP_TYPE.WC)) {
+					util = new DownloadUtils(new URL(GEOIP_WORLDCITIES_URL));
+				}
+				file_downloaded = util.download(new File(GEOIP_SAVE_PATH +FS+ util.getFileNameFromURL()));
+				file_decompressed = new UncompressUtils(file_downloaded).uncompressSmart();
+				file_decompressed.setLastModified(remoteFileTimestamp);
+				if (file_downloaded.exists())
+					file_downloaded.delete();
+			} catch(IOException ioe) {
+				logger.error("Download FAILED. ({})", file_downloaded.getName());
+				ioe.printStackTrace();
+			}
+		} 
+		else {
+			throw new BadGeoipTypeException("Unknown GeoIp type ...");
+		}
+	}
+
+	// =======================================================================
+
+	/**
+	 * Checks whether or not an update is available for the the specified GeoIp
+	 * entity (Database or World-Cities).
+	 * 
+	 * @param type
+	 *            A type which is a value of {@link GEOIP_TYPE}.
+	 * @return <code>true</code> if an update is available, <code>false</code>
+	 *         otherwise.
+	 * @throws BadGeoipTypeException 
+	 */
+	public boolean isUpdateAvailable(GEOIP_TYPE type) throws BadGeoipTypeException {
+		if(isCorrectType(type)) {
+			boolean update = new Utils().checkUpdate(
+					getLocalGeoipTimestamp(type), getRemoteGeoipTimestamp(type));
+
+			if (update)
+				logger.info("An update is available for ({}).", getCorrectGeoipFile(type).getName());
+			else
+				logger.info("No update available yet for ({}).", getCorrectGeoipFile(type).getName());
+			return update;
+		}
+		else {
+			throw new BadGeoipTypeException("Unknown GeoIp type ...");
+		}
+	};
+
+	// =======================================================================
+
+	/**
+	 * Get the timestamp of the local GeoIP file (GeoLiteCity.dat or
+	 * worldcitiespop.txt).
+	 * 
+	 * @param type
+	 *            A type which is a value of {@link GEOIP_TYPE}.
+	 * @return The timestamp of the local file (GeoLiteCity.dat or
+	 *         worldcitiespop.txt)
+	 * @throws BadGeoipTypeException 
+	 */
+	public static long getLocalGeoipTimestamp(GEOIP_TYPE type) throws BadGeoipTypeException {
+		long _error = -1L;
+		if (isCorrectType(type)) {
+			File geoipFile = getCorrectGeoipFile(type);
+			if(geoipFile.exists()) {
+				try {
+					return new Utils().getLocalFileTimestamp(geoipFile);
+				} catch (IOException e) {
+					logger.error(
+							"Error while retrieving the timestamp of the local file'{}'",
+							geoipFile.getAbsolutePath());
+					e.printStackTrace();
+				}
+			}
+			return _error;
+		}
+		else {
+			throw new BadGeoipTypeException("Unknown GeoIp type ...");
+		}
+	}
+
+	// =======================================================================
+
+	/**
+	 * Get the timestamp of a remote GeoIP file (GeoLiteCity.dat.gz or
+	 * worldcitiespop.txt.gz)
+	 * 
+	 * @param type
+	 *            A type which is a value of {@link GEOIP_TYPE}.
+	 * @return The timestamp of the remote file.
+	 * @throws BadGeoipTypeException 
+	 */
+	public static long getRemoteGeoipTimestamp(GEOIP_TYPE type) throws BadGeoipTypeException {
+		long _error = -1L;
+		if (isCorrectType(type)) {
+			try {
+				if(type.equals(GEOIP_TYPE.DB))
+					return new Utils().getRemoteFileTimestamp(new URL(GEOIP_DATABASE_UPDATE_URL));
+				else if (type.equals(GEOIP_TYPE.WC))
+					return new Utils().getRemoteFileTimestamp(new URL(GEOIP_WORLDCITIES_URL));
+			}
+			catch (MalformedURLException e) { e.printStackTrace(); }
+			catch (IOException e) { e.printStackTrace(); }
+			return _error;
+		}
+		else {
+			throw new BadGeoipTypeException("Unknown GeoIp type ...");
+		}
+	}
+
+	// =======================================================================
+
+	/**
+	 * Checks whether or not a specified type is correct or not.
+	 * 
+	 * @return Return <code>true</code> if type is a know type,
+	 *         <code>false</code> otherwise.
+	 */
+	private static boolean isCorrectType(GEOIP_TYPE type) {
+		GEOIP_TYPE[] allowed_types = GEOIP_TYPE.values();
+		for (int i=0; i<allowed_types.length; i++) {
+			if(type.equals(allowed_types[i]))
+				return true;
+		}
+		return false;
+	}
+
+	// =======================================================================
+
+	private static File getCorrectGeoipFile(GEOIP_TYPE type) throws BadGeoipTypeException {
+
+		if(type.equals(GEOIP_TYPE.DB)) 
+			return new File(GEOIP_SAVE_PATH +FS+ GEOIP_DATABASE_FILENAME);
+		else if (type.equals(GEOIP_TYPE.WC))
+			return new File(GEOIP_SAVE_PATH +FS+ GEOIP_WORLDCITIES_FILENAME);
+		else {
+			throw new BadGeoipTypeException("Unknown GeoIp type ...");
+		}
+	}
+
+	// =======================================================================
+
+	/**
+	 * Exception thrown when an error occurs with {@link GeoipUtils}.<br>
+	 * Mostly, when a specified {@link GEOIP_TYPE} type is does not exist.
+	 */
+	public static class BadGeoipTypeException extends Exception {
+
+		private static final long serialVersionUID = 1L;
+
+		private BadGeoipTypeException() {
+			super();
+			System.err.println("Error in GeoIpUtils ...");
+		}
+
+		private BadGeoipTypeException(String message) {
+			super(message);
+			System.err.println(message);
+		}
+
+	}
+
 	// =======================================================================
 
 }

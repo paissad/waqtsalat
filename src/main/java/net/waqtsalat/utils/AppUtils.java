@@ -23,19 +23,12 @@ package net.waqtsalat.utils;
 
 import java.util.Observable;
 
-import net.waqtsalat.WaqtSalat;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Contains some utilities such as update checking for the application ...
  * 
  * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
  */
 public class AppUtils extends Observable {
-
-	Logger logger = LoggerFactory.getLogger(WaqtSalat.class);
 
 	public static final String APP_UPDATE_URL = "http://www.waqtsalat.net/download";
 	public static final String APP_CURRENT_VERSION = "1.0";

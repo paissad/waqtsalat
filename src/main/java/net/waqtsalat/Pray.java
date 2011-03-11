@@ -27,8 +27,7 @@ import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static net.waqtsalat.WaqtSalat.logger;
 
 /**
  * Encapsulates a pray with all its "options" such like its name, its time, its
@@ -37,8 +36,6 @@ import org.slf4j.LoggerFactory;
  * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
  */
 public class Pray extends Observable implements Observer {
-
-	Logger logger = LoggerFactory.getLogger(WaqtSalat.class);
 
 	private static final String FS = File.separator;
 
@@ -280,14 +277,13 @@ public class Pray extends Observable implements Observer {
 	}
 
 	/**
-	 * 
 	 * @param prayTime
 	 */
 	public synchronized void setTime(String prayTime) {
 
 		if(!_currentTimeOfPray.equals(prayTime)) {
 			_currentTimeOfPray = prayTime;
-			//cronDateFromTime(_currentTimeOfPray)
+			//cronDateFromTime(_currentTimeOfPray) // TODO ...
 			setChanged();
 			notifyObservers(_currentTimeOfPray);
 		}

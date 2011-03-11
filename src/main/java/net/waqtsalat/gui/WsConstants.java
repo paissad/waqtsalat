@@ -53,8 +53,8 @@ public interface WsConstants {
 	ImageIcon HEADER_IMAGE_SUNSET = new ImageIcon(ClassLoader.getSystemResource("images" +FS+ "sunset_red.jpg"));
 
 	//About dialog ...
-	int ABOUT_WINDOW_PREFERED_WIDTH  = 100;
-	int ABOUT_WINDOW_PREFERED_HEIGHT = 100;
+	int ABOUT_WINDOW_PREFERED_WIDTH  = 200;
+	int ABOUT_WINDOW_PREFERED_HEIGHT = 200;
 
 	// Icons ...
 	Icon TAB_ICON_GENERAL     = new ImageIcon(ClassLoader.getSystemResource("icons" +FS+ ""));
@@ -63,5 +63,13 @@ public interface WsConstants {
 	Icon TAB_ICON_PRAYTIMES   = new ImageIcon(ClassLoader.getSystemResource("icons" +FS+ ""));
 	Icon TAB_ICON_ALERTS      = new ImageIcon(ClassLoader.getSystemResource("icons" +FS+ "alert.png"));
 	Icon TAB_ICON_ADVANCED    = new ImageIcon(ClassLoader.getSystemResource("icons" +FS+ ""));
+
+	// Adhans
+	String DEFAULT_ADHAN_SOUND = ClassLoader.getSystemResource("sounds" +FS+ "adhan.mp3").getPath();
+	String DEFAULT_ADHAN_DIR   = "extras" +FS+ "sounds" +FS+ "praytimes.org" +FS+ "audio" +FS+ "adhan";
+
+	// Supported audio files: additional extensions apart from the default ones (wav, au, aif ...)
+	// Use lowercase !
+	String[] ADDITIONAL_EXTENSIONS = {"mp3"};
 
 }

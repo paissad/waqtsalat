@@ -26,10 +26,8 @@ import java.io.File;
 import java.io.FileInputStream;
 
 import javazoom.jl.player.Player;
-import net.waqtsalat.WaqtSalat;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static net.waqtsalat.WaqtSalat.logger;
 
 /**
  * Contains some utilities such as playing a MP3 file.
@@ -38,9 +36,9 @@ import org.slf4j.LoggerFactory;
  */
 public class Mp3Utils extends AudioUtils implements PlayerUtils {
 
-	Logger logger = LoggerFactory.getLogger(WaqtSalat.class);
-
 	private Player player;
+
+	// =======================================================================
 
 	public Mp3Utils() {
 		super();
@@ -74,11 +72,11 @@ public class Mp3Utils extends AudioUtils implements PlayerUtils {
 
 		try {
 			BufferedInputStream bis = new BufferedInputStream(
-					new FileInputStream(audioFile));
+					new FileInputStream(_audioFile));
 			player = new Player(bis);
 		} catch (Exception e) {
 			logger.error("Problem playing file '{}'",
-					audioFile.getAbsolutePath());
+					_audioFile.getAbsolutePath());
 			e.printStackTrace();
 			return;
 		}
@@ -88,10 +86,10 @@ public class Mp3Utils extends AudioUtils implements PlayerUtils {
 			public void run() {
 				try {
 					logger.debug("Playing mp3 file '{}'",
-							audioFile.getAbsolutePath());
+							_audioFile.getAbsolutePath());
 					player.play();
 					logger.debug("Finished playing mp3 file '{}'",
-							audioFile.getAbsolutePath());
+							_audioFile.getAbsolutePath());
 				} catch (Exception e) {
 					logger.error("Error: '{}'", this.toString());
 					e.printStackTrace();
@@ -109,7 +107,7 @@ public class Mp3Utils extends AudioUtils implements PlayerUtils {
 	 * @return Return the mp3 file used for this object.
 	 */
 	public File getMp3File() {
-		return audioFile;
+		return _audioFile;
 	}
 
 	// =======================================================================
@@ -121,7 +119,7 @@ public class Mp3Utils extends AudioUtils implements PlayerUtils {
 	 *            mp3 file to use.
 	 */
 	public void setMp3File(File mp3File) {
-		this.audioFile = mp3File;
+		_audioFile = mp3File;
 	}
 	// =======================================================================
 

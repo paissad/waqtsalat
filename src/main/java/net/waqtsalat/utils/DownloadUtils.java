@@ -34,38 +34,29 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Observable;
 
-import net.waqtsalat.WaqtSalat;
+import static net.waqtsalat.WaqtSalat.logger;
 
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Contains some utilities such as download of a file from a given url (like
- * wget).<br />
- * Method to print some informations about response-header of an url. <br />
+ * wget).<br>
+ * Method to print some informations about response-header of an url.<br>
  * Method to check for redirections of an url ...
  * 
  * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
  */
 public class DownloadUtils extends Observable {
 
-	Logger logger = LoggerFactory.getLogger(WaqtSalat.class);
-
 	/** Url to use. */
-	private URL url;
-	/** If the url has an redirection, 'redirect' will catch it ! */
-	private URL redirect = null;
-
-	private Object stateLock = new Object();
-
+	private URL _url;
+	private URL _redirect = null;
+	private Object _stateLock = new Object();
 	private enum State {
 		NOTHING_KNOWN, DOWNLOAD_IN_PROGRESS, DOWNLOAD_FINISHED, ERROR
-	}
-
-	private State state = State.NOTHING_KNOWN;
-
-	private Throwable errorStateCause;
+	};
+	private State _state = State.NOTHING_KNOWN;
+	private Throwable _errorStateCause;
 	private int _bytesDownloaded = 0;
 	private int _totalBytes = 0;
 	private boolean _downloadCancelled = false;
@@ -79,7 +70,7 @@ public class DownloadUtils extends Observable {
 	// =======================================================================
 
 	public DownloadUtils(URL url) {
-		this.url = url;
+		_url = url;
 	}
 
 	// =======================================================================
@@ -96,11 +87,11 @@ public class DownloadUtils extends Observable {
 			String outputFileName = getFileNameFromURL();
 
 			// Let's play with redirections.
-			URL tempURL = new URL(url.toString());
+			URL tempURL = new URL(_url.toString());
 			DownloadUtils util = new DownloadUtils(tempURL);
 			while (util.checkForRedirect()) {
-				url = util.getRedirectURL();
-				util = new DownloadUtils(url);
+				_url = util.getRedirectURL();
+				util = new DownloadUtils(_url);
 				outputFileName = util.getFileNameFromURL();
 			}
 
@@ -121,9 +112,9 @@ public class DownloadUtils extends Observable {
 	// =======================================================================
 
 	/**
-	 * Download a file from a given url.<br />
-	 * Default timeout for the connection is 30 seconds.<br />
-	 * Default timeout for reading the url is 1 hour.<br />
+	 * Download a file from a given url.<br>
+	 * Default timeout for the connection is 30 seconds.<br>
+	 * Default timeout for reading the url is 1 hour.<br>
 	 * 
 	 * @param outputFile
 	 *            Where to save the downloaded file.
@@ -132,24 +123,20 @@ public class DownloadUtils extends Observable {
 	 */
 	public File download(File outputFile) throws IOException {
 		try {
-			Logger logger = LoggerFactory.getLogger(WaqtSalat.class);
 			logger.info("Downloading file ...");
 			setState(State.DOWNLOAD_IN_PROGRESS);
 
-			File downloadedFile = File.createTempFile(outputFile.getName(),
-					".download", outputFile.getParentFile());
-			URLConnection urlc = url.openConnection();
-			String osName = System.getProperty("os.name");
-			String osVersion = System.getProperty("os.version");
-			String osArch = System.getProperty("os.arch");
-			String javaVersion = System.getProperty("java.version");
-			String userAgent = "WaqtSalat/1.0 (" + osName + "; U; " + osArch
-					+ "; " + osVersion + "; " + Locale.getDefault() + ") Java/"
-					+ javaVersion;
+			File downloadedFile = File.createTempFile(outputFile.getName(),".download", outputFile.getParentFile());
+			URLConnection urlc  = _url.openConnection();
+			String osName       = System.getProperty("os.name");
+			String osVersion    = System.getProperty("os.version");
+			String osArch       = System.getProperty("os.arch");
+			String javaVersion  = System.getProperty("java.version");
+			String userAgent    = "WaqtSalat/1.0 (" + osName + "; U; " + osArch + "; " + osVersion + "; " + Locale.getDefault() + ") Java/" + javaVersion;
 			urlc.setRequestProperty("User-Agent", userAgent);
-			String contentType = urlc.getContentType();
+			String contentType     = urlc.getContentType();
 			String contentEncoding = urlc.getContentEncoding();
-			_totalBytes = urlc.getContentLength();
+			_totalBytes            = urlc.getContentLength();
 			urlc.setConnectTimeout(30000);
 			urlc.setReadTimeout(3600000);
 
@@ -157,13 +144,10 @@ public class DownloadUtils extends Observable {
 			logger.debug("Content type             : {}", contentType);
 			logger.debug("Content length           : {}", _totalBytes);
 			logger.debug("Content encoding         : {}", contentEncoding);
-			logger.debug("Connection timeout (sec) : {}",
-					urlc.getConnectTimeout() / 1000);
-			logger.debug("Read timeout (sec)       : {}",
-					urlc.getReadTimeout() / 1000);
-			logger.debug("Temporary file           : {}",
-					downloadedFile.getAbsolutePath());
-			logger.debug("Remote file              : {}", url.toString());
+			logger.debug("Connection timeout (sec) : {}", urlc.getConnectTimeout() / 1000);
+			logger.debug("Read timeout (sec)       : {}", urlc.getReadTimeout() / 1000);
+			logger.debug("Temporary file           : {}", downloadedFile.getAbsolutePath());
+			logger.debug("Remote file              : {}", _url.toString());
 
 			BufferedInputStream bis = new BufferedInputStream(
 					urlc.getInputStream());
@@ -197,8 +181,7 @@ public class DownloadUtils extends Observable {
 				}
 
 				FileUtils.moveFile(downloadedFile, outputFile);
-				logger.info("Download finished successfully ! '{}'",
-						outputFile.getAbsolutePath());
+				logger.info("Download finished successfully ! '{}'", outputFile.getAbsolutePath());
 			} catch (IOException ioe) {
 				setState(State.ERROR);
 				if (!outputFile.exists() && outputFileTemp.exists()) {
@@ -230,7 +213,7 @@ public class DownloadUtils extends Observable {
 	// =======================================================================
 
 	/**
-	 * Retreives response-headers from an url.
+	 * Retrieves response-headers from an url.
 	 * 
 	 * @throws IOException
 	 */
@@ -239,7 +222,7 @@ public class DownloadUtils extends Observable {
 		try {
 			logger.trace("===== GET URL HEADERS =====");
 
-			URLConnection urlc = url.openConnection();
+			URLConnection urlc = _url.openConnection();
 			Iterator<?> headers = urlc.getHeaderFields().entrySet().iterator();
 
 			while (headers.hasNext()) {
@@ -249,8 +232,7 @@ public class DownloadUtils extends Observable {
 
 			logger.trace("=== FINISHED GETTING URL HEADERS ===");
 		} catch (IOException ioe) {
-			throw new IOException("Error while retreiving headers for url: "
-					+ url.toString());
+			throw new IOException("Error while retreiving headers for url: " + _url.toString());
 		}
 	}
 
@@ -265,7 +247,7 @@ public class DownloadUtils extends Observable {
 	private boolean checkForRedirect() throws IOException {
 
 		try {
-			URLConnection urlc = url.openConnection();
+			URLConnection urlc = _url.openConnection();
 			HttpURLConnection httpUrlCon = HttpURLConnection.class.cast(urlc);
 			httpUrlCon.setInstanceFollowRedirects(false);
 
@@ -275,8 +257,8 @@ public class DownloadUtils extends Observable {
 				return false; // no redirection
 			}
 
-			redirect = new URL(httpUrlCon.getHeaderField("Location"));
-			logger.debug("Following '{}'", redirect.toString());
+			_redirect = new URL(httpUrlCon.getHeaderField("Location"));
+			logger.debug("Following '{}'", _redirect.toString());
 			return true;
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
@@ -292,7 +274,7 @@ public class DownloadUtils extends Observable {
 	 * @return Return the url of the redirection.
 	 */
 	private URL getRedirectURL() {
-		return redirect;
+		return _redirect;
 	}
 
 	// =======================================================================
@@ -302,30 +284,26 @@ public class DownloadUtils extends Observable {
 	 */
 	public String getFileNameFromURL() {
 		String outputFilename;
-		outputFilename = url.toString().replaceFirst("/*$", ""); // remove
-																	// trailing
-																	// slashes
-		outputFilename = outputFilename.replaceFirst(".*/", ""); // get the
-																	// filename
+		outputFilename = _url.toString().replaceFirst("/*$", ""); // remove trailing slashes
+		outputFilename = outputFilename.replaceFirst(".*/", ""); // get the filename
 		return outputFilename;
 	}
 
 	// =======================================================================
 
 	private synchronized void setState(State value) {
-		synchronized (stateLock) {
-			state = value;
-			if (state == State.DOWNLOAD_FINISHED) {
+		synchronized (_stateLock) {
+			_state = value;
+			if (_state == State.DOWNLOAD_FINISHED) {
 				_bytesDownloaded = _totalBytes;
-			} else if (state != State.DOWNLOAD_IN_PROGRESS) {
+			} else if (_state != State.DOWNLOAD_IN_PROGRESS) {
 				_bytesDownloaded = 0;
 				_totalBytes = 0;
 			}
-			if (state != State.ERROR) {
-				errorStateCause = null;
+			if (_state != State.ERROR) {
+				_errorStateCause = null;
 			}
 		}
-
 		setChanged();
 		notifyObservers();
 	}
@@ -334,44 +312,44 @@ public class DownloadUtils extends Observable {
 
 	/**
 	 * @param url
-	 *            the url where to download the file from.
+	 *            The url where to download the file from.
 	 */
 	public void setUrl(URL url) {
-		this.url = url;
+		this._url = url;
 	}
 
 	public State getState() {
-		synchronized (stateLock) {
-			return state;
+		synchronized (_stateLock) {
+			return _state;
 		}
 	}
 
 	public Throwable getErrorStateCause() {
-		synchronized (stateLock) {
-			return errorStateCause;
+		synchronized (_stateLock) {
+			return _errorStateCause;
 		}
 	}
 
 	public int getBytesDownloaded() {
-		synchronized (stateLock) {
+		synchronized (_stateLock) {
 			return _bytesDownloaded;
 		}
 	}
 
 	public int getTotalBytes() {
-		synchronized (stateLock) {
+		synchronized (_stateLock) {
 			return _totalBytes;
 		}
 	}
 
 	public void cancelDownload() {
-		synchronized (stateLock) {
+		synchronized (_stateLock) {
 			_downloadCancelled = true;
 		}
 	}
 
 	public boolean isDownloadCancelled() {
-		synchronized (stateLock) {
+		synchronized (_stateLock) {
 			return _downloadCancelled;
 		}
 	}

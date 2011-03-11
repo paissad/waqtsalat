@@ -27,6 +27,7 @@ import java.util.Observable;
 import java.util.TimeZone;
 
 import net.waqtsalat.utils.GeoipUtils;
+import static net.waqtsalat.WaqtSalat.logger;
 
 /**
  * 
@@ -100,7 +101,7 @@ public class ComputePrayTimes extends Observable implements Runnable {
 	public void run() {
 		while(true && !_stop) {
 			if(_state.equals(State.CHANGED)) {
-				WaqtSalat.logger.debug("Updating pray time computer ...");
+				logger.debug("Updating pray time computer ...");
 				minimalComputing();
 				synchronized(stateLock) {
 					_state = State.NOT_CHANGED;
