@@ -76,7 +76,7 @@
             <tarfileset 
                 dir="." 
                 prefix="waqtsalat-${version}" 
-                includes="LICENSE, README, CHANGELOG, COPYING, AUTHORS, NEWS, INSTALL, TODO, ${output.jar}, waqtsalat.conf, extras/**" /> 
+                includes="LICENSE, README, CHANGELOG, COPYING, AUTHORS, NEWS, INSTALL, TODO, ${output.jar}, waqtsalat.conf, waqtsalat.sh, extras/**" /> 
         </tar>
     </target>
 

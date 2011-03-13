@@ -21,12 +21,13 @@
 
 package net.waqtsalat.gui;
 
-import javax.swing.JPanel;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
+import java.awt.Insets;
+
+import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JCheckBox;
-import java.awt.Insets;
 
 /**
  * 

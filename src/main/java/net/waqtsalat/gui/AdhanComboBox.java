@@ -105,6 +105,9 @@ public class AdhanComboBox extends JComboBox {
 		JComboBox cb = (JComboBox) e.getSource();
 		Selection currentSeletion  = (Selection) cb.getSelectedItem();
 		if (currentSeletion.equals(Selection.NONE)) { // TODO ...
+			
+		} else if (currentSeletion.equals(Selection.DEFAULT_ADHAN_SOUND)) { // TODO ...
+			
 		} else if (currentSeletion.equals(Selection.SELECT_FILE)) { // TODO ...
 			System.out.println("selection ...");
 			adhanChooser = new adhanJFileChooser();
@@ -123,7 +126,6 @@ public class AdhanComboBox extends JComboBox {
 				}
 			});
 			adhanChooser.setVisible(true);
-		} else if (currentSeletion.equals(Selection.DEFAULT_ADHAN_SOUND)) { // TODO ...
 		} else {
 			// Not known selection ...
 		}

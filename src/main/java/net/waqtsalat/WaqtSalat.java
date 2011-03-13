@@ -22,7 +22,9 @@
 package net.waqtsalat;
 
 import java.io.IOException;
+
 import java.text.DateFormat;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -41,7 +43,6 @@ import net.waqtsalat.gui.MainFrame;
 import net.waqtsalat.utils.GeoipUtils;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.maxmind.geoip.Location;
 import com.maxmind.geoip.LookupService;
@@ -49,7 +50,7 @@ import com.maxmind.geoip.timeZone;
 
 public class WaqtSalat implements Observer {
 
-	public static Logger logger = LoggerFactory.getLogger(WaqtSalat.class);
+	public static Logger logger = WaqtSalatLogger.initLog4j();
 	private static ArrayList<String> _prayerTimes = new ArrayList<String>();
 	private static ComputePrayTimes _computePrayTimes = new ComputePrayTimes();
 	private static Object stateLock = new Object();

@@ -27,10 +27,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.TimeZone;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
@@ -47,6 +43,13 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import java.io.IOException;
+
+import java.sql.SQLException;
+
+import java.util.ArrayList;
+import java.util.TimeZone;
+
 import net.waqtsalat.IpAddress;
 import net.waqtsalat.configuration.WsConfiguration;
 import net.waqtsalat.utils.GeoipUtils;
@@ -56,6 +59,7 @@ import net.waqtsalat.utils.WorldCitiesLucene;
 import static net.waqtsalat.WaqtSalat.logger;
 
 import org.apache.commons.configuration.ConfigurationException;
+
 import org.apache.lucene.queryParser.ParseException;
 
 import com.maxmind.geoip.Location;
@@ -299,7 +303,7 @@ public class LocationTab extends JPanel {
 	public void textFieldLocation_ActionPerformed(ActionEvent e) {
 		if (textFieldLocation.getText().length() > 2) {
 			try {
-				searchWCDatabase();
+				searchWorldCitiesLucene();
 			} catch (SQLException sqle) {
 				sqle.printStackTrace();
 			} catch (IOException ioe) {
@@ -328,7 +332,7 @@ public class LocationTab extends JPanel {
 			}
 		} else { // Search into the Lucene index.
 			try {
-				searchWCDatabase();
+				searchWorldCitiesLucene();
 			} catch (SQLException sqle) {
 				sqle.printStackTrace();
 			} catch (ParseException pe) {
@@ -367,11 +371,14 @@ public class LocationTab extends JPanel {
 
 	// ======================================================================
 
-	private void searchWCDatabase() throws SQLException, IOException, ParseException {
+	/**
+	 * http://lucene.apache.org/java/2_9_1/queryparsersyntax.html
+	 */
+	private void searchWorldCitiesLucene() throws SQLException, IOException, ParseException {
 		ArrayList<String[]> locations = new ArrayList<String[]>();
 		String entry = textFieldLocation.getText();
 		entry = (entry.isEmpty()) ? "_____" : entry;
-		locations = WorldCitiesLucene.search(entry);
+		locations = WorldCitiesLucene.search(entry + "~"); // fuzzy search ...
 		WorldCitiesLucene.closeIndex();
 		listModellocation.removeAllElements();
 		for (int i=0; i<locations.size(); i ++) {
@@ -408,7 +415,7 @@ public class LocationTab extends JPanel {
 		return _latitude;
 	};
 
-	private static void set_latitude(float latitude) {
+	private synchronized static void set_latitude(float latitude) {
 		_latitude = latitude;
 	}
 
@@ -416,7 +423,7 @@ public class LocationTab extends JPanel {
 		return _longitude;
 	}
 
-	private static void set_longitude(float longitude) {
+	private synchronized static void set_longitude(float longitude) {
 		_longitude = longitude;
 	}
 
