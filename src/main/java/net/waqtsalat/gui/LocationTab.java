@@ -104,6 +104,7 @@ public class LocationTab extends JPanel {
 
 		panelLocation = new JPanel();
 		GridBagConstraints gbc_panelLocation = new GridBagConstraints();
+		gbc_panelLocation.anchor = GridBagConstraints.BASELINE;
 		gbc_panelLocation.gridwidth = 2;
 		gbc_panelLocation.insets = new Insets(0, 5, 5, 5);
 		gbc_panelLocation.fill = GridBagConstraints.HORIZONTAL;
@@ -234,6 +235,7 @@ public class LocationTab extends JPanel {
 
 		panelTimezone = new JPanel();
 		GridBagConstraints gbc_panelTimezone = new GridBagConstraints();
+		gbc_panelTimezone.anchor = GridBagConstraints.BASELINE;
 		gbc_panelTimezone.insets = new Insets(0, 5, 0, 5);
 		gbc_panelTimezone.fill = GridBagConstraints.HORIZONTAL;
 		gbc_panelTimezone.gridx = 0;

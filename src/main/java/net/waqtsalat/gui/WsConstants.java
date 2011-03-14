@@ -39,16 +39,16 @@ public interface WsConstants {
 
 	String FS = File.separator;
 
-	int MAINFRAME_PREFERED_WIDTH  = 650;
-	int MAINFRAME_PREFERED_HEIGHT = 500;
+	int MAINFRAME_PREFERED_WIDTH  = 500;
+	int MAINFRAME_PREFERED_HEIGHT = 400;
 	int MENUBAR_PREFERED_HEIGHT   = 25;
 	int IMAGE_HEADER_PANEL_HEIGHT = 50;
 	int SHORTCUT_KEY_MASK = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
 	// Colours ...
 	Color COLOR_BACKGROUND_MAINFRAME = Color.LIGHT_GRAY;
-	Color COLOR_BACKGROUND_MENUBAR = Color.DARK_GRAY;
-	Color COLOR_BACKGROUND_MENU = Color.DARK_GRAY;
+	Color COLOR_BACKGROUND_MENUBAR = Color.LIGHT_GRAY;
+	Color COLOR_BACKGROUND_MENU = Color.LIGHT_GRAY;
 
 	ImageIcon HEADER_IMAGE_SUNSET = new ImageIcon(ClassLoader.getSystemResource("images" +FS+ "sunset_red.jpg"));
 

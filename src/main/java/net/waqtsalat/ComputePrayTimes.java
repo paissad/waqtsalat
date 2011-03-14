@@ -35,21 +35,61 @@ import static net.waqtsalat.WaqtSalat.logger;
  */
 public class ComputePrayTimes extends Observable implements Runnable {
 
-	private static enum CalculationMethod {
-		JAFARI, KARACHI, ISNA, MWL, MAKKAH, EGYPT, TEHRAN, CUSTOM 
+	// ======================================================================
+
+	public static enum CalculationMethod { // Method ...
+
+		JAFARI ("Ithna Ashari, Jafari"), 
+		KARACHI ("University of Islamic Sciences, Karachi"), 
+		ISNA ("Islamic Society of North America (ISNA)"),
+		MWL ("Muslim World League (MWL)"),
+		MAKKAH ("Umm al-Qura, Makkah"),
+		EGYPT ("Egyptian General Authority of Survey"), 
+		TEHRAN ("Institute of Geophysics, University of Tehran"), 
+		CUSTOM ("Custom");
+
+		private String methodName;
+
+		private CalculationMethod(String name) {
+			methodName = name;
+		};
+
+		public String getName() {
+			return methodName;
+		}
+
 	};
 
-	private static enum JuristicMethod {
-		SHAFII, HANAFI
+	// ======================================================================
+
+	public static enum JuristicMethod {  // Madhab ...
+		SHAFII ("Shafii"),
+		HANAFI ("Hanafi");
+
+		private String madhabName;
+
+		private JuristicMethod(String name) {
+			madhabName = name;
+		}
+
+		public String getName() {
+			return madhabName;
+		}
 	};
 
-	private static enum AdjustingMethod {
+	// ======================================================================
+
+	public static enum AdjustingMethod {
 		NONE, MIDNIGHT, ONE_SEVENTH, ANGLE_BASED
 	};
+
+	// ======================================================================
 
 	private static enum State {
 		CHANGED, NOT_CHANGED
 	};
+
+	// ======================================================================
 
 	private static PrayTime _prayers  = new PrayTime();
 	private static final ArrayList<String> _prayerNames = _prayers.getTimeNames();
