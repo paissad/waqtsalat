@@ -21,12 +21,16 @@
 
 package net.waqtsalat.gui;
 
-import javax.swing.JPanel;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import java.util.HashMap;
 
+import javax.swing.ButtonGroup;
+import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 import javax.swing.JComboBox;
@@ -41,7 +45,7 @@ import net.waqtsalat.ComputePrayTimes.JuristicMethod;
  * 
  * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
  */
-public class PrayTimesTab extends JPanel {
+public class PrayTimesTab extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -96,7 +100,11 @@ public class PrayTimesTab extends JPanel {
 		gbc_rdbtnHanafi.insets = new Insets(0, 0, 5, 5);
 		gbc_rdbtnHanafi.gridx = 1;
 		gbc_rdbtnHanafi.gridy = 1;
-		madhabPanel.add(rdbtnHanafi, gbc_rdbtnHanafi);
+		madhabPanel.add(rdbtnHanafi, gbc_rdbtnHanafi);		
+
+		ButtonGroup madhabBtnGrp = new ButtonGroup();
+		madhabBtnGrp.add(rdbtnShafii);
+		madhabBtnGrp.add(rdbtnHanafi);
 
 		JPanel methodPanel = new JPanel();
 		GridBagConstraints gbc_methodPanel = new GridBagConstraints();
@@ -163,6 +171,15 @@ public class PrayTimesTab extends JPanel {
 			_madhabs.put(allMadhabs[i], allMadhabs[i].getName());
 		}
 	}
+
+	// ======================================================================
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		// Implements radio buttons conditions ...
+	}
+
 	// ======================================================================
 
 }

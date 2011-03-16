@@ -23,6 +23,7 @@ package net.waqtsalat.gui;
 
 import java.awt.Color;
 import java.awt.Toolkit;
+
 import java.io.File;
 
 import javax.swing.Icon;
@@ -63,6 +64,8 @@ public interface WsConstants {
 	Icon TAB_ICON_PRAYTIMES   = new ImageIcon(ClassLoader.getSystemResource("icons" +FS+ ""));
 	Icon TAB_ICON_ALERTS      = new ImageIcon(ClassLoader.getSystemResource("icons" +FS+ "alert.png"));
 	Icon TAB_ICON_ADVANCED    = new ImageIcon(ClassLoader.getSystemResource("icons" +FS+ ""));
+	Icon SEARCH_LOCATION      = new ImageIcon(ClassLoader.getSystemResource("icons" +FS+ "search-icon-1.png"));
+	//Icon SEARCH_LOCATION      = new ImageIcon(ClassLoader.getSystemResource("icons" +FS+ "search-icon-2.png"));
 
 	// Adhans
 	String DEFAULT_ADHAN_SOUND = ClassLoader.getSystemResource("sounds" +FS+ "adhan.mp3").getPath();

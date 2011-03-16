@@ -24,12 +24,14 @@ package net.waqtsalat.gui;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JCheckBox;
 import javax.swing.JSeparator;
-import java.awt.Color;
 import javax.swing.JLabel;
 
 /**
@@ -85,6 +87,14 @@ public class AlertsTab extends JPanel {
 		gbc_chckbxEnableSilentMode.insets = new Insets(0, 0, 5, 5);
 		gbc_chckbxEnableSilentMode.gridx = 0;
 		gbc_chckbxEnableSilentMode.gridy = 0;
+		chckbxEnableSilentMode.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				// if enable mode is selected, then disable adhan combobox ...
+			}
+		});
 		adhansPanel.add(chckbxEnableSilentMode, gbc_chckbxEnableSilentMode);
 
 		AdhanComboBox adhanComboBox_1 = new AdhanComboBox();

@@ -53,8 +53,8 @@ public class WaqtSalat implements Observer {
 	public static Logger logger = WaqtSalatLogger.initLog4j();
 	private static ArrayList<String> _prayerTimes = new ArrayList<String>();
 	private static ComputePrayTimes _computePrayTimes = new ComputePrayTimes();
-	private static Object stateLock = new Object();
-	private static boolean quiet = false;
+	private static Object _stateLock = new Object();
+	private static boolean _quiet = false;
 
 	// =======================================================================
 
@@ -79,6 +79,7 @@ public class WaqtSalat implements Observer {
 				public void run() {
 					try {
 						MainFrame mainFrame = new MainFrame();
+						mainFrame.pack();
 						mainFrame.setVisible(true);
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -89,13 +90,13 @@ public class WaqtSalat implements Observer {
 		else { // Console mode.
 
 			WsParseCommandLine parser = new WsParseCommandLine(args);
-			boolean _help = parser.isHelp();
-			int _verboseLevel = parser.getVerboseLevel();
-			boolean _auto = parser.isAutomatic();
-			String _ip = parser.getIp();
-			double _latitude = parser.getLatitude();
-			double _longitude = parser.getLongitude();
-			boolean _play = parser.isPlay();
+			boolean _help             = parser.isHelp();
+			int _verboseLevel         = parser.getVerboseLevel();
+			boolean _auto             = parser.isAutomatic();
+			String _ip                = parser.getIp();
+			double _latitude          = parser.getLatitude();
+			double _longitude         = parser.getLongitude();
+			boolean _play             = parser.isPlay();
 
 			// Geoip Location informations ...
 			Map<String, Object> geoipLocDatas = new LinkedHashMap<String, Object>(); 
@@ -107,8 +108,7 @@ public class WaqtSalat implements Observer {
 			}
 
 			if (_longitude != -1 || _latitude != -1) { // latitude & longitude have
-				// the priority over
-				// automatic mode.
+				// the priority over automatic mode.
 				if (_longitude == -1 || _latitude == -1) {
 					logger.error("You must set both longitude and latitudes !!!");
 					parser.printUsage();
@@ -171,16 +171,16 @@ public class WaqtSalat implements Observer {
 			_computePrayTimes.addObserver(this);
 			Thread _thread1 = new Thread(_computePrayTimes, "Prayer Times Computer");
 			_thread1.start();
-			synchronized (stateLock) {
-				quiet = true;
+			synchronized (_stateLock) {
+				_quiet = true;
 				_computePrayTimes.setLatitude(_latitude);
 				_computePrayTimes.setLongitude(_longitude);
-				quiet = false;
+				_quiet = false;
 			}
 
 			printPrays();
 
-			// Play the muezzin call at each pray time.
+			// Play the muezzin call at each pray time (if specified).
 			if (_play) {
 				MuezzinCallDaemon muezzinCallDaemon;
 				try {
@@ -209,7 +209,7 @@ public class WaqtSalat implements Observer {
 	@Override
 	public synchronized void update(Observable o, Object prayerTimes) {
 		_prayerTimes = (ArrayList<String>) prayerTimes;
-		if(!quiet)
+		if(!_quiet)
 			printPrays();
 	}
 	// =======================================================================
@@ -218,10 +218,10 @@ public class WaqtSalat implements Observer {
 	 * Prints a table containing the prayers times.
 	 */
 	public void printPrays() {
-		int dateStyle = DateFormat.LONG;
-		int timeStyle = DateFormat.LONG;
+		int dateStyle  = DateFormat.LONG;
+		int timeStyle  = DateFormat.LONG;
 		Locale aLocale = Locale.getDefault();
-		synchronized (stateLock) {
+		synchronized (_stateLock) {
 			System.out.println(DateFormat.getDateTimeInstance(dateStyle, timeStyle, aLocale).format(new Date()));
 			System.out.println("+=================================+");
 			System.out.println(String.format(

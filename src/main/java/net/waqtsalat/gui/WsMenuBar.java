@@ -140,7 +140,7 @@ public class WsMenuBar extends JMenuBar {
 	// =======================================================================
 
 	private void exitActionPerformed() {
-		System.exit(0);
+		MainFrame.exitGUI();
 	}
 	// =======================================================================
 

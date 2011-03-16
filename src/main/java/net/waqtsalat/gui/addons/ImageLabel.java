@@ -19,18 +19,21 @@
  * 
  */
 
-package net.waqtsalat.gui;
+package net.waqtsalat.gui.addons;
 
 import java.awt.Graphics;
 import java.awt.Image;
+
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.imageio.ImageIO;
+
 import java.io.File;
 import java.io.IOException;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-
 /**
+ * A JLabel which contains an image. The image associated to the JLable is
+ * always resized to automatically fits into the JLabel.
  * 
  * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
  */
@@ -61,8 +64,8 @@ public class ImageLabel extends JLabel {
 	// =======================================================================
 
 	@Override
-	public void paint(Graphics g) {
-		super.paint(g);
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
 		int width = g.getClipBounds().width;
 		int height =  g.getClipBounds().height;
 		g.drawImage(_originalImage, 0, 0, width, height, null);

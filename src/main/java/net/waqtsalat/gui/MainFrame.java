@@ -27,11 +27,18 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
+import java.util.prefs.BackingStoreException;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.UIManager;
 
 import net.waqtsalat.Messages;
+import net.waqtsalat.gui.addons.ImageLabel;
+import net.waqtsalat.utils.Utils;
+import static net.waqtsalat.gui.WaqtSalatPrefs.userPrefs;
+import static net.waqtsalat.WaqtSalat.logger;
 
 /**
  * 
@@ -41,7 +48,19 @@ public class MainFrame extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
+	private JPanel topPanel;
+	private JPanel imgHeaderPanel;
+	private JTabbedPane tabbedPane;
+	private JPanel generalPanel;
+	private JPanel locationPanel;
+	private JPanel praytimesPanel;
+	private JPanel alertsPanel;
+	private JPanel preferencesPanel;
+	private JPanel advancedPanel;
+
 	public MainFrame() {
+
+		chooseCustomLookAndFeel();
 
 		this.setTitle("WaqtSalat");
 		this.setBackground(WsConstants.COLOR_BACKGROUND_MAINFRAME);
@@ -51,7 +70,6 @@ public class MainFrame extends JFrame {
 		this.setMinimumSize(getPreferredSize());
 		this.setJMenuBar(new WsMenuBar());
 		this.setLocationRelativeTo(null);
-		this.pack();
 
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		gridBagLayout.columnWidths = new int[]{0, 0};
@@ -60,7 +78,7 @@ public class MainFrame extends JFrame {
 		gridBagLayout.rowWeights = new double[]{0.0, 1.0, Double.MIN_VALUE};
 		getContentPane().setLayout(gridBagLayout);
 
-		JPanel topPanel = new JPanel();
+		topPanel = new JPanel();
 		GridBagConstraints gbc_topPanel = new GridBagConstraints();
 		gbc_topPanel.fill = GridBagConstraints.BOTH;
 		gbc_topPanel.gridx = 0;
@@ -74,7 +92,7 @@ public class MainFrame extends JFrame {
 		topPanel.setLayout(gbl_topPanel);
 
 		// Panel which contains the image ...
-		JPanel imgHeaderPanel = new JPanel();
+		imgHeaderPanel = new JPanel();
 		GridBagConstraints gbc_imgHeaderPanel = new GridBagConstraints();
 		gbc_imgHeaderPanel.insets = new Insets(0, 0, 5, 0);
 		gbc_imgHeaderPanel.fill = GridBagConstraints.BOTH;
@@ -84,7 +102,7 @@ public class MainFrame extends JFrame {
 		imgHeaderPanel.setLayout(new BorderLayout(0, 0));
 		imgHeaderPanel.add(new ImageLabel(WsConstants.HEADER_IMAGE_SUNSET));
 
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		GridBagConstraints gbc_tabbedPane = new GridBagConstraints();
 		tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 		gbc_tabbedPane.fill = GridBagConstraints.BOTH;
@@ -93,22 +111,66 @@ public class MainFrame extends JFrame {
 		topPanel.add(tabbedPane, gbc_tabbedPane);
 
 		// Declarations of the tabs ...
-		JPanel generalPanel     = new GeneralTab();
-		JPanel locationPanel    = new LocationTab();
-		JPanel praytimesPanel   = new PrayTimesTab();
-		AlertsTab alertsPanel      = new AlertsTab();
-//		JPanel alertsPanel      = new AlertsTab();
-		JPanel preferencesPanel = new PreferencesTab();
-		JPanel advancedPanel    = new AdvancedTab();
+		generalPanel     = new GeneralTab();
+		locationPanel    = new LocationTab();
+		praytimesPanel   = new PrayTimesTab();
+		alertsPanel      = new AlertsTab();
+		preferencesPanel = new PreferencesTab();
+		advancedPanel    = new AdvancedTab();
 
 		// Add each tab to the JTabbedPane ...
-		tabbedPane.addTab(Messages.getString("Tab.General"), WsConstants.TAB_ICON_GENERAL, generalPanel, null);
-		tabbedPane.addTab(Messages.getString("Tab.Location"), WsConstants.TAB_ICON_LOCATION, locationPanel, null);
-		tabbedPane.addTab(Messages.getString("Tab.PrayTimes"), WsConstants.TAB_ICON_PRAYTIMES, praytimesPanel, null);
-		tabbedPane.addTab(Messages.getString("Tab.Alerts"), WsConstants.TAB_ICON_ALERTS, alertsPanel, null);
-		tabbedPane.addTab(Messages.getString("Tab.Preferences"), WsConstants.TAB_ICON_PREFERENCES, preferencesPanel, null);
-		tabbedPane.addTab(Messages.getString("Tab.Advanced"), WsConstants.TAB_ICON_ADVANCED, advancedPanel, null);
-		
+		tabbedPane.addTab(Messages.getString("Tab.General"),
+				WsConstants.TAB_ICON_GENERAL, generalPanel, null);
+		tabbedPane.addTab(Messages.getString("Tab.Location"),
+				WsConstants.TAB_ICON_LOCATION, locationPanel, null);
+		tabbedPane.addTab(Messages.getString("Tab.PrayTimes"),
+				WsConstants.TAB_ICON_PRAYTIMES, praytimesPanel, null);
+		tabbedPane.addTab(Messages.getString("Tab.Alerts"),
+				WsConstants.TAB_ICON_ALERTS, alertsPanel, null);
+		tabbedPane.addTab(Messages.getString("Tab.Preferences"),
+				WsConstants.TAB_ICON_PREFERENCES, preferencesPanel, null);
+		tabbedPane.addTab(Messages.getString("Tab.Advanced"),
+				WsConstants.TAB_ICON_ADVANCED, advancedPanel, null);
+
 	}
+
+	// =======================================================================
+
+	private void chooseCustomLookAndFeel() {
+		Utils os = new Utils();
+		try {
+			if (os.isMac()) {
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			} else { // Not (Linux, Mac, Windows) operating system ... 
+				UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+			}
+		}
+		catch (Exception e) {
+			logger.error("Unable to load custom Look&Feel : {}", e.getMessage());
+			//e.printStackTrace();
+			try {
+				UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+			} catch (Exception e2) {e2.printStackTrace();}
+		}
+	}
+
+	// =======================================================================
+
+	/**
+	 * Save Gui preferences/settings and exits.
+	 */
+	public static void exitGUI() {
+		try {
+			userPrefs.sync();
+			userPrefs.flush();
+		} catch (BackingStoreException e) {
+			logger.error("Abnormal exit : {}", e.getMessage());
+			//e.printStackTrace();
+			System.exit(1);
+		}
+		System.exit(0);
+	}
+
+	// =======================================================================
 
 }

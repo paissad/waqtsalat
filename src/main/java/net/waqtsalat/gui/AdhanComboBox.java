@@ -30,6 +30,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.Font;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -38,6 +39,7 @@ import java.io.File;
 import java.io.IOException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -67,9 +69,24 @@ public class AdhanComboBox extends JComboBox {
 
 	private static final long serialVersionUID = 1L;
 	private static enum Selection {
-		NONE, DEFAULT_ADHAN_SOUND, SELECT_FILE
+
+		NONE ("None"),
+		DEFAULT_ADHAN_SOUND ("Default adhan"),
+		SELECT_FILE ("Select file ...");
+
+		private String value;
+
+		private Selection(String valueName) {
+			value = valueName;
+		}
+
+		private String getValue() {
+			return value;
+		}
 	};
-	Selection selection = Selection.DEFAULT_ADHAN_SOUND;
+
+	private HashMap<Selection, String> _possibleSelections = new HashMap<AdhanComboBox.Selection, String>();
+
 	private String defaultAdhan;
 	private String defaultSelectDir;
 	private JFileChooser adhanChooser;
@@ -84,13 +101,12 @@ public class AdhanComboBox extends JComboBox {
 	// ======================================================================
 
 	public AdhanComboBox(String defaultAdhanSound) {
-		setModel(new DefaultComboBoxModel(
-				new Selection[] {
-						Selection.NONE,
-						Selection.DEFAULT_ADHAN_SOUND,
-						Selection.SELECT_FILE
-				}));
 
+		initSelection_Names();
+		setModel(new DefaultComboBoxModel(
+				_possibleSelections.values().toArray(new String[_possibleSelections.size()])
+		));
+		setSelectedItem(Selection.NONE.getValue()); // default item to use ...
 		this.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -103,12 +119,12 @@ public class AdhanComboBox extends JComboBox {
 
 	private void adhanListSelection_actionPerformed(ItemEvent e) {
 		JComboBox cb = (JComboBox) e.getSource();
-		Selection currentSeletion  = (Selection) cb.getSelectedItem();
-		if (currentSeletion.equals(Selection.NONE)) { // TODO ...
-			
-		} else if (currentSeletion.equals(Selection.DEFAULT_ADHAN_SOUND)) { // TODO ...
-			
-		} else if (currentSeletion.equals(Selection.SELECT_FILE)) { // TODO ...
+		String currentSeletion  = (String) cb.getSelectedItem();
+		if (currentSeletion.equals(Selection.NONE.getValue())) { // TODO ...
+
+		} else if (currentSeletion.equals(Selection.DEFAULT_ADHAN_SOUND.getValue())) { // TODO ...
+
+		} else if (currentSeletion.equals(Selection.SELECT_FILE.getValue())) { // TODO ...
 			System.out.println("selection ...");
 			adhanChooser = new adhanJFileChooser();
 			adhanChooser.addActionListener(new ActionListener() {
@@ -116,16 +132,17 @@ public class AdhanComboBox extends JComboBox {
 				public void actionPerformed(ActionEvent e) {
 					if (JFileChooser.CANCEL_SELECTION.equals(e.getActionCommand())) {
 						System.out.println("selected -> " + ((File)e.getSource()).getName()); // TODO 
-						adhanChooser.setVisible(false);
+						//adhanChooser.setVisible(false);  // TODO ...
 					} else if (JFileChooser.APPROVE_SELECTION.equals(e.getActionCommand())) {
 						System.out.println("canceled ..."); // TODO
-						adhanChooser.setVisible(false);
+						//adhanChooser.setVisible(false); // TODO ...
 					} else { // TODO
 						System.out.println("unknown response ...");
 					}
 				}
 			});
-			adhanChooser.setVisible(true);
+			adhanChooser.showOpenDialog(getParent());
+
 		} else {
 			// Not known selection ...
 		}
@@ -148,7 +165,7 @@ public class AdhanComboBox extends JComboBox {
 			setAccessory(adhanAccessory);
 			addPropertyChangeListener(adhanAccessory); // to receive selection changes
 			addActionListener(adhanAccessory); // to receive approve/cancel button events
-			showDialog(getParent(), "Select");
+			setApproveButtonText("Select");
 		}
 	}
 	// ======================================================================
@@ -283,6 +300,7 @@ public class AdhanComboBox extends JComboBox {
 			playerPanel.add(stopButton);
 
 			tagsLabel = new JLabel("");
+			tagsLabel.setFont(new Font("Calibri", Font.PLAIN, 13));
 			GridBagConstraints gbc_tagsLabel = new GridBagConstraints();
 			gbc_tagsLabel.gridx = 0;
 			gbc_tagsLabel.gridy = 2;
@@ -321,8 +339,9 @@ public class AdhanComboBox extends JComboBox {
 				audioPlayer.stop();
 
 			// Make sure we have a real file, otherwise, disable the buttons
-			if (audioFile == null || audioFile.getName() == null) {
+			if (audioFile == null || audioFile.getName() == null || audioFile.isDirectory()) {
 				fileLabel.setText("No audio selected");
+				tagsLabel.setText(null);
 				playButton.setEnabled(false);
 				stopButton.setEnabled(false);
 				return;
@@ -363,7 +382,9 @@ public class AdhanComboBox extends JComboBox {
 			infos.append(String.format(format, "Title", tagger.getTag_Title()));
 			infos.append(String.format(format, "Artist", tagger.getTag_Artist()));
 			infos.append(String.format(format, "Album", tagger.getTag_Album()));
-			infos.append(String.format(format, "Comment", tagger.getTag_Comment()));
+			String comment = tagger.getTag_Comment();
+			comment = (comment.equals("0")) ? "" : comment;
+			infos.append(String.format(format, "Comment", comment));
 			infos.append(String.format(format, "Year", tagger.getTag_Year()));
 
 			AudioHeader audioHeader = tagger.getAudioHeader();
@@ -371,7 +392,8 @@ public class AdhanComboBox extends JComboBox {
 
 			infos.append(String.format(format, "Duration",
 					Utils.formatDuration("mm:ss", audioHeader.getTrackLength() * 1000L)));
-			infos.append(String.format(format, "Bitrate", audioHeader.getBitRate()));
+			String bitRate = audioHeader.getBitRate() + " kbit/s";
+			infos.append(String.format(format, "Bitrate", bitRate));
 			infos.append(String.format(format, "Channels", audioHeader.getChannels()));
 			infos.append(String.format(format, "Encoding", audioHeader.getEncodingType()));
 			infos.append(String.format(format, "Format", audioHeader.getFormat()));
@@ -391,7 +413,7 @@ public class AdhanComboBox extends JComboBox {
 			// approved or cancelled so we should stop any playing clip
 			if (audioPlayer != null) {
 				audioPlayer.stop();
-			}																		// $$$$$$$$$$$$$$$$$$$$$$$$$$$$$ // TODO ...
+			}
 		}
 		// -----------------------------------------------
 
@@ -420,6 +442,15 @@ public class AdhanComboBox extends JComboBox {
 		for (int i=0; i<ADDITIONAL_EXTENSIONS.length; i++)
 			all_known_extensions.add(ADDITIONAL_EXTENSIONS[i]);
 		return all_known_extensions.contains(extension);
+	}
+
+	// ======================================================================
+
+	private void initSelection_Names() {
+		Selection[] allSelections = Selection.values();
+		for (int i=0; i<allSelections.length; i++) {
+			_possibleSelections.put(allSelections[i], allSelections[i].getValue());
+		}
 	}
 
 	// ======================================================================
