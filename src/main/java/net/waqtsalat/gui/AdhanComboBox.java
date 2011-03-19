@@ -68,7 +68,7 @@ import org.jaudiotagger.tag.TagException;
 public class AdhanComboBox extends JComboBox {
 
 	private static final long serialVersionUID = 1L;
-	private static enum Selection {
+	public static enum Selection {
 
 		NONE ("None"),
 		DEFAULT_ADHAN_SOUND ("Default adhan"),
@@ -80,7 +80,7 @@ public class AdhanComboBox extends JComboBox {
 			value = valueName;
 		}
 
-		private String getValue() {
+		public String getDescName() {
 			return value;
 		}
 	};
@@ -106,7 +106,7 @@ public class AdhanComboBox extends JComboBox {
 		setModel(new DefaultComboBoxModel(
 				_possibleSelections.values().toArray(new String[_possibleSelections.size()])
 		));
-		setSelectedItem(Selection.NONE.getValue()); // default item to use ...
+		setSelectedItem(Selection.NONE.getDescName()); // default item to use ...
 		this.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -120,11 +120,11 @@ public class AdhanComboBox extends JComboBox {
 	private void adhanListSelection_actionPerformed(ItemEvent e) {
 		JComboBox cb = (JComboBox) e.getSource();
 		String currentSeletion  = (String) cb.getSelectedItem();
-		if (currentSeletion.equals(Selection.NONE.getValue())) { // TODO ...
+		if (currentSeletion.equals(Selection.NONE.getDescName())) { // TODO ...
 
-		} else if (currentSeletion.equals(Selection.DEFAULT_ADHAN_SOUND.getValue())) { // TODO ...
+		} else if (currentSeletion.equals(Selection.DEFAULT_ADHAN_SOUND.getDescName())) { // TODO ...
 
-		} else if (currentSeletion.equals(Selection.SELECT_FILE.getValue())) { // TODO ...
+		} else if (currentSeletion.equals(Selection.SELECT_FILE.getDescName())) { // TODO ...
 			System.out.println("selection ...");
 			adhanChooser = new adhanJFileChooser();
 			adhanChooser.addActionListener(new ActionListener() {
@@ -449,7 +449,7 @@ public class AdhanComboBox extends JComboBox {
 	private void initSelection_Names() {
 		Selection[] allSelections = Selection.values();
 		for (int i=0; i<allSelections.length; i++) {
-			_possibleSelections.put(allSelections[i], allSelections[i].getValue());
+			_possibleSelections.put(allSelections[i], allSelections[i].getDescName());
 		}
 	}
 

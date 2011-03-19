@@ -40,8 +40,10 @@ public interface WsConstants {
 
 	String FS = File.separator;
 
-	int MAINFRAME_PREFERED_WIDTH  = 500;
-	int MAINFRAME_PREFERED_HEIGHT = 400;
+	int MAINFRAME_MINIMUM_WIDTH   = 500;
+	int MAINFRAME_MININUM_HEIGHT  = 450;
+	int MAINFRAME_PREFERED_WIDTH  = 700;
+	int MAINFRAME_PREFERED_HEIGHT = 480;
 	int MENUBAR_PREFERED_HEIGHT   = 25;
 	int IMAGE_HEADER_PANEL_HEIGHT = 50;
 	int SHORTCUT_KEY_MASK = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
@@ -51,28 +53,36 @@ public interface WsConstants {
 	Color COLOR_BACKGROUND_MENUBAR = Color.LIGHT_GRAY;
 	Color COLOR_BACKGROUND_MENU = Color.LIGHT_GRAY;
 
-	ImageIcon HEADER_IMAGE_SUNSET = new ImageIcon(ClassLoader.getSystemResource("images" +FS+ "sunset_red.jpg"));
+	ImageIcon HEADER_IMAGE_SUNSET = new ImageIcon(ClassLoader.getSystemResource("images/sunset_red.jpg"));
 
 	//About dialog ...
 	int ABOUT_WINDOW_PREFERED_WIDTH  = 200;
 	int ABOUT_WINDOW_PREFERED_HEIGHT = 200;
 
 	// Icons ...
-	Icon TAB_ICON_GENERAL     = new ImageIcon(ClassLoader.getSystemResource("icons" +FS+ ""));
-	Icon TAB_ICON_LOCATION    = new ImageIcon(ClassLoader.getSystemResource("icons" +FS+ "earth.png"));
-	Icon TAB_ICON_PREFERENCES = new ImageIcon(ClassLoader.getSystemResource("icons" +FS+ "preferences.png"));
-	Icon TAB_ICON_PRAYTIMES   = new ImageIcon(ClassLoader.getSystemResource("icons" +FS+ ""));
-	Icon TAB_ICON_ALERTS      = new ImageIcon(ClassLoader.getSystemResource("icons" +FS+ "alert.png"));
-	Icon TAB_ICON_ADVANCED    = new ImageIcon(ClassLoader.getSystemResource("icons" +FS+ ""));
-	Icon SEARCH_LOCATION      = new ImageIcon(ClassLoader.getSystemResource("icons" +FS+ "search-icon-1.png"));
-	//Icon SEARCH_LOCATION      = new ImageIcon(ClassLoader.getSystemResource("icons" +FS+ "search-icon-2.png"));
+	Icon TAB_ICON_GENERAL        = new ImageIcon(ClassLoader.getSystemResource("icons/general_preferences.png"));
+	Icon TAB_ICON_LOCATION       = new ImageIcon(ClassLoader.getSystemResource("icons/earth.png"));
+	Icon TAB_ICON_PREFERENCES    = new ImageIcon(ClassLoader.getSystemResource("icons/preferences.png"));
+	Icon TAB_ICON_PRAYTIMES      = new ImageIcon(ClassLoader.getSystemResource("icons/mosque_16x16.png"));
+	Icon TAB_ICON_ALERTS         = new ImageIcon(ClassLoader.getSystemResource("icons/alert.png"));
+	Icon TAB_ICON_ADVANCED       = new ImageIcon(ClassLoader.getSystemResource("icons/advanced_config.png"));
+	Icon ICON_SEARCH_LOCATION    = new ImageIcon(ClassLoader.getSystemResource("icons/search-icon-1.png"));
+	Icon SEARCH_LOCATION         = new ImageIcon(ClassLoader.getSystemResource("icons/search-icon-2.png"));
+	Icon ICON_LOCATION_OK        = new ImageIcon(ClassLoader.getSystemResource("icons/ok-accept.png"));
+	Icon ICON_LOCATION_NOT_OK    = new ImageIcon(ClassLoader.getSystemResource("icons/notOk-cancel.png"));
+	Icon ICON_LOCATION_SEARCHING = new ImageIcon(ClassLoader.getSystemResource("icons/loading-kit.gif"));
+	Icon ICON_LOCATION_TIMEZONE  = new ImageIcon(ClassLoader.getSystemResource("icons/timezone.png"));
+	Icon ICON_UNKNOWN_STATE      = new ImageIcon(ClassLoader.getSystemResource("icons/unknown-state.png"));
+	Icon ICON_RESET_PREFERENCES  = new ImageIcon(ClassLoader.getSystemResource("icons/reset_prefs.png"));
+	
+	String ICON_FLAGS_DIR = "images/flags/";
 
 	// Adhans
-	String DEFAULT_ADHAN_SOUND = ClassLoader.getSystemResource("sounds" +FS+ "adhan.mp3").getPath();
-	String DEFAULT_ADHAN_DIR   = "extras" +FS+ "sounds" +FS+ "praytimes.org" +FS+ "audio" +FS+ "adhan";
+	String DEFAULT_ADHAN_SOUND = ClassLoader.getSystemResource("sounds/adhan.mp3").getFile();
+	String DEFAULT_ADHAN_DIR   = "extras/sounds/praytimes.org/audio/adhan";
 
 	// Supported audio files: additional extensions apart from the default ones (wav, au, aif ...)
-	// Use lowercase !
+	// Use lower case !
 	String[] ADDITIONAL_EXTENSIONS = {"mp3"};
 
 }

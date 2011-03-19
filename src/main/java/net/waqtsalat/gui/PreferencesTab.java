@@ -21,7 +21,20 @@
 
 package net.waqtsalat.gui;
 
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JButton;
+
+import java.util.prefs.BackingStoreException;
+
+import static net.waqtsalat.WaqtSalat.logger;
+import static net.waqtsalat.gui.WaqtSalatPrefs.userPrefs;
 
 /**
  * 
@@ -31,7 +44,77 @@ public class PreferencesTab extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
+	JPanel settingsPanel;
+	JLabel lblResetSettings;
+	JButton btnResetSettings;
+
 	public PreferencesTab() {
-		
+		GridBagLayout gridBagLayout = new GridBagLayout();
+		gridBagLayout.columnWidths = new int[]{0, 0};
+		gridBagLayout.rowHeights = new int[]{0, 0};
+		gridBagLayout.columnWeights = new double[]{0.0, Double.MIN_VALUE};
+		gridBagLayout.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+		setLayout(gridBagLayout);
+
+		settingsPanel = new JPanel();
+		GridBagConstraints gbc_settingsPanel = new GridBagConstraints();
+		gbc_settingsPanel.insets = new Insets(10, 5, 0, 5);
+		gbc_settingsPanel.anchor = GridBagConstraints.WEST;
+		gbc_settingsPanel.gridx = 0;
+		gbc_settingsPanel.gridy = 0;
+		add(settingsPanel, gbc_settingsPanel);
+		GridBagLayout gbl_settingsPanel = new GridBagLayout();
+		gbl_settingsPanel.columnWidths = new int[]{0, 0, 0};
+		gbl_settingsPanel.rowHeights = new int[]{0, 0};
+		gbl_settingsPanel.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
+		gbl_settingsPanel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
+		settingsPanel.setLayout(gbl_settingsPanel);
+
+		String resetInfoString_1 = "Restore defaults";
+		String resetInfoString_2 = "(Will need the restart of the application !)";
+		lblResetSettings = new JLabel("<html>"
+				+ resetInfoString_1
+				+ "<br><span style= \"font-style: italic; font-family: Calibri Italic;\">"
+				+ resetInfoString_2
+				+ "</span></html>");
+		lblResetSettings.setIcon(WsConstants.ICON_RESET_PREFERENCES);
+		lblResetSettings.setIconTextGap(8);
+		GridBagConstraints gbc_lblResetSettings = new GridBagConstraints();
+		gbc_lblResetSettings.anchor = GridBagConstraints.WEST;
+		gbc_lblResetSettings.insets = new Insets(0, 0, 0, 5);
+		gbc_lblResetSettings.gridx = 0;
+		gbc_lblResetSettings.gridy = 0;
+		settingsPanel.add(lblResetSettings, gbc_lblResetSettings);
+
+		btnResetSettings = new JButton("Reset");
+		lblResetSettings.setLabelFor(btnResetSettings);
+		btnResetSettings.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				btnResetSettings_actionPerformed(e);
+			}
+		});
+		GridBagConstraints gbc_btnResetSettings = new GridBagConstraints();
+		gbc_btnResetSettings.anchor = GridBagConstraints.WEST;
+		gbc_btnResetSettings.gridx = 1;
+		gbc_btnResetSettings.gridy = 0;
+		settingsPanel.add(btnResetSettings, gbc_btnResetSettings);
 	}
+
+	// ======================================================================
+	// Actions ...
+
+	private void btnResetSettings_actionPerformed(ActionEvent e) {
+		logger.info("Restoring all preferences settings to defaults.");
+		try {
+			userPrefs.clear();
+		} catch (BackingStoreException bse) {
+			logger.error("Error while restoring settings to defaults.");
+			bse.printStackTrace();
+			return;
+		}
+		logger.info("Finished restoring all preferences to defaults.");
+	}
+
+	// ======================================================================
+
 }

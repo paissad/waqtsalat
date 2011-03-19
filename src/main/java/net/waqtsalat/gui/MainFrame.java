@@ -32,6 +32,7 @@ import java.util.prefs.BackingStoreException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 
 import net.waqtsalat.Messages;
@@ -66,8 +67,8 @@ public class MainFrame extends JFrame {
 		this.setBackground(WsConstants.COLOR_BACKGROUND_MAINFRAME);
 		this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		this.setPreferredSize(new Dimension(WsConstants.MAINFRAME_PREFERED_WIDTH, WsConstants.MAINFRAME_PREFERED_HEIGHT));
+		this.setMinimumSize(new Dimension(WsConstants.MAINFRAME_MINIMUM_WIDTH, WsConstants.MAINFRAME_MININUM_HEIGHT));
 		this.setResizable(true);
-		this.setMinimumSize(getPreferredSize());
 		this.setJMenuBar(new WsMenuBar());
 		this.setLocationRelativeTo(null);
 
@@ -104,7 +105,8 @@ public class MainFrame extends JFrame {
 
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		GridBagConstraints gbc_tabbedPane = new GridBagConstraints();
-		tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+		tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT); 
+		//tabbedPane.setTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT); // REMOVE: TESTING:
 		gbc_tabbedPane.fill = GridBagConstraints.BOTH;
 		gbc_tabbedPane.gridx = 0;
 		gbc_tabbedPane.gridy = 1;
@@ -152,12 +154,17 @@ public class MainFrame extends JFrame {
 				UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 			} catch (Exception e2) {e2.printStackTrace();}
 		}
+		LookAndFeel currentLAF = UIManager.getLookAndFeel();
+		logger.debug(currentLAF.getDescription());
+		logger.debug("Is supported LAF ? : {}", currentLAF.isSupportedLookAndFeel() + ""); // TODO: Change the log level to 'TRACE'
+		logger.debug("LookAndFeel ID     : {}", currentLAF.getID());
+		logger.debug("LookAndFeel Name   : {}", currentLAF.getName());
 	}
 
 	// =======================================================================
 
 	/**
-	 * Save Gui preferences/settings and exits.
+	 * Save Gui preferences/settings and exit.
 	 */
 	public static void exitGUI() {
 		try {

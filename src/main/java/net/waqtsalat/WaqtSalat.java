@@ -70,6 +70,8 @@ public class WaqtSalat implements Observer {
 
 	public WaqtSalat(String[] args) throws IOException {
 
+		initializeAPP();
+		
 		// STILL IN TESTING PURPOSE, NOT YET FINISHED !!!
 		ArrayList<String> al = new ArrayList<String>();
 		for (int i=0; i<args.length; i++)
@@ -236,4 +238,25 @@ public class WaqtSalat implements Observer {
 
 		}
 	}
+
+	// =======================================================================
+
+	private static void initializeAPP() {
+		ShutdownHook hook = new ShutdownHook();
+		Runtime.getRuntime().addShutdownHook(hook);
+	}
+
+	// =======================================================================
+
+	private static class ShutdownHook extends Thread {
+		@Override
+		public void run() {
+			logger.info("Freeing resources ...");
+			System.gc();
+			logger.info("Bye bye !");
+		}
+	}
+
+	// =======================================================================
+
 }

@@ -21,11 +21,12 @@
 
 package net.waqtsalat;
 
-import it.sauronsoftware.cron4j.Scheduler;
-
 import java.io.File;
+
 import java.util.Observable;
 import java.util.Observer;
+
+import it.sauronsoftware.cron4j.Scheduler;
 
 import static net.waqtsalat.WaqtSalat.logger;
 
@@ -61,7 +62,8 @@ public class Pray extends Observable implements Observer {
 		scheduler = new Scheduler();
 		this.scheduler.setDaemon(false);
 		this.playMuezzin = false;
-		this.muezzinSound = "resources" + FS + "sounds" + FS + "adhan.mp3";
+		this.muezzinSound = ClassLoader.getSystemResource(
+				"sounds" +FS+ "adhan.mp3").getFile();
 	}
 	// =======================================================================
 

@@ -25,8 +25,11 @@ import static net.waqtsalat.WaqtSalat.logger;
 
 import java.applet.Applet;
 import java.applet.AudioClip;
+
 import java.io.File;
+
 import java.net.MalformedURLException;
+
 import java.util.ArrayList;
 
 import javax.sound.sampled.AudioFileFormat;

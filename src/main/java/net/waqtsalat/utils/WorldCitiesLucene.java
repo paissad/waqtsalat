@@ -26,13 +26,14 @@ import static net.waqtsalat.utils.GeoipUtils.GEOIP_WORLDCITIES_FULL_PATH;
 
 import java.io.File;
 import java.io.IOException;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 
+import java.util.ArrayList;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -59,8 +60,8 @@ import org.apache.lucene.util.Version;
  */
 public class WorldCitiesLucene {
 
-	private static DBDatas _dbData           = new DBDatas();
-	private static StandardAnalyzer analyzer = new StandardAnalyzer(Version.LUCENE_30);
+	private static DBDatas _dbData             = new DBDatas();
+	private static StandardAnalyzer _analyzer  = new StandardAnalyzer(Version.LUCENE_30);
 	private static String fieldName_location   = "location";
 	private static Directory _indexDir;
 
@@ -78,7 +79,7 @@ public class WorldCitiesLucene {
 		_dbData.loadDriver();
 		Connection conn           = DriverManager.getConnection(_dbData.get_ConnectionURL());
 		connectToIndex();
-		IndexWriter writer        = new IndexWriter(_indexDir, analyzer, true, IndexWriter.MaxFieldLength.UNLIMITED);
+		IndexWriter writer        = new IndexWriter(_indexDir, _analyzer, true, IndexWriter.MaxFieldLength.UNLIMITED);
 		logger.info("Indexing to directory '{}'.", _indexDir.toString());
 		addDocs(writer, conn);
 		writer.optimize();
@@ -104,13 +105,19 @@ public class WorldCitiesLucene {
 	public static ArrayList<String[]> search(String queryStr) throws IOException, ParseException {
 		ArrayList<String[]> locations = new ArrayList<String[]>(); 
 		connectToIndex();
-		int hitsPerPage = 300;
-		Query q = new QueryParser(Version.LUCENE_30, fieldName_location, analyzer).parse(queryStr);
+		int hitsPerPage = 500;
+		
+		//TESTING: when the String entry is escaped, the search is less productive ...
+		// will try to figure it out in the future
+		//queryStr = QueryParser.escape(queryStr); 
+		
+		Query q = new QueryParser(
+				Version.LUCENE_30, fieldName_location, _analyzer).parse(queryStr);
 		IndexSearcher searcher = new IndexSearcher(IndexReader.open(_indexDir));
 		TopScoreDocCollector collector = TopScoreDocCollector.create(hitsPerPage, true);
 		searcher.search(q, collector);
 		ScoreDoc[] hits = collector.topDocs().scoreDocs;
-		logger.debug("Found {} hits.", hits.length); // TODO ...
+		logger.debug("Found {} hits.", hits.length);
 		for (int i=0; i<hits.length; i++) {
 			int docID = hits[i].doc;
 			Document doc = searcher.doc(docID);
@@ -165,7 +172,7 @@ public class WorldCitiesLucene {
 			doc.add(new Field(
 					fieldName_location, rs.getString("CITY"), Field.Store.YES, Field.Index.ANALYZED));
 			doc.add(new Field(
-					fieldName_location, rs.getString("REGION"), Field.Store.YES, Field.Index.NO)); // TODO ...
+					fieldName_location, rs.getString("REGION"), Field.Store.YES, Field.Index.NO)); // REMOVE: ...
 			doc.add(new Field(
 					fieldName_location, rs.getString("LATITUDE"), Field.Store.YES, Field.Index.NO));
 			doc.add(new Field(

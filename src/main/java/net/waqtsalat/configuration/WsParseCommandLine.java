@@ -21,13 +21,13 @@
 
 package net.waqtsalat.configuration;
 
-import jargs.gnu.CmdLineParser;
-
 import java.util.Iterator;
 import java.util.Map;
 
 import net.waqtsalat.IpAddress;
 import net.waqtsalat.WaqtSalat;
+
+import jargs.gnu.CmdLineParser;
 
 import org.apache.commons.configuration.ConfigurationException;
 

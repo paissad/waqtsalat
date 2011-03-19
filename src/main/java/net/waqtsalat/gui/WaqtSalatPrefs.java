@@ -41,6 +41,20 @@ public class WaqtSalatPrefs {
 		CHECK_FOR_DAILY_UPDATES,
 		DISPLAY_NAME_COMBOBOX,
 		DISPLAY_TIME_COMBOBOX,
+
+		LOCATION_FULL_NAME, // String
+		LOCATION_COUNTRY_CODE, //String
+		LOCATION_VIA_IP, // boolean
+		LOCATION_TIMEZONE, // String
+		LOCATION_USE_SYS_TIMEZONE, // boolean
+		LOCATION_USE_DST, // boolean
+
+		PRAYTIME_MADHAB, // String
+		PRAYTIME_METHOD, // String
+
+		SILENT_MODE, // boolean
+		ADHAN_COMBOBOXES_CURRENT_STATE, // String (splitted by NUL \0) 
+		ADHAN_CURRENT_SOUNDS, // String (splitted by NUL \0)
 	}
 
 	public static Preferences userPrefs;
@@ -48,12 +62,13 @@ public class WaqtSalatPrefs {
 
 	static {
 		WaqtSalatPrefs o = new WaqtSalatPrefs();
-		userPrefs   = Preferences.userRoot().node(o.getClass().getPackage().getName());
+		//userPrefs   = Preferences.userRoot().node(o.getClass().getPackage().getName());
+		userPrefs   = Preferences.userRoot().node("WaqtSalat");
 		systemPrefs = Preferences.systemRoot().node(o.getClass().getPackage().getName());
 		o = null;
 	}
 
-	public static void printInfos() {  // To remove ... (only for testing purpose !!!)
+	public static void printInfos() {  // To remove ... (only for testing purpose !!!) // XXX
 		String format = new String("%-20s : %s");
 		System.out.println(String.format(format, "Absolute path", userPrefs.absolutePath()));
 	}

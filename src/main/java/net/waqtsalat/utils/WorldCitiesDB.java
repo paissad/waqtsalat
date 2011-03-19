@@ -21,17 +21,20 @@
 
 package net.waqtsalat.utils;
 
+import net.waqtsalat.Coordinates;
+import net.waqtsalat.utils.DBDatas;
 import static net.waqtsalat.WaqtSalat.logger;
 import static net.waqtsalat.utils.GeoipUtils.GEOIP_WORLDCITIES_FULL_PATH;
-import net.waqtsalat.utils.DBDatas;
 
 import java.io.IOException;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -221,30 +224,59 @@ public class WorldCitiesDB {
 
 	/**
 	 * @param country
+	 *            The country.
 	 * @param city
-	 * @return An array of float containing the coordinates.<br>
-	 *         The 1st element of the array is the latitude, the 2nd element is
-	 *         the longitude.
+	 *            The city.
+	 * @return The {@link Coordinates} of the couple <i>city/country</i>, return
+	 *         <code>null</code> if the couple of city/country is not found into
+	 *         the database or when an error occurs.
 	 * @throws SQLException
 	 * 
 	 */
-	public float[] getCoordinates(String country, String city) throws SQLException {
+	public Coordinates getCoordinates(String country, String city) throws SQLException {
 		connectToDB();
+		Coordinates coord = null;
 		String sql = "SELECT latitude, longitude FROM " + _dbData.get_tableName()
 		+ " WHERE country_name LIKE '" + country + "' AND city LIKE '" +  city +  "';";
 		Statement stmt = _conn.createStatement();
 		ResultSet rs = stmt.executeQuery(sql);
 		if (rs.next()) {  // We only select the 1st row !
-			float latitude  = rs.getFloat(1);
-			float longitude = rs.getFloat(2);
-			float[] coordinates = { latitude, longitude };
+			coord = new Coordinates();
+			coord.setLatitude(rs.getFloat(1));
+			coord.setLongitude(rs.getFloat(2));
 			if (rs != null) {
 				rs.close(); rs = null;
 			}
-			return  coordinates;
-		} else {
-			return null;
 		}
+		return coord;
+	}
+
+	// =======================================================================
+
+	/**
+	 * Get the country ISO Code from a given country name.
+	 * 
+	 * @param countryName The full name of the country.
+	 * 
+	 * @return The String 2 letters representation of the country code.
+	 * @throws SQLException
+	 */
+	public String getCountryCodeFromCountryName(String countryName) throws SQLException {
+		String cc = null; // cc like the abbreviation of country code 
+		if (countryName != null) {
+			connectToDB();
+			String sql = "SELECT country_code FROM " + _dbData.get_tableName()
+			+ " WHERE country_name LIKE '" + countryName + "';";
+			Statement stmt = _conn.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			if (rs.next()) { // We only select the 1st row ...
+				cc = rs.getString(1);
+				if (rs != null) {
+					rs.close(); rs = null;
+				}
+			}
+		}
+		return cc;
 	}
 
 	// =======================================================================
