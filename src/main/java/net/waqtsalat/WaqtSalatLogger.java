@@ -52,8 +52,9 @@ public class WaqtSalatLogger {
 		_level = Level.DEBUG;
 		// http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/EnhancedPatternLayout.html
 		_pattern = "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p - [%t] (%F: %M: %-4L) - %m%n";
-		_logFileName = "waqtsalat.log"; 
-		_appendToLog = true;
+		//_logFileName = System.getProperty("java.io.tmpdir") + "waqtsalat.log"; // TODO: We must use this in the future ... (or specified via an option)
+		_logFileName = "waqtsalat.log";
+		_appendToLog = false;
 	}
 
 	// ======================================================================

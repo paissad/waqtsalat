@@ -99,14 +99,13 @@ public class MainFrame extends JFrame {
 		gbc_imgHeaderPanel.fill = GridBagConstraints.BOTH;
 		gbc_imgHeaderPanel.gridx = 0;
 		gbc_imgHeaderPanel.gridy = 0;
-		topPanel.add(imgHeaderPanel, gbc_imgHeaderPanel);
 		imgHeaderPanel.setLayout(new BorderLayout(0, 0));
 		imgHeaderPanel.add(new ImageLabel(WsConstants.HEADER_IMAGE_SUNSET));
+		topPanel.add(imgHeaderPanel, gbc_imgHeaderPanel);
 
 		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		GridBagConstraints gbc_tabbedPane = new GridBagConstraints();
 		tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT); 
-		//tabbedPane.setTabLayoutPolicy(JTabbedPane.WRAP_TAB_LAYOUT); // REMOVE: TESTING:
 		gbc_tabbedPane.fill = GridBagConstraints.BOTH;
 		gbc_tabbedPane.gridx = 0;
 		gbc_tabbedPane.gridy = 1;
@@ -143,6 +142,12 @@ public class MainFrame extends JFrame {
 		try {
 			if (os.isMac()) {
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+				System.setProperty("apple.laf.useScreenMenuBar", "false");
+				System.setProperty("Window.documentModified", "true");
+				/*
+				 *  XXX: What about adding requestUserAttention() too ? ...
+				 *  http://developer.apple.com/library/mac/documentation/Java/Reference/JavaSE6_AppleExtensionsRef/api/com/apple/eawt/Application.html
+				 */
 			} else { // Not (Linux, Mac, Windows) operating system ... 
 				UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 			}
@@ -156,7 +161,7 @@ public class MainFrame extends JFrame {
 		}
 		LookAndFeel currentLAF = UIManager.getLookAndFeel();
 		logger.debug(currentLAF.getDescription());
-		logger.debug("Is supported LAF ? : {}", currentLAF.isSupportedLookAndFeel() + ""); // TODO: Change the log level to 'TRACE'
+		logger.debug("Is supported LAF ? : {}", currentLAF.isSupportedLookAndFeel() + "");
 		logger.debug("LookAndFeel ID     : {}", currentLAF.getID());
 		logger.debug("LookAndFeel Name   : {}", currentLAF.getName());
 	}

@@ -74,6 +74,12 @@ public interface WsConstants {
 	Icon ICON_LOCATION_TIMEZONE  = new ImageIcon(ClassLoader.getSystemResource("icons/timezone.png"));
 	Icon ICON_UNKNOWN_STATE      = new ImageIcon(ClassLoader.getSystemResource("icons/unknown-state.png"));
 	Icon ICON_RESET_PREFERENCES  = new ImageIcon(ClassLoader.getSystemResource("icons/reset_prefs.png"));
+	Icon ICON_NOTIFICATION_1     = new ImageIcon(ClassLoader.getSystemResource("icons/notification-1.png"));
+	Icon ICON_NOTIFICATION_2     = new ImageIcon(ClassLoader.getSystemResource("icons/notification-2.png"));
+	Icon ICON_AUDIO_VOLUME       = new ImageIcon(ClassLoader.getSystemResource("icons/audio-volume.png"));
+	Icon ICON_SOUND_ON           = new ImageIcon(ClassLoader.getSystemResource("icons/sound-unmute.png"));
+	Icon ICON_SOUND_OFF          = new ImageIcon(ClassLoader.getSystemResource("icons/sound-mute.png"));
+	Icon ICON_GROWL              = new ImageIcon(ClassLoader.getSystemResource("icons/growl-icon.png"));
 	
 	String ICON_FLAGS_DIR = "images/flags/";
 

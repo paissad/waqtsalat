@@ -21,8 +21,6 @@
 
 package net.waqtsalat.gui;
 
-import javax.swing.JPanel;
-
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
@@ -35,15 +33,17 @@ import java.awt.event.ItemListener;
 
 import java.util.HashMap;
 
+import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
+import javax.swing.DefaultComboBoxModel;
 
+import net.waqtsalat.utils.StartupUtils;
 import static net.waqtsalat.gui.WaqtSalatPrefs.userPrefs;
 import static net.waqtsalat.gui.WaqtSalatPrefs.guiSettings;
-import javax.swing.DefaultComboBoxModel;
 
 /**
  * 
@@ -256,7 +256,10 @@ public class GeneralTab extends JPanel {
 		chckbxStartAtLogin.addActionListener(new ActionListener() {	
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				startAtLogin_actionPerformed(e);
+				try {
+					startAtLogin_actionPerformed(e);
+				}
+				catch (Exception e1) {e1.printStackTrace();}
 			}
 		});
 		sysPanel.add(chckbxStartAtLogin, gbc_chckbxStartAtLogin);
@@ -323,12 +326,14 @@ public class GeneralTab extends JPanel {
 
 	// --------------------------
 
-	private void startAtLogin_actionPerformed(ActionEvent e) {
+	private void startAtLogin_actionPerformed(ActionEvent e) throws Exception {
 		boolean currentSelection = chckbxStartAtLogin.isSelected();
 		userPrefs.putBoolean(
 				guiSettings.START_AT_LOGIN.toString(), currentSelection);
 		if (currentSelection == true) {
-			// TODO ... start the application at login ...
+			StartupUtils.startAppAtLogin();
+		} else {
+			StartupUtils.removeStartupLogin();
 		}
 	}
 

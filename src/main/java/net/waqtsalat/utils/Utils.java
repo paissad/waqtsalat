@@ -21,8 +21,10 @@
 
 package net.waqtsalat.utils;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 import java.net.URL;
 import java.net.URLConnection;
@@ -351,6 +353,25 @@ public class Utils {
 	   // String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
 	    String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + "";
 	    return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+	}
+
+	// ======================================================================
+
+	/**
+	 * Prints the error message of a process if it does have an error message.
+	 * 
+	 * @param p
+	 *            The {@link Process} to display its error.
+	 * @throws IOException
+	 */
+	public static void printErrorProcess(Process p) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+		StringBuilder errMsg = new StringBuilder();
+		String s;
+		while ((s = br.readLine()) != null) {
+			errMsg.append(s + "\n");
+		}
+		logger.warn("The warning/error message is :\n{}", errMsg);
 	}
 
 	// ======================================================================

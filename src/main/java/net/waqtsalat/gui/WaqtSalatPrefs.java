@@ -55,25 +55,24 @@ public class WaqtSalatPrefs {
 		SILENT_MODE, // boolean
 		ADHAN_COMBOBOXES_CURRENT_STATE, // String (splitted by NUL \0) 
 		ADHAN_CURRENT_SOUNDS, // String (splitted by NUL \0)
+		ENABLE_NOTIFICATIONS, // boolean
+		USE_GROWL, // boolean
 	}
 
 	public static Preferences userPrefs;
 	public static Preferences systemPrefs;
 
 	static {
-		WaqtSalatPrefs o = new WaqtSalatPrefs();
-		//userPrefs   = Preferences.userRoot().node(o.getClass().getPackage().getName());
-		userPrefs   = Preferences.userRoot().node("WaqtSalat");
-		systemPrefs = Preferences.systemRoot().node(o.getClass().getPackage().getName());
-		o = null;
+		String root = "/waqtsalat";
+		userPrefs   = Preferences.userRoot().node(root);
+		systemPrefs = Preferences.systemRoot().node(root);
+		/*
+		 * WaqtSalatPrefs o = new WaqtSalatPrefs();
+		 * root = o.getClass().getPackage().getName();
+		 * userPrefs   = Preferences.userRoot().node(root);
+		 * systemPrefs = Preferences.systemRoot().node(root);
+		 * o = null;
+		 * 
+		 */
 	}
-
-	public static void printInfos() {  // To remove ... (only for testing purpose !!!) // XXX
-		String format = new String("%-20s : %s");
-		System.out.println(String.format(format, "Absolute path", userPrefs.absolutePath()));
-	}
-
-	/*
-	 * (boolean) DISPLAY_NEXT_PRAY_IN_MENUBAR
-	 */
 }

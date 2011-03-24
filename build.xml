@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="WaqtSalat" default="build">
 
+    <!-- This 
+         -->
+
     <!-- properties -->
-    <property name="version" value="0.0.1_snapshot" />
+    <property name="softwareName" value="WaqtSalat" />
+    <property name="version" value="0.1" />
     <property name="debug" value="on" />
     <property name="output.jar" value="waqtsalat.jar" />
     <property name="Name" value="WaqtSalat" />
@@ -26,20 +30,30 @@
     <tstamp>
         <format property="TODAY" pattern="EEEE, d-MMM-yyyy HH:mm:ss, Z" locale="en,UK" />
     </tstamp>
-    <!-- end of properties -->
 
     <path id="lib.path.ref">
         <fileset id="libs.ref" dir="${lib.dir}" includes="*.jar,*.zip" excludes="_docs*,_sources*"/>
     </path>
     <property name="cp" refid="lib.path.ref"/>
-    <!--<echo message="Classpath is ${cp}"/>-->
+    <!-- end of properties -->
+
+    <target name="PrintInfos">
+        <!--<echo message="Classpath is ${cp}"/> XXX -->
+        <echo message="Java Name    : ${java.vm.name}" />
+        <echo message="Java Version : ${java.version}" />
+        <!--<echo message="Classpath    : ${java.class.path}" XXX />-->
+        <echo message="OS Name      : ${os.name}" />
+        <echo message="OS Version   : ${os.version}" />
+        <echo message="OS Arch      : ${os.arch}" />
+    </target>
 
     <!-- target: build -->
     <target name="build" depends="compile" description="Build WaqtSalat.">
+        <echo message="Done !" />
     </target>
 
     <!-- target: compile -->
-    <target name="compile" depends="clean">
+    <target name="compile" depends="PrintInfos, clean">
         <mkdir dir="${build.classes}" />
         <javac
             srcdir="${build.src}"
@@ -73,11 +87,112 @@
 
         <mkdir dir="${dist}" />
         <tar destfile="${dist}/waqtsalat-${version}.tar.gz" compression="gzip">
-            <tarfileset 
-                dir="." 
-                prefix="waqtsalat-${version}" 
-                includes="LICENSE, README, CHANGELOG, COPYING, AUTHORS, NEWS, INSTALL, TODO, ${output.jar}, waqtsalat.conf, waqtsalat.sh, extras/**" /> 
+            <tarfileset
+                dir="."
+                prefix="waqtsalat-${version}"
+                includes="LICENSE, README, CHANGELOG, COPYING, AUTHORS, NEWS, INSTALL, TODO, ${output.jar}, waqtsalat.conf, waqtsalat.sh, extras/**, macosx/*.applescript" />
         </tar>
+
+        <condition property="isMac">
+            <os family="mac" />
+        </condition>
+        <antcall target="DMG" />
+
+    </target>
+
+    <!-- target: DMG 
+         Description: Creates a Mac OS X DMG bundle from the .app bundle,
+         uses tools only available on Mac OS X. Used for official releases. -->
+    <target name="DMG" depends="MacBundle" if="isMac">
+        <echo message="Creating DMG bundle from the .app bundle ..." />
+
+        <property name="dmgFolder" value="${distMac}/DMG" />
+        <mkdir dir="${dmgFolder}" />
+
+        <exec executable="osascript">
+            <arg value="-e"/>
+            <arg value="tell application &quot;Finder&quot; to make new alias to folder &quot;Applications&quot; of startup disk" />
+        </exec>
+        <exec executable="mv">
+            <arg value="${user.home}/Desktop/Applications" />
+            <arg value="${dmgFolder}" />
+        </exec>
+        <exec executable="mv">
+            <arg value="-v" />
+            <arg value="${bundle}" />
+            <arg value="${dmgFolder}" />
+        </exec>
+        <exec executable="hdiutil">
+            <arg value="create" />
+            <arg line='-megabytes 100' />
+            <arg line='-srcfolder ${dmgFolder}' />
+            <arg line='-volname ${softwareName}' />
+            <arg line='-fs HFS+' />
+            <arg line='-format UDBZ' />
+            <arg value="${distMac}/waqtsalat-macosx-${version}.dmg" />
+        </exec>
+        <delete dir="${dmgFolder}" />
+    </target>
+
+    <!-- target: MacBundle 
+         Description: Creates a Mac OS X .app bundle.
+
+         Requires the JarBundler (2.2.0) ant task, which can be downloaded at http://informagen.com/JarBundler/
+         To enable the task, copy jarbundler-2.2.0.jar to /usr/share/ant/lib/
+         It is also possible to install it via MacPorts "sudo port install jarbundler" 
+
+        Other informations in this site too: http://developer.apple.com/library/mac/#documentation/Java/Conceptual/Jar_Bundler -->
+    <target name="MacBundle" if="isMac">
+        <echo message="Creating Mac OS X .app bundle ..." />
+        <property file="macosx/macosx.properties" />
+        <taskdef name="jarbundler" classname="net.sourceforge.jarbundler.JarBundler" />
+        <!--infoString XXX -->
+        <!--jvmarchs XXX -->
+        <!--suFeedURL XXX -->
+        <!--screenmenu="true" XXX -->
+        <mkdir dir="${distMac}" />
+        <jarbundler
+            dir="${distMac}" 
+            name="${softwareName}" 
+            mainclass="${main-class}" 
+            jar="${output.jar}" 
+            arguments="--gui" 
+            build="${version}" 
+            icon="${appIcon}" 
+            shortname="${softwareName}" 
+            showplist="false" 
+            signature="WS01" 
+            verbose="true" 
+            version="${version}" 
+            jvmversion="1.6+" 
+            vmoptions="-Xmx768M -Xss16M -Dfile.encoding=UTF-8 -jar" 
+            workingdirectory="$APP_PACKAGE/Contents/Resources/Java" 
+            antialiasedtext="true" 
+            liveresize="true" 
+            smalltabs="false" 
+            />
+
+        <copy file="CHANGELOG" todir="${javaResources}" preservelastmodified="true" />
+        <copy file="LICENSE" todir="${javaResources}" preservelastmodified="true" />
+        <copy file="AUTHORS" todir="${javaResources}" preservelastmodified="true" />
+        <copy file="COPYING" todir="${javaResources}" preservelastmodified="true" />
+        <copy file="INSTALL" todir="${javaResources}" preservelastmodified="true" />
+        <copy file="NEWS" todir="${javaResources}" preservelastmodified="true" />
+        <copy file="README" todir="${javaResources}" preservelastmodified="true" />
+        <copy file="TODO" todir="${javaResources}" preservelastmodified="true" />
+        <copy file="waqtsalat.conf" todir="${javaResources}" preservelastmodified="true" />
+        <mkdir dir="${javaResources}/plugins" />
+        <copy todir="${javaResources}/plugins" preservelastmodified="true">
+            <fileset dir="plugins">
+            </fileset>
+        </copy>
+        <mkdir dir="${javaResources}/extras" />
+        <copy todir="${javaResources}/extras" preservelastmodified="true">
+            <fileset dir="extras">
+                <exclude name="**/worldcitiespop.trace.db" />
+            </fileset>
+        </copy>
+        <mkdir dir="${macosxResources}" />
     </target>
 
     <!-- target: javadoc -->
@@ -95,7 +210,7 @@
             header="${javadoc.header}" 
             footer="${javadoc.header}" 
             bottom="${javadoc.bottom}" 
-            additionalparam="-noqualifier java.lang:java.io:java.net " 
+            additionalparam="-noqualifier java.lang:java.io:java.net:java.sql " 
             access="protected" 
             nodeprecated="false" 
             nodeprecatedlist="false" 

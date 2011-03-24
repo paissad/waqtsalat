@@ -1,0 +1,73 @@
+#!/usr/bin/perl -w
+#
+# color-ant 0.9 2001-07-30 meier@o-matic.de
+# 
+# perl script to give ant nice colors for readabiliy
+#
+# Philipp Meier <meier@o-matic.de>
+#
+# UPDATED: 
+# 
+# Some regex added by Julian Swagemakers <julian@swagemakers.de>
+# Some regex added by Papa Issa DIAKHATE (paissad) <paissad@gmail.com>
+#
+#
+# Based on:
+#
+#    $Id: loco,v 1.1.1.1 2000/12/14 19:52:34 jules Exp $
+#
+#    perl script to give /var/log/messages nice colors for readability
+#
+#     Jules Stuifbergen <jules@zjuul.net>
+#     (I was bored, rewrote 'logcolorise.pl' from Michael Babcock from scratch)
+#  
+#     Thanks Jeffrey Paul <sneak@datavibe.net> for several improvements
+#            Cristian Ionescu-Idbohrn <cii@axis.se> for better patterns
+#
+# Examples of use: ant | ./color-ant
+#                  ant clean | ./color-ant
+#
+# You also can add that script to you $PATH and then do:
+# Example: ant | color-ant
+#
+# Enjoy ;)
+#
+
+use Term::ANSIColor;
+use strict;
+
+$Term::ANSIColor::AUTORESET++;         # reset color after each print
+$SIG{INT} = sub { print "\n"; exit; }; # reset color after Ctrl-C
+$| = 1;                                # unbuffer STDOUT;
+
+my %rules = (
+    '^\S+:'                                => "cyan",
+    '^\s*\[.*?\]\s+'                       => "blue",
+    # find everything that contains "error" except "error: 0"
+    '[Ee]rror(?!s: 0)(s)?'                 => "bold red",
+    # find everything that contains "fail" except "failures: 0" 
+    '[Ff]ail(?!ures: 0)(ure)?(ed)?(s)?'    => "bold red",
+    '(\d+\s*)?([Ww]arnings?:?|[Ww]arn)'    => "yellow",
+    'Exception'                            => "bold red",
+    'INFO.*'                               => "bold",
+    'ERROR.*'                              => "red bold",
+    'FATAL.*'                              => "blink bold red",
+    'DEBUG.*'                              => "clear",
+    '^\s*BUILD\s*SUCCESSFUL'               => "green",
+    '^\s*BUILD\s*FAILED'                   => "red",
+    '^\s*Total\s*time:'                    => "green" 
+);
+
+
+#### Main loop
+#
+
+while (<>) {
+    study;
+    my $regex;
+    foreach $regex (keys %rules) {
+        s/$regex/colored($&,$rules{$regex})/ge;
+    }
+    print;
+}
+
