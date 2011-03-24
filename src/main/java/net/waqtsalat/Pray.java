@@ -62,8 +62,7 @@ public class Pray extends Observable implements Observer {
 		scheduler = new Scheduler();
 		this.scheduler.setDaemon(false);
 		this.playMuezzin = false;
-		this.muezzinSound = ClassLoader.getSystemResource(
-				"sounds" +FS+ "adhan.mp3").getFile();
+		this.muezzinSound = "extras" +FS+ "sounds" +FS+ "adhan.mp3";
 	}
 	// =======================================================================
 

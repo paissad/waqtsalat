@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="WaqtSalat" default="build">
 
-    <!-- This 
+    <!-- Description:
+         This is the configuration file for ant in order to create 
+         a package of WaqtSalat project into the dist/ directory.
+
+         Author: Papa Issa DIAKHATE (paissad) <paissad@gmail.com>
+
+         License: GPLv3
          -->
 
     <!-- properties -->
