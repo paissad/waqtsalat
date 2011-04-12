@@ -61,7 +61,7 @@ public class JIconTextField extends JTextField {
 		this._icon = icon;
 		Border border = UIManager.getBorder("TextField.border");
 		JTextField dummyJTextField = new JTextField();
-		this._dummyInsets = border.getBorderInsets(dummyJTextField);
+		this._dummyInsets = (border != null) ? border.getBorderInsets(dummyJTextField) : new Insets(1, 1, 1, 1);
 		dummyJTextField = null;
 	}
 
