@@ -39,7 +39,7 @@ import static net.waqtsalat.WaqtSalat.logger;
 public class MuezzinCallDaemon implements Observer {
 
 	// {Fajr, Sunrise, Dhuhr, Asr, Sunset, Maghrib, Isha}
-	ArrayList<String> _prayNames = new PrayTime().getTimeNames();
+	ArrayList<PrayName> _prayNames = new ArrayList<PrayName>();
 
 	private static Set<Pray> _prays; // Only the 5 hours of prayers.
 	private static ArrayList<String> _currentTimes;

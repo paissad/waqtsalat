@@ -46,7 +46,7 @@ public class Pray extends Observable implements Observer {
 	 * are respectively ranked to 6 and 7. 
 	 */
 	private int rank;
-	private String prayName;
+	private PrayName prayName;
 	private String _currentTimeOfPray  = "";
 	private boolean playMuezzin;
 	private Scheduler scheduler;
@@ -78,14 +78,14 @@ public class Pray extends Observable implements Observer {
 
 	// =======================================================================
 
-	public Pray(String prayName) {
+	public Pray(PrayName prayName) {
 		this();
 		this.prayName = prayName;
 	}
 
 	// =======================================================================
 
-	public Pray(int rank, String prayName) {
+	public Pray(int rank, PrayName prayName) {
 		this(rank);
 		this.prayName = prayName;
 	}
@@ -96,7 +96,7 @@ public class Pray extends Observable implements Observer {
 	 * Start the daemon scheduler.
 	 */
 	public void start() {
-		t = new Thread("Pray Daemon for " + prayName) {
+		t = new Thread("Pray Daemon for " + prayName.toString()) {
 			public void run() {
 				logger.trace("Starting {}...", Thread.currentThread().getName());
 				playMuezzin = true;
@@ -104,12 +104,12 @@ public class Pray extends Observable implements Observer {
 				try {
 					cronDate = cronDateFromTime(_currentTimeOfPray);
 				} catch (BadTimeFormatForCronJob e) {
-					logger.warn("Error while creating the Pray instance. Bad time format during computation ! ({})", prayName);
+					logger.warn("Error while creating the Pray instance. Bad time format during computation ! ({})", prayName.toString());
 					e.printStackTrace();
 				}
 
 				logger.trace("Starting scheduler {} ({}).",
-						Thread.currentThread().getName(), prayName
+						Thread.currentThread().getName(), prayName.toString()
 						+ ": cron date -> " + cronDate);
 				try {
 					_schedulerID = scheduler.schedule(cronDate, new Runnable() {
@@ -120,7 +120,7 @@ public class Pray extends Observable implements Observer {
 					});
 					scheduler.start();
 				} catch (Exception e) {
-					logger.error("Error while creating/starting the scheduler for pray daemon ! ({})", prayName);
+					logger.error("Error while creating/starting the scheduler for pray daemon ! ({})", prayName.toString());
 					e.printStackTrace();
 					if (scheduler.isStarted())
 						scheduler.stop();
@@ -148,7 +148,7 @@ public class Pray extends Observable implements Observer {
 
 	@Override
 	public void update(Observable arg0, Object timeOfPray){
-		logger.debug("updating time for '{}'", prayName);
+		logger.debug("updating time for '{}'", prayName.toString());
 		_currentTimeOfPray = (String)timeOfPray;
 	}
 	// =======================================================================
@@ -182,11 +182,11 @@ public class Pray extends Observable implements Observer {
 	public void stop() {
 		if (scheduler.isStarted()) {
 			logger.trace("Stopping scheduler for muezzin call daemon ({}).",
-					prayName);
+					prayName.toString());
 			scheduler.stop();
 			playMuezzin = false;
 		} else {
-			logger.error("No muezzin call daemon to stop ({}).", prayName);
+			logger.error("No muezzin call daemon to stop ({}).", prayName.toString());
 		}
 	}
 
@@ -225,7 +225,7 @@ public class Pray extends Observable implements Observer {
 		String s = "";
 		s += String.format("\n+----------------------------------------------");
 		s += String.format(format, "rank", rank);
-		s += String.format(format, "prayname", prayName);
+		s += String.format(format, "prayname", prayName.toString());
 		s += String.format(format, "time", _currentTimeOfPray);
 		//s += String.format(format, "cron date", cronDate);
 		s += String.format(format, "muezzin call", muezzinSound);
@@ -265,11 +265,11 @@ public class Pray extends Observable implements Observer {
 		this.rank = rank;
 	}
 
-	public String getPrayName() {
+	public PrayName getPrayName() {
 		return prayName;
 	}
 
-	public void setPrayName(String prayName) {
+	public void setPrayName(PrayName prayName) {
 		this.prayName = prayName;
 	}
 

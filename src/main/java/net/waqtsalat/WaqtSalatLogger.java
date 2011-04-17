@@ -43,7 +43,6 @@ public class WaqtSalatLogger {
 
 	private static Level _level;
 	private static String _pattern;
-	private static String _logFileName;
 	private static boolean _appendToLog;
 
 	// ======================================================================
@@ -52,8 +51,6 @@ public class WaqtSalatLogger {
 		_level = Level.DEBUG;
 		// http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/EnhancedPatternLayout.html
 		_pattern = "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p - [%t] (%F: %M: %-4L) - %m%n";
-		//_logFileName = System.getProperty("java.io.tmpdir") + "waqtsalat.log"; // TODO: We must use this in the future ... (or specified via an option)
-		_logFileName = "waqtsalat.log";
 		_appendToLog = false;
 	}
 
@@ -64,10 +61,12 @@ public class WaqtSalatLogger {
 	 * {@link Level}. This method should be called before the creation of an
 	 * logger (via SLF4J example).
 	 * 
+	 * @param logFileName
+	 * 
 	 * @return The logger created.
 	 */
-	public static org.slf4j.Logger initLog4j() {
-		return initLog4j(WaqtSalatLogger.getLevel());
+	public static org.slf4j.Logger initLog4j(String logFileName) {
+		return initLog4j(_level, logFileName);
 	}
 
 	// ======================================================================
@@ -79,9 +78,10 @@ public class WaqtSalatLogger {
 	 * 
 	 * @param level
 	 *            The level to use when creating the logger.
+	 * @param logFileName
 	 * @return The logger created.
 	 */
-	public static org.slf4j.Logger initLog4j(Level level) {
+	public static org.slf4j.Logger initLog4j(Level level, String logFileName) {
 		Logger rootLogger = Logger.getRootLogger();
 
 		if (!rootLogger.getAllAppenders().hasMoreElements()) {
@@ -93,7 +93,7 @@ public class WaqtSalatLogger {
 			try {
 				rootLogger.addAppender( // file
 						new FileAppender(
-								new EnhancedPatternLayout(_pattern), _logFileName, _appendToLog));
+								new EnhancedPatternLayout(_pattern), logFileName, _appendToLog));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -122,62 +122,4 @@ public class WaqtSalatLogger {
 		-------------------------------------------------------------------------------------------------------------
 		 */
 	}
-
-	// ======================================================================
-	// Getters / Setters ...
-
-	public static void setLevel(int level) {
-		_level = Level.toLevel(level);
-	}
-
-	public static void setLevel(String level) {
-		_level = Level.toLevel(level);
-	}
-
-	public static void setLevel(Level level) {
-		_level = level;
-	}
-
-	public static Level getLevel() {
-		return _level;
-	}
-	
-	public static String getPattern() {
-		return _pattern;
-	}
-
-	/**
-	 * Set the pattern to use for the logger. Example:<br>
-	 * setPattern("%d [%-5p] %m%n");<br>
-	 * If set to <code>null</code>, then the current value is not changed.
-	 * 
-	 * @param pattern
-	 *            The pattern to use
-	 */
-	public static void setPattern(String pattern) {
-		_pattern = (pattern != null) ? pattern : getPattern();
-	}
-
-	/**
-	 * Get the current filename used for the logger.
-	 * 
-	 * @return The current filename used for the logger.
-	 */
-	public static String getLogFileName() {
-		return _logFileName;
-	}
-
-	/**
-	 * Set the filename where to save the logs. If it is set to
-	 * <code>null</code>, then the current value is not changed.
-	 * 
-	 * @param logFileName
-	 *            The file where to save the logs.
-	 */
-	public static void setLogFileName(String logFileName) {
-		_logFileName = (logFileName != null) ? logFileName : getLogFileName();
-	}
-
-	// ======================================================================
-
 }

@@ -21,12 +21,15 @@
 
 package net.waqtsalat.gui;
 
+import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
+import java.util.Observable;
+import java.util.Observer;
 import java.util.prefs.BackingStoreException;
 
 import javax.swing.JFrame;
@@ -45,7 +48,7 @@ import static net.waqtsalat.WaqtSalat.logger;
  * 
  * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
  */
-public class MainFrame extends JFrame {
+public class MainFrame extends JFrame implements Observer {
 
 	private static final long serialVersionUID = 1L;
 
@@ -59,7 +62,7 @@ public class MainFrame extends JFrame {
 	private JPanel preferencesPanel;
 	private JPanel advancedPanel;
 
-	public MainFrame() {
+	public MainFrame() throws AWTException {
 
 		chooseCustomLookAndFeel();
 
@@ -133,32 +136,55 @@ public class MainFrame extends JFrame {
 		tabbedPane.addTab(Messages.getString("Tab.Advanced"),
 				WsConstants.TAB_ICON_ADVANCED, advancedPanel, null);
 
+		tabbedPane.setSelectedComponent(praytimesPanel);
+		
+		// Let's initialise the system tray icon !
+		new SysTray();
 	}
 
 	// =======================================================================
 
 	private void chooseCustomLookAndFeel() {
 		Utils os = new Utils();
+		boolean isLafAlreadyChoosen = false;
 		try {
 			if (os.isMac()) {
-				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-				System.setProperty("apple.laf.useScreenMenuBar", "false");
-				System.setProperty("Window.documentModified", "true");
-				/*
-				 *  XXX: What about adding requestUserAttention() too ? ...
-				 *  http://developer.apple.com/library/mac/documentation/Java/Reference/JavaSE6_AppleExtensionsRef/api/com/apple/eawt/Application.html
-				 */
-			} else { // Not (Linux, Mac, Windows) operating system ... 
-				UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+				for (UIManager.LookAndFeelInfo laf : UIManager.getInstalledLookAndFeels()) {
+					if ("Mac OS X".equals(laf.getName())) {
+						UIManager.setLookAndFeel(laf.getClassName());
+						System.setProperty("apple.laf.useScreenMenuBar", "false");
+						System.setProperty("Window.documentModified", "true");
+						isLafAlreadyChoosen = true; break;
+						/*
+						 *  XXX: What about adding requestUserAttention() too ? ...
+						 *  http://developer.apple.com/library/mac/documentation/Java/Reference/JavaSE6_AppleExtensionsRef/api/com/apple/eawt/Application.html
+						 */
+					}
+				}
+			}
+
+			if (!isLafAlreadyChoosen) {
+				for (UIManager.LookAndFeelInfo laf : UIManager.getInstalledLookAndFeels() ) {
+					if ("Nimbus".equals(laf.getName())) {
+						UIManager.setLookAndFeel(laf.getClassName());
+						isLafAlreadyChoosen = true; break;
+					}
+				}
 			}
 		}
+
 		catch (Exception e) {
 			logger.error("Unable to load custom Look&Feel : {}", e.getMessage());
+			isLafAlreadyChoosen = false;
 			//e.printStackTrace();
-			try {
-				UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-			} catch (Exception e2) {e2.printStackTrace();}
+		} finally {
+			if (!isLafAlreadyChoosen) {
+				try {
+					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+				} catch (Exception e) {e.printStackTrace();}
+			}
 		}
+
 		LookAndFeel currentLAF = UIManager.getLookAndFeel();
 		logger.debug(currentLAF.getDescription());
 		logger.debug("Is supported LAF ? : {}", currentLAF.isSupportedLookAndFeel() + "");
@@ -175,12 +201,18 @@ public class MainFrame extends JFrame {
 		try {
 			userPrefs.sync();
 			userPrefs.flush();
+			System.exit(0);
 		} catch (BackingStoreException e) {
 			logger.error("Abnormal exit : {}", e.getMessage());
 			//e.printStackTrace();
 			System.exit(1);
 		}
-		System.exit(0);
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		// TODO Auto-generated method stub
+
 	}
 
 	// =======================================================================

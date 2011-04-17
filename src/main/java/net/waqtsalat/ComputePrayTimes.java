@@ -92,7 +92,6 @@ public class ComputePrayTimes extends Observable implements Runnable {
 	// ======================================================================
 
 	private static PrayTime _prayers  = new PrayTime();
-	private static final ArrayList<String> _prayerNames = _prayers.getTimeNames();
 	private static ArrayList<String> _prayerTimes;
 	private static CalculationMethod _calcMethod    = CalculationMethod.JAFARI;
 	private static JuristicMethod _juristicMethod   = JuristicMethod.SHAFII;
@@ -323,10 +322,6 @@ public class ComputePrayTimes extends Observable implements Runnable {
 	public synchronized void setPrayerTimes(ArrayList<String> prayerTimes) {
 		_prayerTimes = prayerTimes;
 		updateState();
-	}
-
-	public static synchronized ArrayList<String> getPrayernames() {
-		return _prayerNames;
 	}
 
 	public void stop() {

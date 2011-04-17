@@ -21,8 +21,6 @@
 
 package net.waqtsalat.gui;
 
-import static net.waqtsalat.gui.WsConstants.ADDITIONAL_EXTENSIONS;
-
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -214,7 +212,6 @@ public class AdhanComboBox extends JComboBox {
 		private SimplePlayer audioPlayer;
 		private String currentFileName = new String();
 		private JPanel topPanel;
-		//private JScrollPane scrollPane; // TODO ...
 		private JLabel fileLabel;
 		private JLabel tagsLabel;
 		private JPanel playerPanel;
@@ -248,23 +245,13 @@ public class AdhanComboBox extends JComboBox {
 			gbl_topPanel.rowWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
 			topPanel.setLayout(gbl_topPanel);
 
-			/*scrollPane = new JScrollPane(); // TODO ...
-			GridBagConstraints gbc_scrollPane = new GridBagConstraints();
-			gbc_scrollPane.insets = new Insets(0, 0, 0, 5);
-			gbc_scrollPane.fill = GridBagConstraints.BOTH;
-			gbc_scrollPane.gridx = 0;
-			gbc_scrollPane.gridy = 2;
-			scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-			scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-			topPanel.add(scrollPane, gbc_scrollPane);*/
-
 			fileLabel = new JLabel("Audio File", JLabel.CENTER);
 			GridBagConstraints gbc_fileLabel = new GridBagConstraints();
 			gbc_fileLabel.insets = new Insets(0, 0, 5, 0);
 			gbc_fileLabel.gridx = 0;
 			gbc_fileLabel.gridy = 0;
+			gbc_fileLabel.anchor = GridBagConstraints.NORTHWEST;
 			topPanel.add(fileLabel, gbc_fileLabel);
-			//scrollPane.setColumnHeaderView(fileLabel); // TODO ...
 
 			playerPanel = new JPanel();
 			GridBagConstraints gbc_playerPanel = new GridBagConstraints();
@@ -272,9 +259,11 @@ public class AdhanComboBox extends JComboBox {
 			gbc_playerPanel.fill = GridBagConstraints.BOTH;
 			gbc_playerPanel.gridx = 0;
 			gbc_playerPanel.gridy = 1;
+			gbc_playerPanel.anchor = GridBagConstraints.WEST;
 			topPanel.add(playerPanel, gbc_playerPanel);
 
 			playButton = new JButton("Play");
+			playButton.setIcon(WsConstants.ICON_SOUND_PLAY);
 			playButton.setEnabled(false);
 			playButton.addActionListener(new ActionListener() {
 				@Override
@@ -288,6 +277,7 @@ public class AdhanComboBox extends JComboBox {
 			playerPanel.add(playButton);
 
 			stopButton = new JButton("Stop");
+			stopButton.setIcon(WsConstants.ICON_SOUND_STOP);
 			stopButton.setEnabled(false);
 			stopButton.addActionListener(new ActionListener() {				
 				@Override
@@ -304,10 +294,9 @@ public class AdhanComboBox extends JComboBox {
 			GridBagConstraints gbc_tagsLabel = new GridBagConstraints();
 			gbc_tagsLabel.gridx = 0;
 			gbc_tagsLabel.gridy = 2;
-			gbc_tagsLabel.anchor = GridBagConstraints.WEST;
+			gbc_tagsLabel.anchor = GridBagConstraints.SOUTHWEST;
 			tagsLabel.setHorizontalAlignment(SwingConstants.LEADING);
 			topPanel.add(tagsLabel, gbc_tagsLabel);
-			//scrollPane.setViewportView(tagsLabel); // TODO ...
 		}
 		// -----------------------------------------------
 
@@ -349,7 +338,7 @@ public class AdhanComboBox extends JComboBox {
 
 			// Ok, seems the audio file is real, so load it and enable the buttons
 			String fileName = audioFile.getName();
-			fileLabel.setText(fileName);
+			fileLabel.setText(trimTextWithDots(fileName));
 			if (fileName.equals(currentFileName)) { // same file ...
 				playButton.setEnabled(true);
 				stopButton.setEnabled(true);
@@ -358,7 +347,7 @@ public class AdhanComboBox extends JComboBox {
 
 			currentFileName = fileName;
 			audioPlayer = new SimplePlayer(audioFile);
-			fileLabel.setText(fileName);
+			fileLabel.setText(trimTextWithDots(fileName));
 			playButton.setEnabled(true);
 			stopButton.setEnabled(true);
 		}
@@ -416,6 +405,15 @@ public class AdhanComboBox extends JComboBox {
 			}
 		}
 		// -----------------------------------------------
+		
+		private String trimTextWithDots(String text) {
+			if (text != null && text.length() > 25 ) {
+				text = text.substring(0, 25) + "...";
+			}
+			return text;
+		}
+		
+		// -----------------------------------------------
 
 	}
 
@@ -439,8 +437,8 @@ public class AdhanComboBox extends JComboBox {
 
 		for (int i=0; i<default_extensions.length; i++)
 			all_known_extensions.add(default_extensions[i]);
-		for (int i=0; i<ADDITIONAL_EXTENSIONS.length; i++)
-			all_known_extensions.add(ADDITIONAL_EXTENSIONS[i]);
+		for (int i=0; i<WsConstants.ADDITIONAL_AUDIO_EXTENSIONS.length; i++)
+			all_known_extensions.add(WsConstants.ADDITIONAL_AUDIO_EXTENSIONS[i]);
 		return all_known_extensions.contains(extension);
 	}
 

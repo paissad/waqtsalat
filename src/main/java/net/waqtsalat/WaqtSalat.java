@@ -41,6 +41,7 @@ import net.waqtsalat.MuezzinCallDaemon.BadSizePrayTimesArray;
 import net.waqtsalat.configuration.WsParseCommandLine;
 import net.waqtsalat.gui.MainFrame;
 import net.waqtsalat.utils.GeoipUtils;
+import net.waqtsalat.WaqtSalatLogger;
 
 import org.slf4j.Logger;
 
@@ -50,11 +51,11 @@ import com.maxmind.geoip.timeZone;
 
 public class WaqtSalat implements Observer {
 
-	public static Logger logger = WaqtSalatLogger.initLog4j();
+	public static Logger logger;
 	private static ArrayList<String> _prayerTimes = new ArrayList<String>();
 	private static ComputePrayTimes _computePrayTimes = new ComputePrayTimes();
 	private static Object _stateLock = new Object();
-	private static boolean _quiet = false;
+	private static boolean _quiet = false; // Whether or not to print the pray times in STDOUT. (true for printing, false otherwise)
 
 	// =======================================================================
 
@@ -70,45 +71,43 @@ public class WaqtSalat implements Observer {
 
 	public WaqtSalat(String[] args) throws IOException {
 
+		WsParseCommandLine parser = new WsParseCommandLine(args);
+		boolean _help             = parser.isHelp();
+		boolean _gui              = parser.isGUI();
+		int _verboseLevel         = parser.getVerboseLevel();
+		String _logFileName       = parser.getLogFile();
+		boolean _auto             = parser.isAutomatic();
+		String _ip                = parser.getIp();
+		double _latitude          = parser.getLatitude();
+		double _longitude         = parser.getLongitude();
+		boolean _play             = parser.isPlay();
+
+		// Geoip Location informations ...
+		Map<String, Object> geoipLocDatas = new LinkedHashMap<String, Object>(); 
+
+		// Print the help if is specified and then exit.
+		if (_help) {
+			parser.printUsage();
+			System.exit(0);
+		}
+
+		logger = WaqtSalatLogger.initLog4j(_logFileName);
 		initializeAPP();
-		
-		// STILL IN TESTING PURPOSE, NOT YET FINISHED !!!
-		ArrayList<String> al = new ArrayList<String>();
-		for (int i=0; i<args.length; i++)
-			al.add(args[i]);
-		if (al.contains("--gui")) {
+
+		if (_gui == true) {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					try {
 						MainFrame mainFrame = new MainFrame();
 						mainFrame.pack();
 						mainFrame.setVisible(true);
+						_computePrayTimes.addObserver(mainFrame);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
 			});
-		}
-		else { // Console mode.
-
-			WsParseCommandLine parser = new WsParseCommandLine(args);
-			boolean _help             = parser.isHelp();
-			int _verboseLevel         = parser.getVerboseLevel();
-			boolean _auto             = parser.isAutomatic();
-			String _ip                = parser.getIp();
-			double _latitude          = parser.getLatitude();
-			double _longitude         = parser.getLongitude();
-			boolean _play             = parser.isPlay();
-
-			// Geoip Location informations ...
-			Map<String, Object> geoipLocDatas = new LinkedHashMap<String, Object>(); 
-
-			// Print the help if is specified and then exit.
-			if (_help) {
-				parser.printUsage();
-				System.exit(0);
-			}
-
+		} else { // Console mode.
 			if (_longitude != -1 || _latitude != -1) { // latitude & longitude have
 				// the priority over automatic mode.
 				if (_longitude == -1 || _latitude == -1) {
@@ -168,41 +167,43 @@ public class WaqtSalat implements Observer {
 				}
 			} // End of Geoip stuff ...
 
-			// TODO: do not forget to set timezone to either default or automatic from ip address!
-			//ComputePrayTimes _computePrayTimes = new ComputePrayTimes(_latitude, _longitude, 1);
 			_computePrayTimes.addObserver(this);
-			Thread _thread1 = new Thread(_computePrayTimes, "Prayer Times Computer");
-			_thread1.start();
-			synchronized (_stateLock) {
-				_quiet = true;
-				_computePrayTimes.setLatitude(_latitude);
-				_computePrayTimes.setLongitude(_longitude);
-				_quiet = false;
+		} // end of console mode settings ...
+
+		// TODO: do not forget to set timezone to either default or automatic from ip address!
+		//ComputePrayTimes _computePrayTimes = new ComputePrayTimes(_latitude, _longitude, 1);
+		Thread _thread1 = new Thread(_computePrayTimes, "Prayer Times Computer");
+		_thread1.start();
+		synchronized (_stateLock) {
+			_quiet = true;
+			_computePrayTimes.setLatitude(_latitude);
+			_computePrayTimes.setLongitude(_longitude);
+			_quiet = false;
+
+			if (!_gui) {
+				printPrays();
 			}
+		}
 
-			printPrays();
+		// Play the muezzin call at each pray time (if specified).
+		if (_play) {
+			MuezzinCallDaemon muezzinCallDaemon;
+			try {
+				muezzinCallDaemon = new MuezzinCallDaemon(_prayerTimes); // Be aware that _prayerTimes has changed when we called _computePrayTimes.setLatitude() and so on ...
+				_computePrayTimes.addObserver(muezzinCallDaemon);
+				muezzinCallDaemon.start();
 
-			// Play the muezzin call at each pray time (if specified).
-			if (_play) {
-				MuezzinCallDaemon muezzinCallDaemon;
-				try {
-					muezzinCallDaemon = new MuezzinCallDaemon(_prayerTimes);
-					_computePrayTimes.addObserver(muezzinCallDaemon);
-					muezzinCallDaemon.start();
-
-					if (_verboseLevel > 0) {
-						System.out.print("\nMuezzin call daemon informations ...");
-						System.out.println(muezzinCallDaemon);
-					}
-
-				} catch (BadSizePrayTimesArray e) {
-					logger.error("Error while creating/launching muezzin call daemon !!!");
-					e.printStackTrace();
+				if (_verboseLevel > 0) {
+					System.out.print("\nMuezzin call daemon informations ...");
+					System.out.println(muezzinCallDaemon);
 				}
+
+			} catch (BadSizePrayTimesArray e) {
+				logger.error("Error while creating/launching muezzin call daemon !!!");
+				e.printStackTrace();
 			}
-			else {
-				_computePrayTimes.stop();
-			}
+		} else { // No muezzinCallDaemon
+			_computePrayTimes.stop();
 		}
 	}
 	// =======================================================================
@@ -211,8 +212,9 @@ public class WaqtSalat implements Observer {
 	@Override
 	public synchronized void update(Observable o, Object prayerTimes) {
 		_prayerTimes = (ArrayList<String>) prayerTimes;
-		if(!_quiet)
+		if(!_quiet) {
 			printPrays();
+		}
 	}
 	// =======================================================================
 
@@ -231,9 +233,10 @@ public class WaqtSalat implements Observer {
 					Messages.getString("output.PRAYS"), 
 					Messages.getString("output.TIMES")));
 			System.out.println("+=================================+");
-			for (int i = 0; i < _prayerTimes.size(); i++)
+			for (int i = 0; i < _prayerTimes.size(); i++) {
 				System.out.println(String.format("| %-20s : %-8s |",
-						ComputePrayTimes.getPrayernames().get(i), _prayerTimes.get(i)));
+						PrayName.getNamesList().get(i), _prayerTimes.get(i)));
+			}
 			System.out.println("+=================================+");
 
 		}

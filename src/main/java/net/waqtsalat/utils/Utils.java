@@ -150,13 +150,28 @@ public class Utils {
 	// ======================================================================
 
 	/**
+	 * Returns whether we're running under Windows 95/98/ME.
+	 * 
+	 * @return <code>true</code> if running an Windows 95/98/ME,
+	 *         <code>false</code> otherwise.
+	 */
+
+	public boolean isOldWindows(){
+		String os = System.getProperty("os.name");
+
+		return isWindows() && (System.getProperty("os.version").compareTo("5.0") < 0) &&
+		!os.toLowerCase().startsWith("windows nt");
+	}
+
+	// ======================================================================
+
+	/**
 	 * @return <code>true</code> if the platform is windows, <code>false</code>
 	 *         otherwise.
 	 */
 	public boolean isWindows() {
-		if (System.getProperty("os.name").startsWith("Windows"))
-			return true;
-		return false;
+		String os = System.getProperty("os.name"); 
+		return (os != null) && os.toLowerCase().startsWith("windows");
 	}
 
 	// ======================================================================
@@ -166,9 +181,8 @@ public class Utils {
 	 *         otherwise.
 	 */
 	public boolean isLinux() {
-		if (System.getProperty("os.name").startsWith("Linux"))
-			return true;
-		return false;
+		String os = System.getProperty("os.name"); 
+		return (os != null) && os.toLowerCase().startsWith("linux");
 	}
 
 	// ======================================================================
@@ -178,11 +192,41 @@ public class Utils {
 	 *         otherwise.
 	 */
 	public boolean isMac() {
-		if (System.getProperty("os.name").startsWith("Mac OS"))
-			return true;
-		return false;
+		String os = System.getProperty("os.name");
+		return (os != null) && os.toLowerCase().startsWith("mac");
 	}
+
 	// ======================================================================
+
+	/**
+	 * Returns whether we're running under Mac OS X.
+	 * 
+	 * @return <code>true</code> if running Mac OS X, <code>false</code>
+	 *         otherwise.
+	 */
+
+	public boolean isMacOSX(){
+		String os = System.getProperty("os.name");
+		return (os != null) && os.toLowerCase().startsWith("mac os x");
+	}
+
+	// ======================================================================
+
+	/**
+	 * Returns whether we're running under Solaris.
+	 * 
+	 * @return <code>true</code> if running Solaris, <code>false</code>
+	 *         otherwise.
+	 */
+
+	public boolean isSolaris(){
+		String os = System.getProperty("os.name");
+		return (os != null) && (os.toLowerCase().startsWith("solaris") ||
+				os.toLowerCase().startsWith("sunos"));
+	}
+
+	// ======================================================================
+
 
 	/**
 	 * Test whether or not we have an internet connection.<br>
@@ -347,12 +391,12 @@ public class Utils {
 	 * 
 	 */
 	public static String humanReadableByteCount(long bytes, boolean si) {
-	    int unit = si ? 1000 : 1024;
-	    if (bytes < unit) return bytes + " B";
-	    int exp = (int) (Math.log(bytes) / Math.log(unit));
-	   // String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
-	    String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + "";
-	    return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+		int unit = si ? 1000 : 1024;
+		if (bytes < unit) return bytes + " B";
+		int exp = (int) (Math.log(bytes) / Math.log(unit));
+		// String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + (si ? "" : "i");
+		String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp-1) + "";
+		return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
 	}
 
 	// ======================================================================

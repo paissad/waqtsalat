@@ -21,6 +21,11 @@
 
 package net.waqtsalat.gui;
 
+import static net.waqtsalat.WaqtSalat.logger;
+import static net.waqtsalat.gui.WaqtSalatPrefs.userPrefs;
+
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -29,6 +34,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -40,14 +46,26 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JSeparator;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
+import javax.swing.ImageIcon;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.MatteBorder;
 
 import net.waqtsalat.ComputePrayTimes;
 import net.waqtsalat.ComputePrayTimes.CalculationMethod;
 import net.waqtsalat.ComputePrayTimes.JuristicMethod;
+import net.waqtsalat.Messages;
+import net.waqtsalat.PrayName;
 import net.waqtsalat.gui.WaqtSalatPrefs.guiSettings;
-import static net.waqtsalat.WaqtSalat.logger;
-import static net.waqtsalat.gui.WaqtSalatPrefs.userPrefs;
+import java.awt.BorderLayout;
 
 
 /**
@@ -74,6 +92,10 @@ public class PrayTimesTab extends JPanel implements ActionListener {
 	private JRadioButton rdbtnShafii;
 	private JRadioButton rdbtnHanafi;
 	private JComboBox comboBoxMethod;
+	private JSeparator separator;
+	private JTable prayTable;
+	private JLabel lblIconKaba;
+	private JPanel prayPanel;
 
 
 	public PrayTimesTab() {
@@ -82,17 +104,16 @@ public class PrayTimesTab extends JPanel implements ActionListener {
 		initMethod_Names();
 
 		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{0, 0};
+		gridBagLayout.columnWidths = new int[]{0, 0, 0};
 		gridBagLayout.rowHeights = new int[]{0, 0, 0};
-		gridBagLayout.columnWeights = new double[]{1.0, Double.MIN_VALUE};
+		gridBagLayout.columnWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
 		gridBagLayout.rowWeights = new double[]{1.0, 1.0, Double.MIN_VALUE};
 		setLayout(gridBagLayout);
 
 		madhabPanel = new JPanel();
 		GridBagConstraints gbc_madhabPanel = new GridBagConstraints();
-		gbc_madhabPanel.anchor = GridBagConstraints.BASELINE;
-		gbc_madhabPanel.insets = new Insets(5, 15, 0, 15);
-		gbc_madhabPanel.fill = GridBagConstraints.HORIZONTAL;
+		gbc_madhabPanel.anchor = GridBagConstraints.WEST;
+		gbc_madhabPanel.insets = new Insets(5, 15, 5, 15);
 		gbc_madhabPanel.gridx = 0;
 		gbc_madhabPanel.gridy = 0;
 		add(madhabPanel, gbc_madhabPanel);
@@ -136,11 +157,78 @@ public class PrayTimesTab extends JPanel implements ActionListener {
 		madhabBtnGrp.add(rdbtnShafii);
 		madhabBtnGrp.add(rdbtnHanafi);
 
+		separator = new JSeparator();
+		separator.setForeground(Color.BLACK);
+		separator.setOrientation(SwingConstants.VERTICAL);
+		GridBagConstraints gbc_separator = new GridBagConstraints();
+		gbc_separator.anchor = GridBagConstraints.LINE_END;
+		gbc_separator.fill = GridBagConstraints.VERTICAL;
+		gbc_separator.gridheight = 2;
+		gbc_separator.insets = new Insets(5, 5, 0, 5);
+		gbc_separator.gridx = 0;
+		gbc_separator.gridy = 0;
+		add(separator, gbc_separator);
+
+		prayPanel = new JPanel();
+		GridBagConstraints gbc_prayPanel = new GridBagConstraints();
+		gbc_prayPanel.fill = GridBagConstraints.HORIZONTAL;
+		gbc_prayPanel.insets = new Insets(5, 5, 5, 10);
+		gbc_prayPanel.gridx = 1;
+		gbc_prayPanel.gridy = 0;
+		add(prayPanel, gbc_prayPanel);
+		prayPanel.setLayout(new BorderLayout());
+
+		prayTable = new JTable();
+		prayTable.setBorder(new CompoundBorder(
+				new EtchedBorder(EtchedBorder.LOWERED, null, null),
+				new MatteBorder(1, 1, 1, 1, (Color) new Color(0, 0, 0))));
+		prayTable.setBackground(Color.LIGHT_GRAY);
+		prayTable.setFillsViewportHeight(true);
+		prayTable.setColumnSelectionAllowed(true);
+		prayTable.setCellSelectionEnabled(true);
+		prayTable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		prayTable.setGridColor(Color.BLACK);
+		DefaultTableCellRenderer atcr = new AdhanTableCellRenderer();
+		prayTable.setModel(new AdhanDefaultTableModel(
+				new Object[][] {
+						{null, null},
+						{null, null},
+						{null, null},
+						{null, null},
+						{null, null},
+						{null, null},
+						{null, null},
+				},
+				new String[] {
+						Messages.getString("output.PRAYS"), Messages.getString("output.TIMES")
+				}
+		));
+		TableColumn col;
+		for (int i=0; i<prayTable.getColumnCount(); i++) {
+			col = prayTable.getColumn(prayTable.getColumnName(i));
+			col.setCellRenderer(atcr); col = null;
+		}
+		this.updatePrayTableContent();
+
+		JTableHeader th = prayTable.getTableHeader();
+		th.setBorder(prayTable.getBorder());
+		DefaultTableCellRenderer htcr = new HeaderTableCellRenderer();
+		th.setDefaultRenderer(htcr);
+		prayPanel.add(th, BorderLayout.NORTH);
+		prayPanel.add(prayTable, BorderLayout.CENTER);
+
+		lblIconKaba = new JLabel("");
+		lblIconKaba.setIcon(new ImageIcon(PrayTimesTab.class.getResource("/images/kaba_128x128.png")));
+		GridBagConstraints gbc_lblIconKaba = new GridBagConstraints();
+		gbc_lblIconKaba.insets = new Insets(0, 5, 10, 0);
+		gbc_lblIconKaba.gridx = 1;
+		gbc_lblIconKaba.gridy = 1;
+		add(lblIconKaba, gbc_lblIconKaba);
+
 		methodPanel = new JPanel();
 		GridBagConstraints gbc_methodPanel = new GridBagConstraints();
-		gbc_methodPanel.fill = GridBagConstraints.HORIZONTAL;
-		gbc_methodPanel.anchor = GridBagConstraints.BASELINE;
-		gbc_methodPanel.insets = new Insets(0, 15, 5, 15);
+		gbc_methodPanel.anchor = GridBagConstraints.WEST;
+		gbc_methodPanel.insets = new Insets(0, 15, 10, 15);
 		gbc_methodPanel.gridx = 0;
 		gbc_methodPanel.gridy = 1;
 		add(methodPanel, gbc_methodPanel);
@@ -175,10 +263,15 @@ public class PrayTimesTab extends JPanel implements ActionListener {
 		gbc_comboBoxMethod.gridy = 0;
 		methodPanel.add(comboBoxMethod, gbc_comboBoxMethod);
 
-		String praytimesSettingsNotice = "Please, select the pray time settings so that<br>"
-			+ "it matches the prayer times of you Masjid as closely as possible"; 
-		JLabel lblNotice = new JLabel("<html>" + praytimesSettingsNotice + "</html>");
+		String praytimesSettingsNotice_11 = "Please, select the pray time settings so that";
+		String praytimesSettingsNotice_12 = "it matches the prayer times of your Masjid as closely as possible."; 
+		JLabel lblNotice = new JLabel("<html>" 
+				+ praytimesSettingsNotice_11 + "<br>"
+				+ praytimesSettingsNotice_12 + "</html>"
+		);
+		lblNotice.setFont(new Font("Calibri", Font.BOLD | Font.ITALIC, 13));
 		GridBagConstraints gbc_lblNotice = new GridBagConstraints();
+		gbc_lblNotice.fill = GridBagConstraints.HORIZONTAL;
 		gbc_lblNotice.anchor = GridBagConstraints.WEST;
 		gbc_lblNotice.gridwidth = 2;
 		gbc_lblNotice.insets = new Insets(0, 0, 0, 5);
@@ -253,6 +346,13 @@ public class PrayTimesTab extends JPanel implements ActionListener {
 		}
 	}
 
+	private void updatePrayTableContent() { // TODO: to complete ...
+		ArrayList<String> prayNameList = PrayName.getNamesList();
+		for (int i=0; i< prayNameList.size(); i++) {
+			prayTable.setValueAt(prayNameList.get(i), i, 0);
+		}
+	}
+
 	// ======================================================================
 	// Actions ...
 
@@ -281,6 +381,42 @@ public class PrayTimesTab extends JPanel implements ActionListener {
 				}
 				i ++;
 			}
+		}
+	}
+
+	// ======================================================================
+
+	class AdhanDefaultTableModel extends DefaultTableModel {
+
+		private static final long serialVersionUID = 1L;
+
+		AdhanDefaultTableModel(Object[][] objects, String[] strings) {
+			super(objects, strings);
+		}
+
+		@Override
+		public boolean isCellEditable(int row, int column) {
+			return false;
+		}
+	}
+
+	class AdhanTableCellRenderer extends DefaultTableCellRenderer {
+		private static final long serialVersionUID = 1L;
+
+		public AdhanTableCellRenderer() {
+			super();
+			setHorizontalAlignment(SwingConstants.CENTER);
+			setHorizontalTextPosition(DefaultTableCellRenderer.CENTER);
+		}
+	}
+
+	class HeaderTableCellRenderer extends AdhanTableCellRenderer {
+		private static final long serialVersionUID = 1L;
+
+		public HeaderTableCellRenderer() {
+			super();
+			this.setFont(new Font(
+					getFont().getName(), Font.BOLD, getFont().getSize()));
 		}
 	}
 
@@ -318,7 +454,4 @@ public class PrayTimesTab extends JPanel implements ActionListener {
 	public synchronized static String getSelectedMethod() {
 		return _currentMethod_String;
 	}
-
-	// ======================================================================
-
 }

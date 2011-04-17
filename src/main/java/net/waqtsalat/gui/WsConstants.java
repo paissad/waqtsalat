@@ -42,7 +42,7 @@ public interface WsConstants {
 
 	int MAINFRAME_MINIMUM_WIDTH   = 500;
 	int MAINFRAME_MININUM_HEIGHT  = 450;
-	int MAINFRAME_PREFERED_WIDTH  = 700;
+	int MAINFRAME_PREFERED_WIDTH  = 760;
 	int MAINFRAME_PREFERED_HEIGHT = 480;
 	int MENUBAR_PREFERED_HEIGHT   = 25;
 	int IMAGE_HEADER_PANEL_HEIGHT = 50;
@@ -63,7 +63,7 @@ public interface WsConstants {
 	Icon TAB_ICON_GENERAL        = new ImageIcon(ClassLoader.getSystemResource("icons/general_preferences.png"));
 	Icon TAB_ICON_LOCATION       = new ImageIcon(ClassLoader.getSystemResource("icons/earth.png"));
 	Icon TAB_ICON_PREFERENCES    = new ImageIcon(ClassLoader.getSystemResource("icons/preferences.png"));
-	Icon TAB_ICON_PRAYTIMES      = new ImageIcon(ClassLoader.getSystemResource("icons/mosque_16x16.png"));
+	Icon TAB_ICON_PRAYTIMES      = new ImageIcon(ClassLoader.getSystemResource("icons/carpet.png"));
 	Icon TAB_ICON_ALERTS         = new ImageIcon(ClassLoader.getSystemResource("icons/alert.png"));
 	Icon TAB_ICON_ADVANCED       = new ImageIcon(ClassLoader.getSystemResource("icons/advanced_config.png"));
 	Icon ICON_SEARCH_LOCATION    = new ImageIcon(ClassLoader.getSystemResource("icons/search-icon-1.png"));
@@ -79,6 +79,8 @@ public interface WsConstants {
 	Icon ICON_AUDIO_VOLUME       = new ImageIcon(ClassLoader.getSystemResource("icons/audio-volume.png"));
 	Icon ICON_SOUND_ON           = new ImageIcon(ClassLoader.getSystemResource("icons/sound-unmute.png"));
 	Icon ICON_SOUND_OFF          = new ImageIcon(ClassLoader.getSystemResource("icons/sound-mute.png"));
+	Icon ICON_SOUND_PLAY         = new ImageIcon(ClassLoader.getSystemResource("icons/sound-play.png"));
+	Icon ICON_SOUND_STOP         = new ImageIcon(ClassLoader.getSystemResource("icons/sound-stop.png"));
 	Icon ICON_GROWL              = new ImageIcon(ClassLoader.getSystemResource("icons/growl-icon.png"));
 	
 	String ICON_FLAGS_DIR = "images/flags/";
@@ -89,6 +91,6 @@ public interface WsConstants {
 
 	// Supported audio files: additional extensions apart from the default ones (wav, au, aif ...)
 	// Use lower case !
-	String[] ADDITIONAL_EXTENSIONS = {"mp3"};
+	String[] ADDITIONAL_AUDIO_EXTENSIONS = {"mp3"};
 
 }

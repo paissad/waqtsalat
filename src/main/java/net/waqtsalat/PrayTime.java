@@ -68,8 +68,6 @@ public class PrayTime {
 	private int Time12; // 12-hour format
 	private int Time12NS; // 12-hour format with no suffix
 	private int Floating; // floating point number
-	// Time Names
-	private ArrayList<String> timeNames;
 	private String InvalidTime; // The string used for invalid times
 	// --------------------- Technical Settings --------------------
 	private int numIterations; // number of iterations needed to compute times
@@ -121,16 +119,6 @@ public class PrayTime {
 		this.setTime12(1); // 12-hour format
 		this.setTime12NS(2); // 12-hour format with no suffix
 		this.setFloating(3); // floating point number
-
-		// Time Names
-		timeNames = new ArrayList<String>();
-		timeNames.add(Messages.getString("prayname.Fajr"));
-		timeNames.add(Messages.getString("prayname.Sunrise"));
-		timeNames.add(Messages.getString("prayname.Dhuhr"));
-		timeNames.add(Messages.getString("prayname.Asr"));
-		timeNames.add(Messages.getString("prayname.Sunset"));
-		timeNames.add(Messages.getString("prayname.Maghrib"));
-		timeNames.add(Messages.getString("prayname.Isha"));
 
 		InvalidTime = "-----"; // The string used for invalid times
 
@@ -942,9 +930,5 @@ public class PrayTime {
 
 	public void setNumIterations(int numIterations) {
 		this.numIterations = numIterations;
-	}
-
-	public ArrayList<String> getTimeNames() {
-		return timeNames;
 	}
 }
