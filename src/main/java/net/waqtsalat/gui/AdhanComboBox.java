@@ -1,22 +1,21 @@
 /*
- * WaqtSalat, for indicating the muslim prayers times in most cities.
- * Copyright (C) 2011  Papa Issa DIAKHATE (paissad).
+ * WaqtSalat, for indicating the muslim prayers times in most cities. Copyright
+ * (C) 2011 Papa Issa DIAKHATE (paissad).
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
+ * You should have received a copy of the GNU General Public License along with
+ * this program. If not, see <http://www.gnu.org/licenses/>.
+ * 
  * PLEASE DO NOT REMOVE THIS COPYRIGHT BLOCK.
- * 
  */
 
 package net.waqtsalat.gui;
@@ -65,411 +64,430 @@ import org.jaudiotagger.tag.TagException;
  */
 public class AdhanComboBox extends JComboBox {
 
-	private static final long serialVersionUID = 1L;
-	public static enum Selection {
+    private static final long serialVersionUID = 1L;
 
-		NONE ("None"),
-		DEFAULT_ADHAN_SOUND ("Default adhan"),
-		SELECT_FILE ("Select file ...");
+    public static enum Selection {
 
-		private String value;
+        NONE("None"),
+        DEFAULT_ADHAN_SOUND("Default adhan"),
+        SELECT_FILE("Select file ...");
 
-		private Selection(String valueName) {
-			value = valueName;
-		}
+        private String value;
 
-		public String getDescName() {
-			return value;
-		}
-	};
+        private Selection(String valueName) {
+            value = valueName;
+        }
 
-	private HashMap<Selection, String> _possibleSelections = new HashMap<AdhanComboBox.Selection, String>();
+        public String getDescName() {
+            return value;
+        }
+    };
 
-	private String defaultAdhan;
-	private String defaultSelectDir;
-	private JFileChooser adhanChooser;
+    private HashMap<Selection, String> _possibleSelections = new HashMap<AdhanComboBox.Selection, String>();
 
-	// ======================================================================
-	// Constructors ...
+    private String                     defaultAdhan;
+    private String                     defaultSelectDir;
+    private JFileChooser               adhanChooser;
 
-	public AdhanComboBox() {
-		this(WsConstants.DEFAULT_ADHAN_SOUND);
-	}
+    // ======================================================================
+    // Constructors ...
 
-	// ======================================================================
+    public AdhanComboBox() {
+        this(WsConstants.DEFAULT_ADHAN_SOUND);
+    }
 
-	public AdhanComboBox(String defaultAdhanSound) {
+    public AdhanComboBox(String defaultAdhanSound) {
 
-		initSelection_Names();
-		setModel(new DefaultComboBoxModel(
-				_possibleSelections.values().toArray(new String[_possibleSelections.size()])
-		));
-		setSelectedItem(Selection.NONE.getDescName()); // default item to use ...
-		this.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				adhanListSelection_actionPerformed(e);
-			}
-		});
-	}
+        initSelection_Names();
+        setModel(new DefaultComboBoxModel(
+                _possibleSelections.values().toArray(new String[_possibleSelections.size()])));
+        setSelectedItem(Selection.NONE.getDescName()); // default item to use
+                                                       // ...
+        this.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                adhanListSelection_actionPerformed(e);
+            }
+        });
+    }
 
-	// ======================================================================
+    // ======================================================================
 
-	private void adhanListSelection_actionPerformed(ItemEvent e) {
-		JComboBox cb = (JComboBox) e.getSource();
-		String currentSeletion  = (String) cb.getSelectedItem();
-		if (currentSeletion.equals(Selection.NONE.getDescName())) { // TODO ...
+    private void adhanListSelection_actionPerformed(ItemEvent e) {
+        JComboBox cb = (JComboBox) e.getSource();
+        String currentSeletion = (String) cb.getSelectedItem();
+        if (currentSeletion.equals(Selection.NONE.getDescName())) { // TODO ...
 
-		} else if (currentSeletion.equals(Selection.DEFAULT_ADHAN_SOUND.getDescName())) { // TODO ...
+        } else if (currentSeletion.equals(Selection.DEFAULT_ADHAN_SOUND.getDescName())) { // TODO
+                                                                                          // ...
 
-		} else if (currentSeletion.equals(Selection.SELECT_FILE.getDescName())) { // TODO ...
-			System.out.println("selection ...");
-			adhanChooser = new adhanJFileChooser();
-			adhanChooser.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if (JFileChooser.CANCEL_SELECTION.equals(e.getActionCommand())) {
-						System.out.println("selected -> " + ((File)e.getSource()).getName()); // TODO 
-						//adhanChooser.setVisible(false);  // TODO ...
-					} else if (JFileChooser.APPROVE_SELECTION.equals(e.getActionCommand())) {
-						System.out.println("canceled ..."); // TODO
-						//adhanChooser.setVisible(false); // TODO ...
-					} else { // TODO
-						System.out.println("unknown response ...");
-					}
-				}
-			});
-			adhanChooser.showOpenDialog(getParent());
+        } else if (currentSeletion.equals(Selection.SELECT_FILE.getDescName())) { // TODO
+                                                                                  // ...
+            System.out.println("selection ...");
+            adhanChooser = new adhanJFileChooser();
+            adhanChooser.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (JFileChooser.CANCEL_SELECTION.equals(e.getActionCommand())) {
+                        System.out.println("selected -> "
+                                + ((File) e.getSource()).getName()); // TODO
+                        // adhanChooser.setVisible(false); // TODO ...
+                    } else if (JFileChooser.APPROVE_SELECTION.equals(e.getActionCommand())) {
+                        System.out.println("canceled ..."); // TODO
+                        // adhanChooser.setVisible(false); // TODO ...
+                    } else { // TODO
+                        System.out.println("unknown response ...");
+                    }
+                }
+            });
+            adhanChooser.showOpenDialog(getParent());
 
-		} else {
-			// Not known selection ...
-		}
-	}
+        } else {
+            // Not known selection ...
+        }
+    }
 
-	// ======================================================================
+    // ======================================================================
 
-	class adhanJFileChooser extends JFileChooser {
+    class adhanJFileChooser extends JFileChooser {
 
-		private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
 
-		public adhanJFileChooser() {
-			super();
-			setDefaultSelectDir(WsConstants.DEFAULT_ADHAN_DIR);
-			setCurrentDirectory(new File(getDefaultSelectDir()));
-			setFileSelectionMode(JFileChooser.FILES_ONLY);
-			addChoosableFileFilter(new AdhanFileFilter());
-			setFileHidingEnabled(true);
-			AudioAccessory adhanAccessory = new AudioAccessory();
-			setAccessory(adhanAccessory);
-			addPropertyChangeListener(adhanAccessory); // to receive selection changes
-			addActionListener(adhanAccessory); // to receive approve/cancel button events
-			setApproveButtonText("Select");
-		}
-	}
-	// ======================================================================
+        public adhanJFileChooser() {
+            super();
+            setDefaultSelectDir(WsConstants.DEFAULT_ADHAN_DIR);
+            setCurrentDirectory(new File(getDefaultSelectDir()));
+            setFileSelectionMode(JFileChooser.FILES_ONLY);
+            addChoosableFileFilter(new AdhanFileFilter());
+            setFileHidingEnabled(true);
+            AudioAccessory adhanAccessory = new AudioAccessory();
+            setAccessory(adhanAccessory);
+            addPropertyChangeListener(adhanAccessory); // to receive selection
+                                                       // changes
+            addActionListener(adhanAccessory); // to receive approve/cancel
+                                               // button events
+            setApproveButtonText("Select");
+        }
+    }
 
-	/**
-	 * Represents the {@link FileFilter} for choosing an Adhan ( which is an
-	 * audio file).
-	 */
-	class AdhanFileFilter extends FileFilter {
+    // ======================================================================
 
-		@Override
-		public boolean accept(File f) {
-			if (f.isDirectory()) {
-				return true;
-			} else {
-				String extension = Utils.getExtension(f);
-				if (extension != null) {
-					extension = extension.toLowerCase();
-				}
-				return isExtensionSupported(extension);
-			}
-		}
-		// -----------------------------------------------
+    /**
+     * Represents the {@link FileFilter} for choosing an Adhan ( which is an
+     * audio file).
+     */
+    class AdhanFileFilter extends FileFilter {
 
-		@Override
-		public String getDescription() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-		// -----------------------------------------------
-	}
+        @Override
+        public boolean accept(File f) {
+            if (f.isDirectory()) {
+                return true;
+            } else {
+                String extension = Utils.getExtension(f);
+                if (extension != null) {
+                    extension = extension.toLowerCase();
+                }
+                return isExtensionSupported(extension);
+            }
+        }
 
-	// ======================================================================
+        // -----------------------------------------------
 
-	/**
-	 * Represents the Accessory for <code>JFileChooser</code> for playing audio
-	 * files.<br>
-	 * Got some inspiration from this <a href=
-	 * "http://www.java2s.com/Code/Java/Swing-JFC/JFileChooserclassinactionwithanaccessory.htm"
-	 * >link</a>.
-	 */
-	class AudioAccessory extends JPanel implements PropertyChangeListener, ActionListener {
+        @Override
+        public String getDescription() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+        // -----------------------------------------------
+    }
 
-		private static final long serialVersionUID = 1L;
+    // ======================================================================
 
-		private SimplePlayer audioPlayer;
-		private String currentFileName = new String();
-		private JPanel topPanel;
-		private JLabel fileLabel;
-		private JLabel tagsLabel;
-		private JPanel playerPanel;
-		private JButton playButton, stopButton;
+    /**
+     * Represents the Accessory for <code>JFileChooser</code> for playing audio
+     * files.<br>
+     * Got some inspiration from this <a href=
+     * "http://www.java2s.com/Code/Java/Swing-JFC/JFileChooserclassinactionwithanaccessory.htm"
+     * >link</a>.
+     */
+    class AudioAccessory extends JPanel implements PropertyChangeListener,
+            ActionListener {
 
-		// -----------------------------------------------
+        private static final long serialVersionUID = 1L;
 
-		/**
-		 * Default constructor.
-		 */
-		public AudioAccessory() {
+        private SimplePlayer      audioPlayer;
+        private String            currentFileName  = new String();
+        private JPanel            topPanel;
+        private JLabel            fileLabel;
+        private JLabel            tagsLabel;
+        private JPanel            playerPanel;
+        private JButton           playButton, stopButton;
 
-			GridBagLayout gridBagLayout = new GridBagLayout();
-			gridBagLayout.columnWidths = new int[]{0, 0, 0};
-			gridBagLayout.rowHeights = new int[]{0, 0};
-			gridBagLayout.columnWeights = new double[]{0.0, 0.0, Double.MIN_VALUE};
-			gridBagLayout.rowWeights = new double[]{0.0, Double.MIN_VALUE};
-			setLayout(gridBagLayout);
+        // -----------------------------------------------
 
-			topPanel = new JPanel();
-			GridBagConstraints gbc_topPanel = new GridBagConstraints();
-			gbc_topPanel.insets = new Insets(0, 5, 5, 5);
-			gbc_topPanel.anchor = GridBagConstraints.NORTHWEST;
-			gbc_topPanel.gridx = 1;
-			gbc_topPanel.gridy = 0;
-			add(topPanel, gbc_topPanel);
-			GridBagLayout gbl_topPanel = new GridBagLayout();
-			gbl_topPanel.columnWidths = new int[]{0, 0};
-			gbl_topPanel.rowHeights = new int[]{0, 0, 0, 0};
-			gbl_topPanel.columnWeights = new double[]{1.0, Double.MIN_VALUE};
-			gbl_topPanel.rowWeights = new double[]{0.0, 1.0, 0.0, Double.MIN_VALUE};
-			topPanel.setLayout(gbl_topPanel);
+        /**
+         * Default constructor.
+         */
+        public AudioAccessory() {
 
-			fileLabel = new JLabel("Audio File", JLabel.CENTER);
-			GridBagConstraints gbc_fileLabel = new GridBagConstraints();
-			gbc_fileLabel.insets = new Insets(0, 0, 5, 0);
-			gbc_fileLabel.gridx = 0;
-			gbc_fileLabel.gridy = 0;
-			gbc_fileLabel.anchor = GridBagConstraints.NORTHWEST;
-			topPanel.add(fileLabel, gbc_fileLabel);
+            GridBagLayout gridBagLayout = new GridBagLayout();
+            gridBagLayout.columnWidths = new int[] { 0, 0, 0 };
+            gridBagLayout.rowHeights = new int[] { 0, 0 };
+            gridBagLayout.columnWeights = new double[] { 0.0, 0.0, Double.MIN_VALUE };
+            gridBagLayout.rowWeights = new double[] { 0.0, Double.MIN_VALUE };
+            setLayout(gridBagLayout);
 
-			playerPanel = new JPanel();
-			GridBagConstraints gbc_playerPanel = new GridBagConstraints();
-			gbc_playerPanel.insets = new Insets(0, 0, 5, 0);
-			gbc_playerPanel.fill = GridBagConstraints.BOTH;
-			gbc_playerPanel.gridx = 0;
-			gbc_playerPanel.gridy = 1;
-			gbc_playerPanel.anchor = GridBagConstraints.WEST;
-			topPanel.add(playerPanel, gbc_playerPanel);
+            topPanel = new JPanel();
+            GridBagConstraints gbc_topPanel = new GridBagConstraints();
+            gbc_topPanel.insets = new Insets(0, 5, 5, 5);
+            gbc_topPanel.anchor = GridBagConstraints.NORTHWEST;
+            gbc_topPanel.gridx = 1;
+            gbc_topPanel.gridy = 0;
+            add(topPanel, gbc_topPanel);
+            GridBagLayout gbl_topPanel = new GridBagLayout();
+            gbl_topPanel.columnWidths = new int[] { 0, 0 };
+            gbl_topPanel.rowHeights = new int[] { 0, 0, 0, 0 };
+            gbl_topPanel.columnWeights = new double[] { 1.0, Double.MIN_VALUE };
+            gbl_topPanel.rowWeights = new double[] { 0.0, 1.0, 0.0, Double.MIN_VALUE };
+            topPanel.setLayout(gbl_topPanel);
 
-			playButton = new JButton("Play");
-			playButton.setIcon(WsConstants.ICON_SOUND_PLAY);
-			playButton.setEnabled(false);
-			playButton.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent arg0) {
-					if (audioPlayer != null) {
-						audioPlayer.stop();
-						audioPlayer.play();
-					}
-				}
-			});
-			playerPanel.add(playButton);
+            fileLabel = new JLabel("Audio File", JLabel.CENTER);
+            GridBagConstraints gbc_fileLabel = new GridBagConstraints();
+            gbc_fileLabel.insets = new Insets(0, 0, 5, 0);
+            gbc_fileLabel.gridx = 0;
+            gbc_fileLabel.gridy = 0;
+            gbc_fileLabel.anchor = GridBagConstraints.NORTHWEST;
+            topPanel.add(fileLabel, gbc_fileLabel);
 
-			stopButton = new JButton("Stop");
-			stopButton.setIcon(WsConstants.ICON_SOUND_STOP);
-			stopButton.setEnabled(false);
-			stopButton.addActionListener(new ActionListener() {				
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if (audioPlayer != null) {
-						audioPlayer.stop();
-					}
-				}
-			});
-			playerPanel.add(stopButton);
+            playerPanel = new JPanel();
+            GridBagConstraints gbc_playerPanel = new GridBagConstraints();
+            gbc_playerPanel.insets = new Insets(0, 0, 5, 0);
+            gbc_playerPanel.fill = GridBagConstraints.BOTH;
+            gbc_playerPanel.gridx = 0;
+            gbc_playerPanel.gridy = 1;
+            gbc_playerPanel.anchor = GridBagConstraints.WEST;
+            topPanel.add(playerPanel, gbc_playerPanel);
 
-			tagsLabel = new JLabel("");
-			tagsLabel.setFont(new Font("Calibri", Font.PLAIN, 13));
-			GridBagConstraints gbc_tagsLabel = new GridBagConstraints();
-			gbc_tagsLabel.gridx = 0;
-			gbc_tagsLabel.gridy = 2;
-			gbc_tagsLabel.anchor = GridBagConstraints.SOUTHWEST;
-			tagsLabel.setHorizontalAlignment(SwingConstants.LEADING);
-			topPanel.add(tagsLabel, gbc_tagsLabel);
-		}
-		// -----------------------------------------------
+            playButton = new JButton("Play");
+            playButton.setIcon(WsConstants.ICON_SOUND_PLAY);
+            playButton.setEnabled(false);
+            playButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent arg0) {
+                    if (audioPlayer != null) {
+                        audioPlayer.stop();
+                        audioPlayer.play();
+                    }
+                }
+            });
+            playerPanel.add(playButton);
 
-		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			String propertyName = evt.getPropertyName();
-			if (JFileChooser.SELECTED_FILE_CHANGED_PROPERTY.equals(propertyName)) {
-				File f = (File) evt.getNewValue();
-				String audioExtension = Utils.getExtension(f);
-				if (audioExtension != null) {
-					audioExtension = audioExtension.toLowerCase();
-				}
+            stopButton = new JButton("Stop");
+            stopButton.setIcon(WsConstants.ICON_SOUND_STOP);
+            stopButton.setEnabled(false);
+            stopButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (audioPlayer != null) {
+                        audioPlayer.stop();
+                    }
+                }
+            });
+            playerPanel.add(stopButton);
 
-				// Make reasonably sure it's an audio file
-				if (isExtensionSupported(audioExtension)) {
-					setCurrentClip(f);
-					tagsLabel.setText(getTagsInfos(f));
-				} else {
-					setCurrentClip(null);
-				}
-			} else {
-				setCurrentClip(null);
-			}
-		}
-		// -----------------------------------------------
+            tagsLabel = new JLabel("");
+            tagsLabel.setFont(new Font("Calibri", Font.PLAIN, 13));
+            GridBagConstraints gbc_tagsLabel = new GridBagConstraints();
+            gbc_tagsLabel.gridx = 0;
+            gbc_tagsLabel.gridy = 2;
+            gbc_tagsLabel.anchor = GridBagConstraints.SOUTHWEST;
+            tagsLabel.setHorizontalAlignment(SwingConstants.LEADING);
+            topPanel.add(tagsLabel, gbc_tagsLabel);
+        }
 
-		private void setCurrentClip(File audioFile) {			
-			if (audioPlayer != null)
-				audioPlayer.stop();
+        // -----------------------------------------------
 
-			// Make sure we have a real file, otherwise, disable the buttons
-			if (audioFile == null || audioFile.getName() == null || audioFile.isDirectory()) {
-				fileLabel.setText("No audio selected");
-				tagsLabel.setText(null);
-				playButton.setEnabled(false);
-				stopButton.setEnabled(false);
-				return;
-			}
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            String propertyName = evt.getPropertyName();
+            if (JFileChooser.SELECTED_FILE_CHANGED_PROPERTY.equals(propertyName)) {
+                File f = (File) evt.getNewValue();
+                String audioExtension = Utils.getExtension(f);
+                if (audioExtension != null) {
+                    audioExtension = audioExtension.toLowerCase();
+                }
 
-			// Ok, seems the audio file is real, so load it and enable the buttons
-			String fileName = audioFile.getName();
-			fileLabel.setText(trimTextWithDots(fileName));
-			if (fileName.equals(currentFileName)) { // same file ...
-				playButton.setEnabled(true);
-				stopButton.setEnabled(true);
-				return;
-			}
+                // Make reasonably sure it's an audio file
+                if (isExtensionSupported(audioExtension)) {
+                    setCurrentClip(f);
+                    tagsLabel.setText(getTagsInfos(f));
+                } else {
+                    setCurrentClip(null);
+                }
+            } else {
+                setCurrentClip(null);
+            }
+        }
 
-			currentFileName = fileName;
-			audioPlayer = new SimplePlayer(audioFile);
-			fileLabel.setText(trimTextWithDots(fileName));
-			playButton.setEnabled(true);
-			stopButton.setEnabled(true);
-		}
-		// -----------------------------------------------
+        // -----------------------------------------------
 
-		private String getTagsInfos(File file) {
-			String format = "%-12s : %s<br>";
-			AudioTagsReader tagger = null;
-			try {
-				tagger = new AudioTagsReader(file);
-			}
-			catch (CannotReadException e) {e.printStackTrace();}
-			catch (IOException e) {e.printStackTrace();}
-			catch (TagException e) {e.printStackTrace();}
-			catch (ReadOnlyFileException e) {e.printStackTrace();}
-			catch (InvalidAudioFrameException e) {e.printStackTrace();}
+        private void setCurrentClip(File audioFile) {
+            if (audioPlayer != null)
+                audioPlayer.stop();
 
-			StringBuilder infos = new StringBuilder();
+            // Make sure we have a real file, otherwise, disable the buttons
+            if (audioFile == null || audioFile.getName() == null
+                    || audioFile.isDirectory()) {
+                fileLabel.setText("No audio selected");
+                tagsLabel.setText(null);
+                playButton.setEnabled(false);
+                stopButton.setEnabled(false);
+                return;
+            }
 
-			infos.append("<html>");
-			infos.append(String.format(format, "Title", tagger.getTag_Title()));
-			infos.append(String.format(format, "Artist", tagger.getTag_Artist()));
-			infos.append(String.format(format, "Album", tagger.getTag_Album()));
-			String comment = tagger.getTag_Comment();
-			comment = (comment.equals("0")) ? "" : comment;
-			infos.append(String.format(format, "Comment", comment));
-			infos.append(String.format(format, "Year", tagger.getTag_Year()));
+            // Ok, seems the audio file is real, so load it and enable the
+            // buttons
+            String fileName = audioFile.getName();
+            fileLabel.setText(trimTextWithDots(fileName));
+            if (fileName.equals(currentFileName)) { // same file ...
+                playButton.setEnabled(true);
+                stopButton.setEnabled(true);
+                return;
+            }
 
-			AudioHeader audioHeader = tagger.getAudioHeader();
+            currentFileName = fileName;
+            audioPlayer = new SimplePlayer(audioFile);
+            fileLabel.setText(trimTextWithDots(fileName));
+            playButton.setEnabled(true);
+            stopButton.setEnabled(true);
+        }
 
+        // -----------------------------------------------
 
-			infos.append(String.format(format, "Duration",
-					Utils.formatDuration("mm:ss", audioHeader.getTrackLength() * 1000L)));
-			String bitRate = audioHeader.getBitRate() + " kbit/s";
-			infos.append(String.format(format, "Bitrate", bitRate));
-			infos.append(String.format(format, "Channels", audioHeader.getChannels()));
-			infos.append(String.format(format, "Encoding", audioHeader.getEncodingType()));
-			infos.append(String.format(format, "Format", audioHeader.getFormat()));
-			String sampleRate = audioHeader.getSampleRate() + " Hz";
-			infos.append(String.format(format, "SampleRate", sampleRate));
-			infos.append(String.format(format, "Size",
-					Utils.humanReadableByteCount((file.length()), false)));
+        private String getTagsInfos(File file) {
+            String format = "%-12s : %s<br>";
+            AudioTagsReader tagger = null;
+            try {
+                tagger = new AudioTagsReader(file);
+            } catch (CannotReadException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (TagException e) {
+                e.printStackTrace();
+            } catch (ReadOnlyFileException e) {
+                e.printStackTrace();
+            } catch (InvalidAudioFrameException e) {
+                e.printStackTrace();
+            }
 
-			infos.append("</html>");
-			return infos.toString();
-		}
-		// -----------------------------------------------
+            StringBuilder infos = new StringBuilder();
 
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			// Be a little cavalier here...we're assuming the dialog was just
-			// approved or cancelled so we should stop any playing clip
-			if (audioPlayer != null) {
-				audioPlayer.stop();
-			}
-		}
-		// -----------------------------------------------
-		
-		private String trimTextWithDots(String text) {
-			if (text != null && text.length() > 25 ) {
-				text = text.substring(0, 25) + "...";
-			}
-			return text;
-		}
-		
-		// -----------------------------------------------
+            infos.append("<html>");
+            infos.append(String.format(format, "Title", tagger.getTag_Title()));
+            infos.append(String.format(format, "Artist", tagger.getTag_Artist()));
+            infos.append(String.format(format, "Album", tagger.getTag_Album()));
+            String comment = tagger.getTag_Comment();
+            comment = (comment.equals("0"))
+                    ? "" : comment;
+            infos.append(String.format(format, "Comment", comment));
+            infos.append(String.format(format, "Year", tagger.getTag_Year()));
 
-	}
+            AudioHeader audioHeader = tagger.getAudioHeader();
 
-	// ======================================================================
+            infos.append(String.format(format, "Duration",
+                    Utils.formatDuration("mm:ss", audioHeader.getTrackLength() * 1000L)));
+            String bitRate = audioHeader.getBitRate() + " kbit/s";
+            infos.append(String.format(format, "Bitrate", bitRate));
+            infos.append(String.format(format, "Channels", audioHeader.getChannels()));
+            infos.append(String.format(format, "Encoding", audioHeader.getEncodingType()));
+            infos.append(String.format(format, "Format", audioHeader.getFormat()));
+            String sampleRate = audioHeader.getSampleRate() + " Hz";
+            infos.append(String.format(format, "SampleRate", sampleRate));
+            infos.append(String.format(format, "Size",
+                    Utils.humanReadableByteCount((file.length()), false)));
 
-	/**
-	 * Checks whether or not a file is eligible for reading/playing like an
-	 * audio file.
-	 * 
-	 * @param extension
-	 * @return <code>true</code> if the extension is known and supported,
-	 *         <code>false</code> otherwise or when extension is
-	 *         <code>null</code>.
-	 */
-	public boolean isExtensionSupported(String extension) {
-		if (extension == null)
-			return false;
+            infos.append("</html>");
+            return infos.toString();
+        }
 
-		String[] default_extensions  = AudioUtils.getSupportedTargetTypes();
-		ArrayList<String> all_known_extensions = new ArrayList<String>();
+        // -----------------------------------------------
 
-		for (int i=0; i<default_extensions.length; i++)
-			all_known_extensions.add(default_extensions[i]);
-		for (int i=0; i<WsConstants.ADDITIONAL_AUDIO_EXTENSIONS.length; i++)
-			all_known_extensions.add(WsConstants.ADDITIONAL_AUDIO_EXTENSIONS[i]);
-		return all_known_extensions.contains(extension);
-	}
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // Be a little cavalier here...we're assuming the dialog was just
+            // approved or cancelled so we should stop any playing clip
+            if (audioPlayer != null) {
+                audioPlayer.stop();
+            }
+        }
 
-	// ======================================================================
+        // -----------------------------------------------
 
-	private void initSelection_Names() {
-		Selection[] allSelections = Selection.values();
-		for (int i=0; i<allSelections.length; i++) {
-			_possibleSelections.put(allSelections[i], allSelections[i].getDescName());
-		}
-	}
+        private String trimTextWithDots(String text) {
+            if (text != null && text.length() > 25) {
+                text = text.substring(0, 25) + "...";
+            }
+            return text;
+        }
 
-	// ======================================================================
-	// Getters / Setters ...
+        // -----------------------------------------------
 
-	public void setDefaultAdhan(String defaultAdhan) {
-		this.defaultAdhan = defaultAdhan;
-	}
+    }
 
-	public String getDefaultAdhan() {
-		return defaultAdhan;
-	}
+    // ======================================================================
 
-	public void setDefaultSelectDir(String defaultSelectDir) {
-		this.defaultSelectDir = defaultSelectDir;
-	}
+    /**
+     * Checks whether or not a file is eligible for reading/playing like an
+     * audio file.
+     * 
+     * @param extension
+     * @return <code>true</code> if the extension is known and supported,
+     *         <code>false</code> otherwise or when extension is
+     *         <code>null</code>.
+     */
+    public boolean isExtensionSupported(String extension) {
+        if (extension == null)
+            return false;
 
-	public String getDefaultSelectDir() {
-		return defaultSelectDir;
-	}
+        String[] default_extensions = AudioUtils.getSupportedTargetTypes();
+        ArrayList<String> all_known_extensions = new ArrayList<String>();
 
-	// ======================================================================
+        for (int i = 0; i < default_extensions.length; i++)
+            all_known_extensions.add(default_extensions[i]);
+        for (int i = 0; i < WsConstants.ADDITIONAL_AUDIO_EXTENSIONS.length; i++)
+            all_known_extensions.add(WsConstants.ADDITIONAL_AUDIO_EXTENSIONS[i]);
+        return all_known_extensions.contains(extension);
+    }
+
+    // ======================================================================
+
+    private void initSelection_Names() {
+        Selection[] allSelections = Selection.values();
+        for (int i = 0; i < allSelections.length; i++) {
+            _possibleSelections.put(allSelections[i], allSelections[i].getDescName());
+        }
+    }
+
+    // ======================================================================
+    // Getters / Setters ...
+
+    public void setDefaultAdhan(String defaultAdhan) {
+        this.defaultAdhan = defaultAdhan;
+    }
+
+    public String getDefaultAdhan() {
+        return defaultAdhan;
+    }
+
+    public void setDefaultSelectDir(String defaultSelectDir) {
+        this.defaultSelectDir = defaultSelectDir;
+    }
+
+    public String getDefaultSelectDir() {
+        return defaultSelectDir;
+    }
+
+    // ======================================================================
 
 }

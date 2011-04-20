@@ -66,13 +66,11 @@ public class WaqtSalatPrefs {
 		String root = "/waqtsalat";
 		userPrefs   = Preferences.userRoot().node(root);
 		systemPrefs = Preferences.systemRoot().node(root);
-		/*
-		 * WaqtSalatPrefs o = new WaqtSalatPrefs();
-		 * root = o.getClass().getPackage().getName();
-		 * userPrefs   = Preferences.userRoot().node(root);
-		 * systemPrefs = Preferences.systemRoot().node(root);
-		 * o = null;
-		 * 
-		 */
-	}
+        /*
+         * WaqtSalatPrefs o = new WaqtSalatPrefs(); root =
+         * o.getClass().getPackage().getName(); userPrefs =
+         * Preferences.userRoot().node(root); systemPrefs =
+         * Preferences.systemRoot().node(root); o = null;
+         */
+    }
 }
