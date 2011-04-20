@@ -41,7 +41,7 @@ import javax.swing.JComboBox;
 import javax.swing.JButton;
 import javax.swing.DefaultComboBoxModel;
 
-import net.waqtsalat.utils.StartupUtils;
+import net.waqtsalat.utils.StartupSession;
 import static net.waqtsalat.gui.WaqtSalatPrefs.userPrefs;
 import static net.waqtsalat.gui.WaqtSalatPrefs.guiSettings;
 
@@ -331,9 +331,9 @@ public class GeneralTab extends JPanel {
 		userPrefs.putBoolean(
 				guiSettings.START_AT_LOGIN.toString(), currentSelection);
 		if (currentSelection == true) {
-			StartupUtils.startAppAtLogin();
+			StartupSession.addStartupAtLogin();
 		} else {
-			StartupUtils.removeStartupLogin();
+			StartupSession.removeStartupAtLogin();
 		}
 	}
 
