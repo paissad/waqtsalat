@@ -252,10 +252,11 @@ public class LocationTab extends JPanel implements Observer {
         textFieldSearchLocation = new JSearchTextField();
         textFieldSearchLocation.setEnabled(!isAutomaticLocation);
         textFieldSearchLocation.setTextWhenNotFocused("Search ...");
-        // FIXME: there is a problem with the apple look&feel,
-        // the text "search" is under the icon, thus before solving that bug, we
-        // currently
-        // do not set the icon search :(
+        /*
+         * FIXME: there is a problem with the apple look&feel, the text "search"
+         * is under the icon, thus before solving that bug, we currently do not
+         * set the icon search :(
+         */
         if (!UIManager.getLookAndFeel().getID().equals("Aqua")) {
             textFieldSearchLocation.setIcon(WsConstants.ICON_SEARCH_LOCATION);
         }
@@ -302,7 +303,6 @@ public class LocationTab extends JPanel implements Observer {
                                 (String) listModellocation.elementAt(index));
                     }
                 }
-
             }
         });
         scrollPane.setViewportView(listLocation);
@@ -450,7 +450,7 @@ public class LocationTab extends JPanel implements Observer {
                     logger.error(ioe.getMessage());
                     // ioe.printStackTrace();
                 }
-            } else { // (no geoip work ...) Search into the Lucene index.
+            } else { // (no GeoIp work ...) Search into the Lucene index.
                 try {
                     String entry = textFieldSearchLocation.getText();
                     _locationIconState.setState(LocationStateLabel.State.SEARCHING);
@@ -560,7 +560,7 @@ public class LocationTab extends JPanel implements Observer {
             sqle.printStackTrace();
         } catch (IOException ioe) {
             ioe.printStackTrace();
-        } catch (ParseException pe) {/* pe.printStackTrace(); */
+        } catch (ParseException pe) {
         }
     }
 
@@ -707,7 +707,6 @@ public class LocationTab extends JPanel implements Observer {
         } catch (SQLException e) {
             logger.error("Error while retreiving country from coordinates !!!");
             logger.error(e.getMessage());
-            // e.printStackTrace();
         }
     }
 
