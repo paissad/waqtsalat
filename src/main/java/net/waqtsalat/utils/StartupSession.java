@@ -20,21 +20,25 @@
 
 package net.waqtsalat.utils;
 
-import static net.waqtsalat.WaqtSalat.logger;
-import static net.waqtsalat.utils.Utils.printErrorProcess;
-
 import java.io.IOException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.sun.jna.Platform;
 
 /**
  * Contains some convenience methods to start the application during login.<br>
  * Currently, it works only for MacOSX and on some Windows systems too.
  * 
- * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
+ * @author Papa Issa DIAKHATE (paissad)
  */
 public class StartupSession {
 
-    private static final String appPath_MACOSX = "/Applications/WaqtSalat.app";
-    private static final String appPath_WIN32  = "";
+    private static final String APP_PATH_MACOSX = "/Applications/WaqtSalat.app";
+    private static final String APP_PATH_WIN32  = "";
+    
+    private static Logger logger = LoggerFactory.getLogger(StartupSession.class);
 
     // ======================================================================
 
@@ -49,15 +53,12 @@ public class StartupSession {
      * @throws IOException
      */
 
-    public static void addStartupAtLogin() throws IOException,
-            InterruptedException {
-        Utils sys = new Utils();
-        if (sys.isMac()) {
+    public static void addStartupAtLogin() throws IOException, InterruptedException {
+        if (Platform.isMac()) {
             startAppAtLogin_MACOSX();
-        } else if (sys.isWindows()) {
+        } else if (Platform.isWindows()) {
             startAppAtLogin_WIN32();
         } else {
-            // Not possible for other operating systems :/
             logger.error("Login startup feature not supported for this system !");
         }
     }
@@ -72,12 +73,10 @@ public class StartupSession {
      * @throws InterruptedException
      * @throws IOException
      */
-    public static void removeStartupAtLogin() throws IOException,
-            InterruptedException {
-        Utils sys = new Utils();
-        if (sys.isMac()) {
+    public static void removeStartupAtLogin() throws IOException, InterruptedException {
+        if (Platform.isMac()) {
             removeLoginStartup_MACOSX();
-        } else if (sys.isWindows()) {
+        } else if (Platform.isWindows()) {
             removeLoginStartup_WIN32();
         } else {
             // Not supported ...
@@ -103,27 +102,29 @@ public class StartupSession {
      * Paissad,
      */// @formatter:on
 
-    private static void startAppAtLogin_MACOSX() throws IOException,
-            InterruptedException {
+    private static void startAppAtLogin_MACOSX() throws IOException, InterruptedException {
         Process p = null;
         try {
             //@formatter:off
             String[] command = {
                     "/usr/bin/osascript",
                     "-e", "tell application \"System Events\"\n",
-                    "-e", "if \"" + appPath_MACOSX + "\" is not in (path of every login item) then\n",
-                    "-e", "make new login item with properties {path:\"" + appPath_MACOSX + "\", hidden:false} at end\n",
+                    "-e", "if \"" + APP_PATH_MACOSX + "\" is not in (path of every login item) then\n",
+                    "-e", "make new login item with properties {path:\"" + APP_PATH_MACOSX + "\", hidden:false} at end\n",
                     "-e", "end if\n",
                     "-e", "end tell\n"
             };
             // @formatter:on
 
-            p = Runtime.getRuntime().exec(command, null, null);
+            ProcessBuilder pb = new ProcessBuilder(command);
+            pb.directory(null);
+            p = pb.start();
             int exitStatus = p.waitFor();
-            if (exitStatus != 0) {
-                logger.warn("It seems like the creation of login startup property failed, the exit status is ({}).", exitStatus);
+            if (p != null && exitStatus != 0) {
+                logger.warn("It seems like the creation of login startup property failed, the exit status is ({}).",
+                        exitStatus);
                 logger.warn("Please check into your system settings if the application is present in startup items ...");
-                printErrorProcess(p);
+                CommonUtils.printErrorProcess(p);
             } else {
                 logger.info("Now, the application will start at login.");
             }
@@ -140,17 +141,19 @@ public class StartupSession {
             String command[] = {
                     "/usr/bin/osascript",
                     "-e", "tell application \"System Events\"\n",
-                    "-e", "if \"" + appPath_MACOSX + "\" is in (path of every login item) then\n",
-                    "-e", "delete (every login item whose path is \"" + appPath_MACOSX + "\")\n",
+                    "-e", "if \"" + APP_PATH_MACOSX + "\" is in (path of every login item) then\n",
+                    "-e", "delete (every login item whose path is \"" + APP_PATH_MACOSX + "\")\n",
                     "-e", "end if\n",
                     "-e", "end tell\n"
             };
             // @formatter:on
-            p = Runtime.getRuntime().exec(command, null, null);
+            ProcessBuilder pb = new ProcessBuilder(command);
+            pb.directory(null);
+            p = pb.start();
             int exitStatus = p.waitFor();
-            if (exitStatus != 0) {
+            if (p != null && exitStatus != 0) {
                 logger.warn("It seems like the removal of startup property failed, the exit status is ({})", exitStatus);
-                printErrorProcess(p);
+                CommonUtils.printErrorProcess(p);
             } else {
                 logger.info("The application is removed from startup items at login.");
             }

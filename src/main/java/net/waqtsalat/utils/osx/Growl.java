@@ -21,12 +21,13 @@
 package net.waqtsalat.utils.osx;
 
 import java.io.IOException;
+import java.util.Arrays;
 
-import static net.waqtsalat.utils.Utils.printErrorProcess;
+import net.waqtsalat.utils.CommonUtils;
 
 /**
  * 
- * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
+ * @author Papa Issa DIAKHATE (paissad)
  */
 public class Growl {
 
@@ -34,8 +35,9 @@ public class Growl {
      * The path where is located the AppleScript script to run.
      */
     private static final String GROWL_NOTIFIER_SCRIPT = "macosx/growlNotifier.applescript";
+    private static final String OSASCRIPT_COMMAND     = "osascript";
 
-    // =======================================================================
+    // =========================================================================
 
     /**
      * Sends a notification to Growl where the window's title is as the same as
@@ -51,12 +53,11 @@ public class Growl {
      * @throws Exception
      * 
      */
-    public int sendNotification(String appName, String message)
-            throws Exception {
+    public int sendNotification(String appName, String message) throws Exception {
         return sendNotification(appName, message, appName);
     }
 
-    // =======================================================================
+    // =========================================================================
 
     /**
      * Sends a notification to Growl.
@@ -73,28 +74,42 @@ public class Growl {
      * @throws IOException
      * @throws InterruptedException
      */
-    public int sendNotification(String appName, String message,
-            String windowTitle) throws IOException, InterruptedException {
+    public int sendNotification(String appName, String message, String windowTitle) throws
+            IOException, InterruptedException {
+
         Process p = null;
         int exitStatus = -1;
         try {
             String[] command = {
-                    "osascript",
+                    OSASCRIPT_COMMAND,
                     GROWL_NOTIFIER_SCRIPT,
                     appName,
                     message,
                     windowTitle
             };
-            p = Runtime.getRuntime().exec(command, null, null);
+
+            ProcessBuilder pb = new ProcessBuilder(Arrays.asList(command));
+            pb.directory(null);
+            p = pb.start();
             exitStatus = p.waitFor();
             return exitStatus;
+
         } finally {
-            if (exitStatus != 0 && p != null) {
-                printErrorProcess(p);
+            if (p != null && exitStatus != 0) {
+                CommonUtils.printErrorProcess(p);
             }
             p = null;
         }
     }
 
-    // =======================================================================
+    // =========================================================================
+
+    /*
+     * For testing purpose only ! XXX
+     */
+    @Deprecated
+    public static void main(String[] args) throws Exception {
+        Growl growl = new Growl();
+        growl.sendNotification("TextEdit", "test message for Growl from Java");
+    }
 }

@@ -20,7 +20,6 @@
 
 package net.waqtsalat.gui;
 
-import static net.waqtsalat.WaqtSalat.logger;
 import static net.waqtsalat.gui.WaqtSalatPrefs.userPrefs;
 
 import java.awt.BorderLayout;
@@ -58,10 +57,13 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.waqtsalat.ComputePrayTimes;
 import net.waqtsalat.ComputePrayTimes.CalculationMethod;
 import net.waqtsalat.ComputePrayTimes.JuristicMethod;
-import net.waqtsalat.Messages;
+import net.waqtsalat.I18N;
 import net.waqtsalat.PrayName;
 import net.waqtsalat.gui.WaqtSalatPrefs.guiSettings;
 
@@ -72,6 +74,8 @@ import net.waqtsalat.gui.WaqtSalatPrefs.guiSettings;
 public class PrayTimesTab extends JPanel implements ActionListener {
 
     private static final long              serialVersionUID = 1L;
+
+    private static Logger                  logger           = LoggerFactory.getLogger(PrayTimesTab.class);
 
     private Map<JuristicMethod, String>    _madhabs         =
                                                                     new HashMap<ComputePrayTimes.JuristicMethod, String>();
@@ -198,7 +202,7 @@ public class PrayTimesTab extends JPanel implements ActionListener {
                         { null, null },
                 },
                 new String[] {
-                        Messages.getString("output.PRAYS"), Messages.getString("output.TIMES")
+                        I18N.getString("output.PRAYS"), I18N.getString("output.TIMES")
                 }
                 ));
         TableColumn col;

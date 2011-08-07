@@ -30,7 +30,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-import net.waqtsalat.Messages;
+import net.waqtsalat.I18N;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import javax.swing.JTabbedPane;
@@ -51,7 +51,7 @@ public class About extends JDialog {
         getContentPane().setLayout(new GridBagLayout());
         setAlwaysOnTop(true);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setPreferredSize(new Dimension(WsConstants.ABOUT_WINDOW_PREFERED_WIDTH, WsConstants.ABOUT_WINDOW_PREFERED_HEIGHT));
+        setPreferredSize(new Dimension(GuiConstants.ABOUT_WINDOW_PREFERED_WIDTH, GuiConstants.ABOUT_WINDOW_PREFERED_HEIGHT));
         setMinimumSize(getPreferredSize());
         setLocationRelativeTo(getParent());
 
@@ -63,7 +63,7 @@ public class About extends JDialog {
     private void init() {
         jlab = new JLabel();
 
-        jlab.setText(Messages.getString("About"));
+        jlab.setText(I18N.getString("About"));
         // jlab.setToolTipText("My tooltip");
         jlab.setFocusable(true);
         jlab.setEnabled(true);
@@ -84,7 +84,7 @@ public class About extends JDialog {
         tabbedPane.addTab("New tab", null, closeButton, null);
 
         closeButton.setBorderPainted(true);
-        closeButton.setText(Messages.getString("Close"));
+        closeButton.setText(I18N.getString("Close"));
         closeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

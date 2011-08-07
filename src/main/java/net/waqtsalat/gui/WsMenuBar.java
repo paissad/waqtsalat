@@ -34,7 +34,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
-import net.waqtsalat.Messages;
+import net.waqtsalat.I18N;
 
 /**
  * This class represents/builds the menubar of the GUI.
@@ -63,7 +63,7 @@ public class WsMenuBar extends JMenuBar {
         }
         // setPreferredSize(new Dimension(, WsConstants.MENU_PREFERED_HEIGHT));
         setMinimumSize(getPreferredSize());
-        setBackground(WsConstants.COLOR_BACKGROUND_MENUBAR);
+        setBackground(GuiConstants.COLOR_BACKGROUND_MENUBAR);
 
         createMenuItems();
         createMenus();
@@ -81,9 +81,9 @@ public class WsMenuBar extends JMenuBar {
 
     private void createMenuItems() {
 
-        _exit = new JMenuItem(Messages.getString("Quit"));
+        _exit = new JMenuItem(I18N.getString("Quit"));
         _exit.setMnemonic(KeyEvent.VK_Q);
-        _exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, WsConstants.SHORTCUT_KEY_MASK));
+        _exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, GuiConstants.SHORTCUT_KEY_MASK));
         _exit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -91,7 +91,7 @@ public class WsMenuBar extends JMenuBar {
             }
         });
 
-        _help = new JMenuItem(Messages.getString("Help"), KeyEvent.VK_F1);
+        _help = new JMenuItem(I18N.getString("Help"), KeyEvent.VK_F1);
         _help.setMnemonic(KeyEvent.VK_F1);
         _help.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
         _help.addActionListener(new ActionListener() {
@@ -101,7 +101,7 @@ public class WsMenuBar extends JMenuBar {
             }
         });
 
-        _about = new JMenuItem(Messages.getString("About"), KeyEvent.VK_0);
+        _about = new JMenuItem(I18N.getString("About"), KeyEvent.VK_0);
         _about.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -114,10 +114,10 @@ public class WsMenuBar extends JMenuBar {
 
     private void createMenus() {
         _menuFile = new JMenu("WaqtSalat");
-        _menuFile.setBackground(WsConstants.COLOR_BACKGROUND_MENU);
+        _menuFile.setBackground(GuiConstants.COLOR_BACKGROUND_MENU);
 
-        _menuHelp = new JMenu(Messages.getString("MenuHelp"));
-        _menuHelp.setBackground(WsConstants.COLOR_BACKGROUND_MENU);
+        _menuHelp = new JMenu(I18N.getString("MenuHelp"));
+        _menuHelp.setBackground(GuiConstants.COLOR_BACKGROUND_MENU);
     }
 
     // =======================================================================

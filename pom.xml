@@ -1,277 +1,167 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>net.paissad</groupId>
-    <artifactId>waqtsalat</artifactId>
-    <version>0.0.1_snapshot</version>
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <!-- Project's informations -->
-    <name>WaqtSalat</name>
-    <description>WaqtSalat, for the purpose of computing muslim pray times.</description>
-    <url>http://dev.paissad.net/projects/waqtsalat</url>
-    <inceptionYear>2011</inceptionYear>
-    <licenses>
-        <license>
-            <name>GPLv3</name>
-            <url>http://www.gnu.org/licenses/gpl.html</url>
-        </license>
-    </licenses>
-    <organization></organization>
-    <developers>
-        <developer>
-            <id>paissad</id>
-            <name>Papa Issa DIAKHATE</name>
-            <url>http://blog.paissad.org</url>
-            <roles>
-                <role>manager</role>
-                <role>developer</role>
-            </roles>
-        </developer>
-        <developer>
-            <id>tocka</id>
-            <roles>
-                <role>developer</role>
-            </roles>
-        </developer>
-    </developers>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>net.paissad</groupId>
+  <artifactId>waqtsalat</artifactId>
+  <version>0.0.1</version>
 
-    <!-- SCM -->
-    <!--<scm>-->
-        <!--<connection>scm:svn:http://127.0.0.1/svn/my-project</connection>-->
-        <!--<developerConnection>scm:svn:https://127.0.0.1/svn/my-project</developerConnection>-->
-        <!--<tag>HEAD</tag>-->
-        <!--<url>http://127.0.0.1/websvn/my-project</url>-->
-        <!--</scm>-->
+  <name>WaqtSalat</name>
+  <description>WaqtSalat, for the purpose of computing muslim pray times.</description>
+  <url></url>
+  <inceptionYear>2011</inceptionYear>
+  <licenses>
+    <license>
+      <name>GPLv3</name>
+      <url>http://www.gnu.org/licenses/gpl.html</url>
+    </license>
+  </licenses>
+  <organization></organization>
+  <developers>
+    <developer>
+      <name>Papa Issa DIAKHATE</name>
+      <id>paissad</id>
+      <email>paissad@gmail.com</email>
+      <url>http://blog.paissad.org</url>
+      <roles>
+        <role>developer</role>
+      </roles>
+    </developer>
+  </developers>
 
-    <!-- Build settings -->
-    <build>
-        <plugins>
+  <scm>
+    <connection>https://paissad@github.com/paissad/waqtsalat.git</connection>
+    <developerConnection>https://paissad@github.com/paissad/waqtsalat.git</developerConnection>
+    <url>https://github.com/paissad/waqtsalat</url>
+  </scm>
+  
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <jna.version>3.3.0</jna.version>
+  </properties>
 
-            <!-- Use at least 1.6 -->
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
-                </configuration>
-            </plugin> <!---->
+  <!-- Build settings -->
+  <build>
+    <plugins>
 
-           <!-- GEOIP -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>geoip-binary</id>
-                        <phase>validate</phase>
-                        <configuration>
-                            <file>${basedir}/lib/geoip-1.2.4.jar</file>
-                            <repositoryLayout>default</repositoryLayout>
-                            <groupId>geoip</groupId>
-                            <artifactId>geoip</artifactId>
-                            <version>1.2.4</version>
-                            <packaging>jar</packaging>
-                            <generatePom>true</generatePom>
-                        </configuration>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin> <!-- end of GEOIP -->
+      <!-- Use at least JRE/JDK 1.6 -->
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.3.2</version>
+        <configuration>        
+          <source>1.6</source>
+          <target>1.6</target>
+          <showDeprecation>true</showDeprecation>
+          <showWarnings>true</showWarnings>
+        </configuration>
+      </plugin>
 
-            <!-- JARGS -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>jargs-binary</id>
-                        <phase>validate</phase>
-                        <configuration>
-                            <file>${basedir}/lib/jargs.jar</file>
-                            <repositoryLayout>default</repositoryLayout>
-                            <groupId>jargs</groupId>
-                            <artifactId>jargs</artifactId>
-                            <version>0</version>
-                            <packaging>jar</packaging>
-                            <generatePom>true</generatePom>
-                        </configuration>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin> <!-- end of JARGS -->
+    </plugins>
+  </build>
 
-            <!-- CRON4J -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>cron4j-binary</id>
-                        <phase>validate</phase>
-                        <configuration>
-                            <file>${basedir}/lib/cron4j-2.2.2.jar</file>
-                            <repositoryLayout>default</repositoryLayout>
-                            <groupId>cron4j</groupId>
-                            <artifactId>cron4j</artifactId>
-                            <version>2.2.2</version>
-                            <packaging>jar</packaging>
-                            <generatePom>true</generatePom>
-                        </configuration>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin> <!-- end of CRON4J -->
+  <dependencies>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.6.1</version>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-core</artifactId>
+      <version>0.9.29</version>
+      <type>jar</type>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>0.9.29</version>
+      <type>jar</type>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-core</artifactId>
+      <version>3.0.3</version>
+      <type>jar</type>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>de.huxhorn.sulky</groupId>
+      <artifactId>de.huxhorn.sulky.3rdparty.jlayer</artifactId>
+      <version>1.0</version>
+      <type>jar</type>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.dspace.dependencies</groupId>
+      <artifactId>dspace-geoip</artifactId>
+      <version>1.2.3</version>
+      <type>jar</type>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.0.1</version>
+      <type>jar</type>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>1.3.158</version>
+      <type>jar</type>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org</groupId>
+      <artifactId>jaudiotagger</artifactId>
+      <version>2.0.3</version>
+    </dependency>
+    <dependency>
+    	<groupId>ant</groupId>
+    	<artifactId>ant</artifactId>
+    	<version>1.7.0</version>
+    	<scope>compile</scope>
+    </dependency>
+    <dependency>
+    	<groupId>junit</groupId>
+    	<artifactId>junit</artifactId>
+    	<version>4.8.2</version>
+    	<type>jar</type>
+    	<scope>test</scope>
+    </dependency>
+    <dependency>
+    	<groupId>commons-configuration</groupId>
+    	<artifactId>commons-configuration</artifactId>
+    	<version>1.6</version>
+    </dependency>
+    <dependency>
+      <groupId>net.java.dev.jna</groupId>
+      <artifactId>jna</artifactId>
+      <version>${jna.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>net.java.dev.jna</groupId>
+      <artifactId>jna</artifactId>
+      <version>${jna.version}</version>
+      <classifier>platform</classifier>
+    </dependency>
+    <dependency>
+    	<groupId>commons-httpclient</groupId>
+    	<artifactId>commons-httpclient</artifactId>
+    	<version>3.1</version>
+    </dependency>
+  </dependencies>
 
-            <!-- JL1 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>jl-binary</id>
-                        <phase>validate</phase>
-                        <configuration>
-                            <file>${basedir}/lib/jl1.0.jar</file>
-                            <repositoryLayout>default</repositoryLayout>
-                            <groupId>jl</groupId>
-                            <artifactId>jl</artifactId>
-                            <version>1.0</version>
-                            <packaging>jar</packaging>
-                            <generatePom>true</generatePom>
-                        </configuration>
-                        <goals>
-                            <goal>install-file</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin> <!-- end of JL1 -->
-
-            <!-- Add the main class into the MANIFEST file. -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <!--<addClasspath>true</addClasspath>-->
-                            <mainClass>net.waqtsalat.WaqtSalat</mainClass>
-                        </manifest>
-                    </archive>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                </configuration>
-            </plugin> <!---->
-
-            <!-- create jar-with-dependencies -->    
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>net.waqtsalat.WaqtSalat</mainClass>
-                        </manifest>
-                    </archive>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                </configuration>
-            </plugin> <!-- end of jar with-dependencies -->
-
-
-            <!-- Ant tasks ... -->
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>pre-integration-test-user-ant-tasks</id>
-                        <configuration>
-                            <tasks>
-                                <echo message="Ant task before integration tests."/>
-                            </tasks>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>post-integration-test-user-ant-tasks</id>
-                        <configuration>
-                            <tasks>
-                                <echo
-                                    message="Ant task_after integration tests."/>
-                            </tasks>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin> <!-- end of ant tasks -->
-
-        </plugins>
-    </build>
-
-    <!-- Dependencies settings  -->
-    <dependencies>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.6.1</version>
-        </dependency>
-        <dependency>
-            <groupId>ant</groupId>
-            <artifactId>ant</artifactId>
-            <version>1.7.0</version>
-        </dependency>
-        <dependency>
-            <groupId>geoip</groupId>
-            <artifactId>geoip</artifactId>
-            <version>1.2.4</version>
-        </dependency>
-        <dependency>
-            <groupId>cron4j</groupId>
-            <artifactId>cron4j</artifactId>
-            <version>2.2.2</version>
-        </dependency>
-        <dependency>
-            <groupId>jl</groupId>
-            <artifactId>jl</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-configuration</groupId>
-            <artifactId>commons-configuration</artifactId>
-            <version>1.6</version>
-        </dependency>
-        <dependency>
-            <groupId>jargs</groupId>
-            <artifactId>jargs</artifactId>
-            <version>0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.6.1</version>
-        </dependency>
-    </dependencies>
-    <dependencyManagement>
-        <dependencies>
-        </dependencies>
-    </dependencyManagement>
-
-    <repositories>
-        <repository>
-            <id>waqtsalatRepo</id>
-            <url>file://${basedir}/maven-repository</url>
-        </repository>
-    </repositories>
-
+  <repositories>
+    <repository>
+      <id>maven2-repository.java.net</id>
+      <name>Java.net Repository for Maven</name>
+      <url>http://download.java.net/maven/2/</url>
+      <layout>default</layout>
+    </repository>
+  </repositories>
 
 </project>

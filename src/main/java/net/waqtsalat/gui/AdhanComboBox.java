@@ -20,6 +20,7 @@
 
 package net.waqtsalat.gui;
 
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -27,16 +28,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.Font;
-
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-
 import java.io.File;
 import java.io.IOException;
-
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -47,24 +44,27 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileFilter;
 
-import net.waqtsalat.SimplePlayer;
-import net.waqtsalat.utils.AudioTagsReader;
-import net.waqtsalat.utils.AudioUtils;
-import net.waqtsalat.utils.Utils;
-
 import org.jaudiotagger.audio.AudioHeader;
 import org.jaudiotagger.audio.exceptions.CannotReadException;
 import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
 import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
 import org.jaudiotagger.tag.TagException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.waqtsalat.utils.CommonUtils;
+import net.waqtsalat.utils.media.SimplePlayer;
+import net.waqtsalat.utils.tags.BasicTagsReader;
 
 /**
  * 
- * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
+ * @author Papa Issa DIAKHATE (paissad)
  */
 public class AdhanComboBox extends JComboBox {
 
     private static final long serialVersionUID = 1L;
+
+    private static Logger     logger           = LoggerFactory.getLogger(AdhanComboBox.class);
 
     public static enum Selection {
 
@@ -93,7 +93,7 @@ public class AdhanComboBox extends JComboBox {
     // Constructors ...
 
     public AdhanComboBox() {
-        this(WsConstants.DEFAULT_ADHAN_SOUND);
+        this(GuiConstants.DEFAULT_ADHAN_SOUND);
     }
 
     public AdhanComboBox(String defaultAdhanSound) {
@@ -155,7 +155,7 @@ public class AdhanComboBox extends JComboBox {
 
         public adhanJFileChooser() {
             super();
-            setDefaultSelectDir(WsConstants.DEFAULT_ADHAN_DIR);
+            setDefaultSelectDir(GuiConstants.DEFAULT_ADHAN_DIR);
             setCurrentDirectory(new File(getDefaultSelectDir()));
             setFileSelectionMode(JFileChooser.FILES_ONLY);
             addChoosableFileFilter(new AdhanFileFilter());
@@ -183,8 +183,8 @@ public class AdhanComboBox extends JComboBox {
             if (f.isDirectory()) {
                 return true;
             } else {
-                String extension = Utils.getExtension(f);
-                if (extension != null) {
+                String extension = CommonUtils.getFilenameExtension(f.getName());
+                if (extension != null && !extension.isEmpty()) {
                     extension = extension.toLowerCase();
                 }
                 return isExtensionSupported(extension);
@@ -210,8 +210,7 @@ public class AdhanComboBox extends JComboBox {
      * "http://www.java2s.com/Code/Java/Swing-JFC/JFileChooserclassinactionwithanaccessory.htm"
      * >link</a>.
      */
-    class AudioAccessory extends JPanel implements PropertyChangeListener,
-            ActionListener {
+    class AudioAccessory extends JPanel implements PropertyChangeListener, ActionListener {
 
         private static final long serialVersionUID = 1L;
 
@@ -269,7 +268,7 @@ public class AdhanComboBox extends JComboBox {
             topPanel.add(playerPanel, gbc_playerPanel);
 
             playButton = new JButton("Play");
-            playButton.setIcon(WsConstants.ICON_SOUND_PLAY);
+            playButton.setIcon(GuiConstants.ICON_SOUND_PLAY);
             playButton.setEnabled(false);
             playButton.addActionListener(new ActionListener() {
                 @Override
@@ -283,7 +282,7 @@ public class AdhanComboBox extends JComboBox {
             playerPanel.add(playButton);
 
             stopButton = new JButton("Stop");
-            stopButton.setIcon(WsConstants.ICON_SOUND_STOP);
+            stopButton.setIcon(GuiConstants.ICON_SOUND_STOP);
             stopButton.setEnabled(false);
             stopButton.addActionListener(new ActionListener() {
                 @Override
@@ -312,8 +311,8 @@ public class AdhanComboBox extends JComboBox {
             String propertyName = evt.getPropertyName();
             if (JFileChooser.SELECTED_FILE_CHANGED_PROPERTY.equals(propertyName)) {
                 File f = (File) evt.getNewValue();
-                String audioExtension = Utils.getExtension(f);
-                if (audioExtension != null) {
+                String audioExtension = CommonUtils.getFilenameExtension(f.getName());
+                if (audioExtension != null && !audioExtension.isEmpty()) {
                     audioExtension = audioExtension.toLowerCase();
                 }
 
@@ -356,7 +355,11 @@ public class AdhanComboBox extends JComboBox {
             }
 
             currentFileName = fileName;
-            audioPlayer = new SimplePlayer(audioFile);
+            try {
+                audioPlayer = new SimplePlayer(audioFile);
+            } catch (Exception e) {
+                logger.error("Error while getting an instance of SimplePlayer : ", e);
+            }
             fileLabel.setText(trimTextWithDots(fileName));
             playButton.setEnabled(true);
             stopButton.setEnabled(true);
@@ -366,9 +369,9 @@ public class AdhanComboBox extends JComboBox {
 
         private String getTagsInfos(File file) {
             String format = "%-12s : %s<br>";
-            AudioTagsReader tagger = null;
+            BasicTagsReader tagger = null;
             try {
-                tagger = new AudioTagsReader(file);
+                tagger = new BasicTagsReader(file);
             } catch (CannotReadException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -384,19 +387,19 @@ public class AdhanComboBox extends JComboBox {
             StringBuilder infos = new StringBuilder();
 
             infos.append("<html>");
-            infos.append(String.format(format, "Title", tagger.getTag_Title()));
-            infos.append(String.format(format, "Artist", tagger.getTag_Artist()));
-            infos.append(String.format(format, "Album", tagger.getTag_Album()));
-            String comment = tagger.getTag_Comment();
+            infos.append(String.format(format, "Title", tagger.getTitle()));
+            infos.append(String.format(format, "Artist", tagger.getArtist()));
+            infos.append(String.format(format, "Album", tagger.getAlbum()));
+            String comment = tagger.getComment();
             comment = (comment.equals("0"))
                     ? "" : comment;
             infos.append(String.format(format, "Comment", comment));
-            infos.append(String.format(format, "Year", tagger.getTag_Year()));
+            infos.append(String.format(format, "Year", tagger.getYear()));
 
             AudioHeader audioHeader = tagger.getAudioHeader();
 
             infos.append(String.format(format, "Duration",
-                    Utils.formatDuration("mm:ss", audioHeader.getTrackLength() * 1000L)));
+                    CommonUtils.formatDuration(audioHeader.getTrackLength() * 1000L)));
             String bitRate = audioHeader.getBitRate() + " kbit/s";
             infos.append(String.format(format, "Bitrate", bitRate));
             infos.append(String.format(format, "Channels", audioHeader.getChannels()));
@@ -405,7 +408,7 @@ public class AdhanComboBox extends JComboBox {
             String sampleRate = audioHeader.getSampleRate() + " Hz";
             infos.append(String.format(format, "SampleRate", sampleRate));
             infos.append(String.format(format, "Size",
-                    Utils.humanReadableByteCount((file.length()), false)));
+                    CommonUtils.humanReadableByteCount((file.length()), false)));
 
             infos.append("</html>");
             return infos.toString();
@@ -446,18 +449,16 @@ public class AdhanComboBox extends JComboBox {
      *         <code>false</code> otherwise or when extension is
      *         <code>null</code>.
      */
-    public boolean isExtensionSupported(String extension) {
-        if (extension == null)
+    public boolean isExtensionSupported(final String extension) {
+        if (extension == null) {
             return false;
+        }
 
-        String[] default_extensions = AudioUtils.getSupportedTargetTypes();
-        ArrayList<String> all_known_extensions = new ArrayList<String>();
-
-        for (int i = 0; i < default_extensions.length; i++)
-            all_known_extensions.add(default_extensions[i]);
-        for (int i = 0; i < WsConstants.ADDITIONAL_AUDIO_EXTENSIONS.length; i++)
-            all_known_extensions.add(WsConstants.ADDITIONAL_AUDIO_EXTENSIONS[i]);
-        return all_known_extensions.contains(extension);
+        List<String> knownExtensions = CommonUtils.getSupportedAudioTargetTypes();
+        for (String ext : GuiConstants.ADDITIONAL_AUDIO_EXTENSIONS) {
+            knownExtensions.add(ext);
+        }
+        return knownExtensions.contains(extension);
     }
 
     // ======================================================================

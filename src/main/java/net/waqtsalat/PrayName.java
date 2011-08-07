@@ -27,13 +27,13 @@ import java.util.ArrayList;
  * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
  */
 public enum PrayName {
-    FADJR(Messages.getString("prayname.Fadjr")),
-    SUNRISE(Messages.getString("prayname.Sunrise")),
-    DHUHR(Messages.getString("prayname.Dhuhr")),
-    ASR(Messages.getString("prayname.Asr")),
-    SUNSET(Messages.getString("prayname.Sunset")),
-    MAGHRIB(Messages.getString("prayname.Maghrib")),
-    ISHA(Messages.getString("prayname.Isha"));
+    FADJR(I18N.getString("prayname.Fadjr")),
+    SUNRISE(I18N.getString("prayname.Sunrise")),
+    DHUHR(I18N.getString("prayname.Dhuhr")),
+    ASR(I18N.getString("prayname.Asr")),
+    SUNSET(I18N.getString("prayname.Sunset")),
+    MAGHRIB(I18N.getString("prayname.Maghrib")),
+    ISHA(I18N.getString("prayname.Isha"));
 
     private String                   _standardName;
     private static ArrayList<String> _standardNameList = new ArrayList<String>();

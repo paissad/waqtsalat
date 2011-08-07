@@ -1,0 +1,10 @@
+.DS_Store
+*.orig
+*.swp
+*.rej
+*~
+*.o
+dist
+target
+waqtsalat.log
+src/main/resources/extras/geoip/worldcitiespop.trace.db

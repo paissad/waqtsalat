@@ -20,8 +20,6 @@
 
 package net.waqtsalat.utils;
 
-import static net.waqtsalat.WaqtSalat.logger;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,12 +34,14 @@ import org.apache.commons.io.FileUtils;
 import org.apache.tools.bzip2.CBZip2InputStream;
 import org.apache.tools.tar.TarEntry;
 import org.apache.tools.tar.TarInputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Contains some utilities to gunzip, bunzip, untar files and such uncompressing
  * stuffs.
  * 
- * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
+ * @author Papa Issa DIAKHATE (paissad)
  */
 public class UncompressUtils {
 
@@ -52,6 +52,8 @@ public class UncompressUtils {
     private static final String  BUNZIP_METHOD                = "bunzip2";
     private static final String  TAR_METHOD                   = "untar";
     private static final boolean CLOSE_STREAM                 = true;
+    
+    private static Logger logger = LoggerFactory.getLogger(UncompressUtils.class);
 
     /**
      * Compressed file (typically .gz, tar.gz, .bz2, .tar.bz2, .tar, ...)

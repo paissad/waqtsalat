@@ -37,9 +37,10 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 
+import com.sun.jna.Platform;
+
 import net.waqtsalat.gui.AdhanComboBox.Selection;
 import net.waqtsalat.gui.WaqtSalatPrefs.guiSettings;
-import net.waqtsalat.utils.Utils;
 
 /**
  * 
@@ -50,7 +51,6 @@ public class AlertsTab extends JPanel {
     private static final long        serialVersionUID     = 1L;
 
     private static String            _sep                 = "\0";
-    private static Utils             _sys                 = new Utils();
 
     private boolean                  _silentModeState     = userPrefs.getBoolean(
                                                                   guiSettings.SILENT_MODE.toString(), false);
@@ -122,7 +122,7 @@ public class AlertsTab extends JPanel {
         gbl_adhansPanel.columnWeights = new double[] { 0.0, 1.0, Double.MIN_VALUE };
         gbl_adhansPanel.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
         adhansPanel.setLayout(gbl_adhansPanel);
-        tabbedPane.addTab("Adhans", WsConstants.ICON_AUDIO_VOLUME, adhansPanel, null);
+        tabbedPane.addTab("Adhans", GuiConstants.ICON_AUDIO_VOLUME, adhansPanel, null);
 
         chckbxEnableSilentMode = new JCheckBox("Enable silent mode");
         chckbxEnableSilentMode.setSelected(_silentModeState);
@@ -265,7 +265,7 @@ public class AlertsTab extends JPanel {
         gbl_notificationsPanel.columnWeights = new double[] { 0.0, 0.0, Double.MIN_VALUE };
         gbl_notificationsPanel.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
         notificationsPanel.setLayout(gbl_notificationsPanel);
-        tabbedPane.addTab("Notifications", WsConstants.ICON_NOTIFICATION_2, notificationsPanel, null);
+        tabbedPane.addTab("Notifications", GuiConstants.ICON_NOTIFICATION_2, notificationsPanel, null);
 
         chckbxEnableNotifications = new JCheckBox("Enable notifications");
         chckbxEnableNotifications.setSelected(_enableNotifications);
@@ -293,7 +293,7 @@ public class AlertsTab extends JPanel {
         lblNotifications.setFont(new Font(
                 "Calibri", lblNotifications.getFont().getStyle() |
                         Font.ITALIC, lblNotifications.getFont().getSize()));
-        lblNotifications.setIcon(WsConstants.ICON_NOTIFICATION_1);
+        lblNotifications.setIcon(GuiConstants.ICON_NOTIFICATION_1);
         GridBagConstraints gbc_lblNotifications = new GridBagConstraints();
         gbc_lblNotifications.insets = new Insets(0, 5, 5, 5);
         gbc_lblNotifications.anchor = GridBagConstraints.WEST;
@@ -311,7 +311,7 @@ public class AlertsTab extends JPanel {
         gbc_separator_1.gridy = 2;
         notificationsPanel.add(separator_1, gbc_separator_1);
 
-        if (_sys.isMac()) {
+        if (Platform.isMac()) {
             chckbxUseGrowl = new JCheckBox("Use Growl for the notifications instead of the default.");
             chckbxUseGrowl.setSelected(_useGrowl);
             chckbxUseGrowl.addActionListener(new ActionListener() {
@@ -421,7 +421,7 @@ public class AlertsTab extends JPanel {
             if (rawName.equals(Selection.NONE.toString())) {
                 all_adhans_sounds[i] = ""; // no sound for this pray time.
             } else if (rawName.equals(Selection.DEFAULT_ADHAN_SOUND.toString())) {
-                all_adhans_sounds[i] = WsConstants.DEFAULT_ADHAN_SOUND; // default
+                all_adhans_sounds[i] = GuiConstants.DEFAULT_ADHAN_SOUND; // default
                                                                         // sound
                                                                         // for
                                                                         // this
@@ -464,9 +464,9 @@ public class AlertsTab extends JPanel {
 
     private void setIconOfSoundState() {
         if (chckbxEnableSilentMode.isSelected() == true) {
-            lblSoundState.setIcon(WsConstants.ICON_SOUND_OFF);
+            lblSoundState.setIcon(GuiConstants.ICON_SOUND_OFF);
         } else {
-            lblSoundState.setIcon(WsConstants.ICON_SOUND_ON);
+            lblSoundState.setIcon(GuiConstants.ICON_SOUND_ON);
         }
     }
 

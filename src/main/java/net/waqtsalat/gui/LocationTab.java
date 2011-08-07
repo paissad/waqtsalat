@@ -20,7 +20,6 @@
 
 package net.waqtsalat.gui;
 
-import static net.waqtsalat.WaqtSalat.logger;
 import static net.waqtsalat.gui.WaqtSalatPrefs.userPrefs;
 
 import java.awt.Color;
@@ -35,6 +34,7 @@ import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.TimeZone;
@@ -61,20 +61,21 @@ import javax.swing.text.BadLocationException;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.lucene.queryParser.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.maxmind.geoip.Location;
 import com.maxmind.geoip.LookupService;
 import com.maxmind.geoip.timeZone;
 
 import net.waqtsalat.Coordinates;
-import net.waqtsalat.IpAddress;
+import net.waqtsalat.WSConstants;
 import net.waqtsalat.configuration.WsConfiguration;
 import net.waqtsalat.gui.WaqtSalatPrefs.guiSettings;
 import net.waqtsalat.gui.addons.JSearchTextField;
-import net.waqtsalat.utils.GeoipUtils;
-import net.waqtsalat.utils.Utils;
-import net.waqtsalat.utils.WorldCitiesDB;
-import net.waqtsalat.utils.WorldCitiesLucene;
+import net.waqtsalat.utils.CommonUtils;
+import net.waqtsalat.utils.geoip.WorldCitiesDB;
+import net.waqtsalat.utils.geoip.WorldCitiesLucene;
 
 /**
  * 
@@ -83,6 +84,8 @@ import net.waqtsalat.utils.WorldCitiesLucene;
 public class LocationTab extends JPanel implements Observer {
 
     private static final long         serialVersionUID     = 1L;
+    
+    private static Logger logger = LoggerFactory.getLogger(LocationTab.class);
 
     private static Coordinates        _coordinates         = new Coordinates();
     private static String             _timezone            = userPrefs.get(
@@ -171,7 +174,7 @@ public class LocationTab extends JPanel implements Observer {
 
         lblCurrentTimezone = new JLabel("Current Timezone");
         lblCurrentTimezone.setToolTipText("This is the current time zone used by the application to compute pray times.");
-        lblCurrentTimezone.setIcon(WsConstants.ICON_LOCATION_TIMEZONE);
+        lblCurrentTimezone.setIcon(GuiConstants.ICON_LOCATION_TIMEZONE);
         lblCurrentTimezone.setText(_timezone);
         GridBagConstraints gbc_lblCurrentTimezone = new GridBagConstraints();
         gbc_lblCurrentTimezone.anchor = GridBagConstraints.WEST;
@@ -258,7 +261,7 @@ public class LocationTab extends JPanel implements Observer {
          * set the icon search :(
          */
         if (!UIManager.getLookAndFeel().getID().equals("Aqua")) {
-            textFieldSearchLocation.setIcon(WsConstants.ICON_SEARCH_LOCATION);
+            textFieldSearchLocation.setIcon(GuiConstants.ICON_SEARCH_LOCATION);
         }
         textFieldSearchLocation.setColumns(10);
         textFieldSearchLocation.addActionListener(new ActionListener() {
@@ -374,7 +377,7 @@ public class LocationTab extends JPanel implements Observer {
         comboBoxTimezones = new JComboBox();
         comboBoxTimezones.setEnabled(!isUseSystemTimezone);
         comboBoxTimezones.setMaximumRowCount(10);
-        comboBoxTimezones.setModel(new DefaultComboBoxModel(Utils.getAllTimezonesSorted()));
+        comboBoxTimezones.setModel(new DefaultComboBoxModel(CommonUtils.getAllTimezonesSorted()));
         comboBoxTimezones.setSelectedItem(_timezone);
         GridBagConstraints gbc_comboBoxTimezones = new GridBagConstraints();
         gbc_comboBoxTimezones.anchor = GridBagConstraints.WEST;
@@ -414,16 +417,16 @@ public class LocationTab extends JPanel implements Observer {
         LocationStateLabel.State s = (LocationStateLabel.State) currentLocState;
         switch (s) {
             case OK:
-                icon = WsConstants.ICON_LOCATION_OK;
+                icon = GuiConstants.ICON_LOCATION_OK;
                 break;
             case NOT_OK:
-                icon = WsConstants.ICON_LOCATION_NOT_OK;
+                icon = GuiConstants.ICON_LOCATION_NOT_OK;
                 break;
             case SEARCHING:
-                icon = WsConstants.ICON_LOCATION_SEARCHING;
+                icon = GuiConstants.ICON_LOCATION_SEARCHING;
                 break;
             default:
-                icon = WsConstants.ICON_UNKNOWN_STATE;
+                icon = GuiConstants.ICON_UNKNOWN_STATE;
                 break;
         }
         lblCurrentLoc.setIcon(icon);
@@ -529,8 +532,9 @@ public class LocationTab extends JPanel implements Observer {
         Icon currentIcon = lblSearchLoc.getIcon();
         if (currentIcon == null && currentTextLength > 0) {
             new Thread() {
+                @Override
                 public void run() {
-                    lblSearchLoc.setIcon(WsConstants.ICON_LOCATION_SEARCHING);
+                    lblSearchLoc.setIcon(GuiConstants.ICON_LOCATION_SEARCHING);
                     try {
                         Thread.sleep(1000L);
                     } catch (InterruptedException e) {
@@ -605,11 +609,10 @@ public class LocationTab extends JPanel implements Observer {
      */
     private void searchWorldCitiesLucene(String entry) throws SQLException,
             IOException, ParseException {
-        ArrayList<String[]> locations = new ArrayList<String[]>();
+        List<String[]> locations = new ArrayList<String[]>();
         entry = (entry.isEmpty() || entry == null)
                 ? "_____" : entry;
         locations = WorldCitiesLucene.search(entry + "~"); // fuzzy search ...
-        WorldCitiesLucene.closeIndex();
         listModellocation.removeAllElements();
         for (int i = 0; i < locations.size(); i++) {
             String country = locations.get(i)[0];
@@ -623,10 +626,10 @@ public class LocationTab extends JPanel implements Observer {
     private void getIPLocation() throws ConfigurationException, IOException {
         _locationIconState.setState(LocationStateLabel.State.SEARCHING);
         String _ip = new WsConfiguration("").getIpAddress();
-        _ip = new IpAddress().retreiveIpAddress();
+        _ip = CommonUtils.retreiveIpAddress();
         if (_ip.equals("-1"))
             logger.error("The Ip address cannot be '-1', an error occured.");
-        Location location = new LookupService(GeoipUtils.GEOIP_DATABASE_FULL_PATH).getLocation(_ip);
+        Location location = new LookupService(WSConstants.GEOIP_DATABASE_FULLPATH).getLocation(_ip);
         String city = (location.city != null)
                 ? location.city : "";
         String country = (location.countryName != null)
@@ -702,7 +705,7 @@ public class LocationTab extends JPanel implements Observer {
             }
             lblFlag.setIcon(new ImageIcon(
                     ClassLoader.getSystemResource(
-                            WsConstants.ICON_FLAGS_DIR + cc.toLowerCase()
+                            GuiConstants.ICON_FLAGS_DIR + cc.toLowerCase()
                                     + ".gif")));
         } catch (SQLException e) {
             logger.error("Error while retreiving country from coordinates !!!");

@@ -25,8 +25,8 @@ import java.io.File;
 import net.waqtsalat.IpAddress;
 import net.waqtsalat.Pray;
 import net.waqtsalat.WaqtSalat;
-import net.waqtsalat.utils.GeoipUtils;
 import net.waqtsalat.utils.Utils;
+import net.waqtsalat.utils.geoip.GeoipHelper;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.ConversionException;
@@ -245,7 +245,7 @@ public class WsConfiguration {
 
     public String getGeoipDatabase() {
         return getString(KEY_GEOIP_DATABASE,
-                GeoipUtils.GEOIP_DATABASE_FULL_PATH);
+                GeoipHelper.GEOIP_DATABASE_FULL_PATH);
     }
 
     public void setGeoipDatabase(String value) {

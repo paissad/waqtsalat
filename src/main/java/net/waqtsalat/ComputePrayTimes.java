@@ -20,21 +20,22 @@
 
 package net.waqtsalat;
 
-import static net.waqtsalat.WaqtSalat.logger;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Observable;
 import java.util.TimeZone;
 
-import net.waqtsalat.utils.GeoipUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
- * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
+ * @author Papa Issa DIAKHATE (paissad)
  */
 public class ComputePrayTimes extends Observable implements Runnable {
 
+    private static Logger logger = LoggerFactory.getLogger(ComputePrayTimes.class);
+    
     // ======================================================================
 
     public static enum CalculationMethod { // Method ...
@@ -105,8 +106,8 @@ public class ComputePrayTimes extends Observable implements Runnable {
     private Calendar                 _cal;
     private static double            _timezone        = TimeZone.getDefault().getRawOffset()
                                                               / (1000L * 3600);
-    private static double            _latitude        = GeoipUtils.LATITUDE_MAKKAH;  ;
-    private static double            _longitude       = GeoipUtils.LONGITUDE_MAKKAH;
+    private static double            _latitude        = WSConstants.LATITUDE_MAKKAH;  ;
+    private static double            _longitude       = WSConstants.LONGITUDE_MAKKAH;
     private static State             _state           = State.NOT_CHANGED;
     private Object                   stateLock        = new Object();
     /**

@@ -22,9 +22,7 @@
 package net.waqtsalat;
 
 import java.io.IOException;
-
 import java.text.DateFormat;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -37,36 +35,36 @@ import java.util.Set;
 
 import javax.swing.SwingUtilities;
 
-import net.waqtsalat.MuezzinCallDaemon.BadSizePrayTimesArray;
-import net.waqtsalat.configuration.WsParseCommandLine;
-import net.waqtsalat.gui.MainFrame;
-import net.waqtsalat.utils.GeoipUtils;
-import net.waqtsalat.WaqtSalatLogger;
-
 import org.slf4j.Logger;
 
 import com.maxmind.geoip.Location;
 import com.maxmind.geoip.LookupService;
 import com.maxmind.geoip.timeZone;
 
+import net.waqtsalat.MuezzinCallDaemon.BadSizePrayTimesArray;
+import net.waqtsalat.configuration.WsParseCommandLine;
+import net.waqtsalat.gui.MainFrame;
+import net.waqtsalat.utils.CommonUtils;
+
 public class WaqtSalat implements Observer {
 
-	public static Logger logger;
+	private static Logger logger;
 	private static ArrayList<String> _prayerTimes = new ArrayList<String>();
 	private static ComputePrayTimes _computePrayTimes = new ComputePrayTimes();
 	private static Object _stateLock = new Object();
-	private static boolean _quiet = false; // Whether or not to print the pray times in STDOUT. (true for printing, false otherwise)
+	// Whether or not to print the pray times in STDOUT. (true for printing, false otherwise)
+	private static boolean _quiet = false; 
 
 	// =======================================================================
 
 	public static void main(String[] args) throws IOException {
 		new WaqtSalat(args);
 	}
-	// =======================================================================
 
 	{
 		_computePrayTimes.addObserver(this);
 	}
+	
 	// =======================================================================
 
 	public WaqtSalat(String[] args) throws IOException {
@@ -91,12 +89,12 @@ public class WaqtSalat implements Observer {
 			System.exit(0);
 		}
 
-		logger = WaqtSalatLogger.initLog4j(_logFileName);
 		initializeAPP();
 
 		if (_gui == true) {
 			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
+				@Override
+                public void run() {
 					try {
 						MainFrame mainFrame = new MainFrame();
 						mainFrame.pack();
@@ -120,13 +118,13 @@ public class WaqtSalat implements Observer {
 					logger.info("Using forced ip address: {}", _ip);
 				} else if (_auto) {
 					logger.info("Public Ip Address ...");
-					_ip = new IpAddress().retreiveIpAddress();
+					_ip = CommonUtils.retreiveIpAddress();
 					logger.debug("Ip Address: {}", _ip);
 					if (_ip.equals("-1"))
 						logger.error("The Ip address cannot be '-1', an error occured.");
 				}
 
-				Location location = new LookupService(GeoipUtils.GEOIP_DATABASE_FULL_PATH).getLocation(_ip);
+				Location location = new LookupService(WSConstants.GEOIP_DATABASE_FULLPATH).getLocation(_ip);
 
 				geoipLocDatas.put("City", location.city);
 				geoipLocDatas.put("Country", location.countryName);
@@ -152,14 +150,14 @@ public class WaqtSalat implements Observer {
 					s += String.format("+-----------------------------------------------+\n");
 					s += String.format(
 							format1,
-							Messages.getString("output.GEOIP_DATAS"),
-							Messages.getString("output.VALUES"));
+							I18N.getString("output.GEOIP_DATAS"),
+							I18N.getString("output.VALUES"));
 					s += String.format("+-----------------------------------------------+\n");
 					Set<String> st = geoipLocDatas.keySet();
 					Iterator<String> it = st.iterator();
 					while(it.hasNext()) {
 						String key = it.next();
-						s += String.format(format2, Messages.getString(key), geoipLocDatas.get(key));
+						s += String.format(format2, I18N.getString(key), geoipLocDatas.get(key));
 					}
 
 					s += String.format("+-----------------------------------------------+");
@@ -230,8 +228,8 @@ public class WaqtSalat implements Observer {
 			System.out.println("+=================================+");
 			System.out.println(String.format(
 					"| %-20s | %-8s |", 
-					Messages.getString("output.PRAYS"), 
-					Messages.getString("output.TIMES")));
+					I18N.getString("output.PRAYS"), 
+					I18N.getString("output.TIMES")));
 			System.out.println("+=================================+");
 			for (int i = 0; i < _prayerTimes.size(); i++) {
 				System.out.println(String.format("| %-20s : %-8s |",

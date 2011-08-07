@@ -20,28 +20,31 @@
 
 package net.waqtsalat.gui;
 
-import java.awt.GridBagLayout;
+import static net.waqtsalat.gui.WaqtSalatPrefs.userPrefs;
+
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JButton;
-
+import java.awt.event.ActionListener;
 import java.util.prefs.BackingStoreException;
 
-import static net.waqtsalat.WaqtSalat.logger;
-import static net.waqtsalat.gui.WaqtSalatPrefs.userPrefs;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
- * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
+ * @author Papa Issa DIAKHATE (paissad)
  */
 public class PreferencesTab extends JPanel {
 
     private static final long serialVersionUID = 1L;
+
+    private static Logger     logger           = LoggerFactory.getLogger(PreferencesTab.class);
 
     JPanel                    settingsPanel;
     JLabel                    lblResetSettings;
@@ -76,7 +79,7 @@ public class PreferencesTab extends JPanel {
                 + "<br><span style= \"font-style: italic; font-family: Calibri Italic;\">"
                 + resetInfoString_2
                 + "</span></html>");
-        lblResetSettings.setIcon(WsConstants.ICON_RESET_PREFERENCES);
+        lblResetSettings.setIcon(GuiConstants.ICON_RESET_PREFERENCES);
         lblResetSettings.setIconTextGap(8);
         GridBagConstraints gbc_lblResetSettings = new GridBagConstraints();
         gbc_lblResetSettings.anchor = GridBagConstraints.WEST;

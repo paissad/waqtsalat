@@ -20,8 +20,6 @@
 
 package net.waqtsalat.gui;
 
-import static net.waqtsalat.WaqtSalat.logger;
-
 import java.awt.AWTException;
 import java.awt.Image;
 import java.awt.MenuItem;
@@ -35,13 +33,18 @@ import java.util.ArrayList;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.waqtsalat.PrayName;
 
 /**
  * 
- * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
+ * @author Papa Issa DIAKHATE (paissad)
  */
 public class SysTray implements ActionListener {
+
+    private static Logger     logger            = LoggerFactory.getLogger(SysTray.class);
 
     private String            action_quit       = "action_QUIT";
     private String            action_gui        = "action_GUI";

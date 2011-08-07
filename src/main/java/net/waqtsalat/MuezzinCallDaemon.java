@@ -28,14 +28,17 @@ import java.util.Observer;
 import java.util.Set;
 import java.util.TreeSet;
 
-import static net.waqtsalat.WaqtSalat.logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A thread that plays the muezzin call at each pray time.
  * 
- * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
+ * @author Papa Issa DIAKHATE (paissad)
  */
 public class MuezzinCallDaemon implements Observer {
+    
+    private static Logger logger = LoggerFactory.getLogger(MuezzinCallDaemon.class);
 
     // {Fajr, Sunrise, Dhuhr, Asr, Sunset, Maghrib, Isha}
     ArrayList<PrayName>              _prayNames = new ArrayList<PrayName>();

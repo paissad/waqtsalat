@@ -20,21 +20,24 @@
 
 package net.waqtsalat;
 
-import static net.waqtsalat.WaqtSalat.logger;
-import it.sauronsoftware.cron4j.Scheduler;
-
 import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.waqtsalat.utils.media.SimplePlayer;
 
 /**
  * Encapsulates a pray with all its "options" such like its name, its time, its
  * muezzin call sound and so on ...
  * 
- * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
+ * @author Papa Issa DIAKHATE (paissad)
  */
 public class Pray extends Observable implements Observer {
-
+    
+    private static Logger logger = LoggerFactory.getLogger(Pray.class);
     private static final String FS                 = File.separator;
 
     /**

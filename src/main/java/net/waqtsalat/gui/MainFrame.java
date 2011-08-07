@@ -20,7 +20,6 @@
 
 package net.waqtsalat.gui;
 
-import static net.waqtsalat.WaqtSalat.logger;
 import static net.waqtsalat.gui.WaqtSalatPrefs.userPrefs;
 
 import java.awt.AWTException;
@@ -39,9 +38,13 @@ import javax.swing.JTabbedPane;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 
-import net.waqtsalat.Messages;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.sun.jna.Platform;
+
+import net.waqtsalat.I18N;
 import net.waqtsalat.gui.addons.ImageLabel;
-import net.waqtsalat.utils.Utils;
 
 /**
  * 
@@ -50,6 +53,8 @@ import net.waqtsalat.utils.Utils;
 public class MainFrame extends JFrame implements Observer {
 
     private static final long serialVersionUID = 1L;
+
+    private static Logger     logger           = LoggerFactory.getLogger(MainFrame.class);
 
     private JPanel            topPanel;
     private JPanel            imgHeaderPanel;
@@ -66,10 +71,10 @@ public class MainFrame extends JFrame implements Observer {
         chooseCustomLookAndFeel();
 
         this.setTitle("WaqtSalat");
-        this.setBackground(WsConstants.COLOR_BACKGROUND_MAINFRAME);
+        this.setBackground(GuiConstants.COLOR_BACKGROUND_MAINFRAME);
         this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        this.setPreferredSize(new Dimension(WsConstants.MAINFRAME_PREFERED_WIDTH, WsConstants.MAINFRAME_PREFERED_HEIGHT));
-        this.setMinimumSize(new Dimension(WsConstants.MAINFRAME_MINIMUM_WIDTH, WsConstants.MAINFRAME_MININUM_HEIGHT));
+        this.setPreferredSize(new Dimension(GuiConstants.MAINFRAME_PREFERED_WIDTH, GuiConstants.MAINFRAME_PREFERED_HEIGHT));
+        this.setMinimumSize(new Dimension(GuiConstants.MAINFRAME_MINIMUM_WIDTH, GuiConstants.MAINFRAME_MININUM_HEIGHT));
         this.setResizable(true);
         this.setJMenuBar(new WsMenuBar());
         this.setLocationRelativeTo(null);
@@ -102,7 +107,7 @@ public class MainFrame extends JFrame implements Observer {
         gbc_imgHeaderPanel.gridx = 0;
         gbc_imgHeaderPanel.gridy = 0;
         imgHeaderPanel.setLayout(new BorderLayout(0, 0));
-        imgHeaderPanel.add(new ImageLabel(WsConstants.HEADER_IMAGE_SUNSET));
+        imgHeaderPanel.add(new ImageLabel(GuiConstants.HEADER_IMAGE_SUNSET));
         topPanel.add(imgHeaderPanel, gbc_imgHeaderPanel);
 
         tabbedPane = new JTabbedPane(JTabbedPane.TOP);
@@ -122,18 +127,18 @@ public class MainFrame extends JFrame implements Observer {
         advancedPanel = new AdvancedTab();
 
         // Add each tab to the JTabbedPane ...
-        tabbedPane.addTab(Messages.getString("Tab.General"),
-                WsConstants.TAB_ICON_GENERAL, generalPanel, null);
-        tabbedPane.addTab(Messages.getString("Tab.Location"),
-                WsConstants.TAB_ICON_LOCATION, locationPanel, null);
-        tabbedPane.addTab(Messages.getString("Tab.PrayTimes"),
-                WsConstants.TAB_ICON_PRAYTIMES, praytimesPanel, null);
-        tabbedPane.addTab(Messages.getString("Tab.Alerts"),
-                WsConstants.TAB_ICON_ALERTS, alertsPanel, null);
-        tabbedPane.addTab(Messages.getString("Tab.Preferences"),
-                WsConstants.TAB_ICON_PREFERENCES, preferencesPanel, null);
-        tabbedPane.addTab(Messages.getString("Tab.Advanced"),
-                WsConstants.TAB_ICON_ADVANCED, advancedPanel, null);
+        tabbedPane.addTab(I18N.getString("Tab.General"),
+                GuiConstants.TAB_ICON_GENERAL, generalPanel, null);
+        tabbedPane.addTab(I18N.getString("Tab.Location"),
+                GuiConstants.TAB_ICON_LOCATION, locationPanel, null);
+        tabbedPane.addTab(I18N.getString("Tab.PrayTimes"),
+                GuiConstants.TAB_ICON_PRAYTIMES, praytimesPanel, null);
+        tabbedPane.addTab(I18N.getString("Tab.Alerts"),
+                GuiConstants.TAB_ICON_ALERTS, alertsPanel, null);
+        tabbedPane.addTab(I18N.getString("Tab.Preferences"),
+                GuiConstants.TAB_ICON_PREFERENCES, preferencesPanel, null);
+        tabbedPane.addTab(I18N.getString("Tab.Advanced"),
+                GuiConstants.TAB_ICON_ADVANCED, advancedPanel, null);
 
         tabbedPane.setSelectedComponent(praytimesPanel);
 
@@ -144,10 +149,9 @@ public class MainFrame extends JFrame implements Observer {
     // =======================================================================
 
     private void chooseCustomLookAndFeel() {
-        Utils os = new Utils();
         boolean isLafAlreadyChoosen = false;
         try {
-            if (os.isMac()) {
+            if (Platform.isMac()) {
                 for (UIManager.LookAndFeelInfo laf : UIManager.getInstalledLookAndFeels()) {
                     if ("Mac OS X".equals(laf.getName())) {
                         UIManager.setLookAndFeel(laf.getClassName());
