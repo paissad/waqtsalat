@@ -25,7 +25,7 @@ import java.io.File;
 import org.junit.Assert;
 import org.junit.Test;
 
-import net.waqtsalat.utils.CommonUtils;
+import net.paissad.waqtsalat.utils.CommonUtils;
 
 /**
  * @author Papa Issa DIAKHATE (paissad)

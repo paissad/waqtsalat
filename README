@@ -17,9 +17,9 @@ Requirements
 A Java Development Kit (JDK 1.6.xx or newer)
 A build tool, 'ant' or 'maven'.
 
-=======
-install
-=======
+============
+Installation
+============
 For the instructions, refer to the INSTALL file.
 
 =====
@@ -43,7 +43,7 @@ Thanks to contributors, testers, praytimes.org and everyone involved in this pro
 =====
 Links
 =====
-http://dev.paissad.net/projects/waqtsalat
+https://github.com/paissad/waqtsalat
 
 Paissad,
 
