@@ -23,35 +23,35 @@ package net.paissad.waqtsalat;
 /**
  * A class which represent geographical coordinates ...
  * 
- * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
+ * @author Papa Issa DIAKHATE (paissad)
  */
 public class Coordinates {
 
-    float _latitude;
-    float _longitude;
+    private float latitude;
+    private float longitude;
 
     public Coordinates() {
     }
 
     public Coordinates(float latitude, float longitude) {
-        this._latitude = latitude;
-        this._longitude = longitude;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public float getLatitude() {
-        return _latitude;
+        return latitude;
     }
 
     public void setLatitude(float latitude) {
-        this._latitude = latitude;
+        this.latitude = latitude;
     }
 
     public float getLongitude() {
-        return _longitude;
+        return longitude;
     }
 
     public void setLongitude(float longitude) {
-        this._longitude = longitude;
+        this.longitude = longitude;
     }
 
     @Override

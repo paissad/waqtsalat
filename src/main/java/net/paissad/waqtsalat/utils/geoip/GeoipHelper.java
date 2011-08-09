@@ -20,7 +20,9 @@
 
 package net.paissad.waqtsalat.utils.geoip;
 
-import static net.paissad.waqtsalat.WSConstants.*;
+import static net.paissad.waqtsalat.WSConstants.GEOIP_DATABASE_FULLPATH;
+import static net.paissad.waqtsalat.WSConstants.GEOIP_DATABASE_UPDATE_URL;
+import static net.paissad.waqtsalat.WSConstants.GEOIP_WORLDCITIES_URL;
 
 import java.io.File;
 import java.io.IOException;
@@ -101,6 +103,8 @@ public class GeoipHelper {
     // _________________________________________________________________________
 
     /**
+     * Get geographic coordinates from a given IP address.
+     * 
      * @param ipAddress
      * @return The {@link Coordinates} for the given IP address.
      * @throws IOException
@@ -110,16 +114,35 @@ public class GeoipHelper {
         return new Coordinates(location.latitude, location.longitude);
     }
 
+    /**
+     * Get the city name for the specified IP address.
+     * 
+     * @param ipAddress
+     * @return The city name.
+     * @throws IOException
+     */
     public static String getCity(String ipAddress) throws IOException {
         Location location = getLocation(ipAddress);
         return location.city;
     }
 
+    /**
+     * Get the country name from a given IP address.
+     * 
+     * @param ipAddress
+     * @return The country name.
+     * @throws IOException
+     */
     public static String getCountry(String ipAddress) throws IOException {
         Location location = getLocation(ipAddress);
         return location.countryName;
     }
 
+    /**
+     * @param ipAddress
+     * @return The {@link Location} object for the given IP address.
+     * @throws IOException
+     */
     private static Location getLocation(final String ipAddress) throws IOException {
         LookupService service = new LookupService(
                 GEOIP_DATABASE_FULLPATH, LookupService.GEOIP_MEMORY_CACHE);

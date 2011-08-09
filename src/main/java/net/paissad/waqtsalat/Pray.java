@@ -29,6 +29,8 @@ import org.slf4j.LoggerFactory;
 
 import net.paissad.waqtsalat.utils.media.SimplePlayer;
 
+import it.sauronsoftware.cron4j.Scheduler;
+
 /**
  * Encapsulates a pray with all its "options" such like its name, its time, its
  * muezzin call sound and so on ...
@@ -98,6 +100,7 @@ public class Pray extends Observable implements Observer {
      */
     public void start() {
         t = new Thread("Pray Daemon for " + prayName.toString()) {
+            @Override
             public void run() {
                 logger.trace("Starting {}...", Thread.currentThread().getName());
                 playMuezzin = true;
@@ -116,7 +119,11 @@ public class Pray extends Observable implements Observer {
                     _schedulerID = scheduler.schedule(cronDate, new Runnable() {
                         @Override
                         public void run() {
-                            new SimplePlayer(muezzinSound).play();
+                            try {
+                                new SimplePlayer(muezzinSound).play();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     });
                     scheduler.start();
@@ -224,6 +231,7 @@ public class Pray extends Observable implements Observer {
 
     // =======================================================================
 
+    @Override
     public String toString() {
         String format = "\n| %-14s : %-40s";
         String s = "";

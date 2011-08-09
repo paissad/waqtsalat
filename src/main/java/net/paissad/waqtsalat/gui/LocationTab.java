@@ -59,7 +59,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.BadLocationException;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.lucene.queryParser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +77,7 @@ import net.paissad.waqtsalat.utils.geoip.WorldCitiesLucene;
 
 /**
  * 
- * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
+ * @author Papa Issa DIAKHATE (paissad)
  */
 public class LocationTab extends JPanel implements Observer {
 
@@ -439,7 +438,7 @@ public class LocationTab extends JPanel implements Observer {
     // ---------- ACTIONS ...
 
     private void chckbxIPLocation_ActionPerformed(ActionEvent e)
-            throws ConfigurationException, IOException {
+            throws IOException {
         boolean currentSelection = chckbxIPLocation.isSelected();
         try {
             lblSearchLoc.setEnabled(!currentSelection);
@@ -625,7 +624,7 @@ public class LocationTab extends JPanel implements Observer {
 
     // ------
 
-    private void getIPLocation() throws ConfigurationException, IOException {
+    private void getIPLocation() throws IOException {
         _locationIconState.setState(LocationStateLabel.State.SEARCHING);
         String _ip = CommonUtils.retreiveIpAddress();
         if (_ip.equals("-1"))

@@ -6,10 +6,10 @@ DirName=$(dirname $0)
 
 # Set HOME
 
-if [[ "x$WS_Home" = "x" ]]; then
-    WS_Home=$(cd $DirName; pwd)
+if [[ "x$WS_HOME" = "x" ]]; then
+    WS_HOME=$(cd $DirName; pwd)
 fi
-export WS_Home
+export WS_HOME
 
 # Setup the JVM
 if [[ "x$Java" = "x" ]]; then
@@ -21,7 +21,7 @@ if [[ "x$Java" = "x" ]]; then
 fi
 
 # Setup the classpath
-WS_Jars="$WS_Home/waqtsalat.jar"
+WS_JARS="$WS_HOME/waqtsalat.jar"
 
 # Execute the JVM (1st solution)
 #exec \
@@ -29,7 +29,7 @@ WS_Jars="$WS_Home/waqtsalat.jar"
     #$Java_Opts \
     #-Xmx768M -Xss16M \
     #-Dfile.encoding=UTF-8 \
-    #-classpath "$WS_Jars" \
+    #-classpath "$WS_JARS" \
     #net/waqtsalat/WaqtSalat \
     #"$@"
 
@@ -39,6 +39,6 @@ exec \
     $Java_Opts \
     -Xmx768M -Xss16M \
     -Dfile.encoding=UTF-8 \
-    -jar "$WS_Jars" \
+    -jar "$WS_JARS" \
     "$@"
 

@@ -34,10 +34,11 @@
     <developerConnection>https://paissad@github.com/paissad/waqtsalat.git</developerConnection>
     <url>https://github.com/paissad/waqtsalat</url>
   </scm>
-  
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jna.version>3.3.0</jna.version>
+    <main.class>net.paissad.waqtsalat.WaqtSalat</main.class>
   </properties>
 
   <!-- Build settings -->
@@ -48,11 +49,45 @@
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>2.3.2</version>
-        <configuration>        
+        <configuration>
           <source>1.6</source>
           <target>1.6</target>
           <showDeprecation>true</showDeprecation>
           <showWarnings>true</showWarnings>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.3.1</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <mainClass>${main.class}</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+
+      <!-- Create a jar with dependencies -->
+      <!-- http://maven.apache.org/plugins/maven-assembly-plugin/descriptor-refs.html#jar-with-dependencies -->
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2.1</version>
+        <configuration>
+          <descriptorRefs>
+            <!-- http://maven.apache.org/plugins/maven-assembly-plugin/descriptor-refs.html -->
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+            <descriptorRef>bin</descriptorRef>
+<!--             <descriptorRef>src</descriptorRef> -->
+<!--             <descriptorRef>project</descriptorRef> -->
+          </descriptorRefs>
+          <archive>
+            <manifest>
+              <mainClass>${main.class}</mainClass>
+            </manifest>
+          </archive>
         </configuration>
       </plugin>
 
@@ -120,22 +155,11 @@
       <version>2.0.3</version>
     </dependency>
     <dependency>
-    	<groupId>ant</groupId>
-    	<artifactId>ant</artifactId>
-    	<version>1.7.0</version>
-    	<scope>compile</scope>
-    </dependency>
-    <dependency>
-    	<groupId>junit</groupId>
-    	<artifactId>junit</artifactId>
-    	<version>4.8.2</version>
-    	<type>jar</type>
-    	<scope>test</scope>
-    </dependency>
-    <dependency>
-    	<groupId>commons-configuration</groupId>
-    	<artifactId>commons-configuration</artifactId>
-    	<version>1.6</version>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.8.2</version>
+      <type>jar</type>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>net.java.dev.jna</groupId>
@@ -149,14 +173,24 @@
       <classifier>platform</classifier>
     </dependency>
     <dependency>
-    	<groupId>commons-httpclient</groupId>
-    	<artifactId>commons-httpclient</artifactId>
-    	<version>3.1</version>
+      <groupId>commons-httpclient</groupId>
+      <artifactId>commons-httpclient</artifactId>
+      <version>3.1</version>
     </dependency>
     <dependency>
-    	<groupId>args4j</groupId>
-    	<artifactId>args4j</artifactId>
-    	<version>2.0.12</version>
+      <groupId>args4j</groupId>
+      <artifactId>args4j</artifactId>
+      <version>2.0.12</version>
+    </dependency>
+    <dependency>
+      <groupId>org.clojars.ghoseb</groupId>
+      <artifactId>cron4j</artifactId>
+      <version>2.2.1</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.apache.ant</groupId>
+    	<artifactId>ant</artifactId>
+    	<version>1.8.2</version>
     </dependency>
   </dependencies>
 
@@ -166,6 +200,10 @@
       <name>Java.net Repository for Maven</name>
       <url>http://download.java.net/maven/2/</url>
       <layout>default</layout>
+    </repository>
+    <repository>
+      <id>clojars.org</id>
+      <url>http://clojars.org/repo</url>
     </repository>
   </repositories>
 

@@ -57,7 +57,7 @@ public class WSOptions {
     @Option(name = "-l", aliases = { "--log" }, metaVar = "<log_file>", usage = "options_specify_logfile")
     private File             logfile;
 
-    @Option(name = "-c", aliases = { "--conf" }, metaVar = "<conf_file>", required = true, usage = "options_conf_file")
+    @Option(name = "-c", aliases = { "--conf" }, metaVar = "<conf_file>", usage = "options_conf_file")
     private File             configFile;
 
     @Option(name = "--color", usage = "options_colorize_stdout")
