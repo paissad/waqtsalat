@@ -8,11 +8,11 @@
 
   <name>WaqtSalat</name>
   <description>WaqtSalat, for the purpose of computing muslim pray times.</description>
-  <url></url>
+  <url>http://paissad.github.com/waqtsalat/</url>
   <inceptionYear>2011</inceptionYear>
   <licenses>
     <license>
-      <name>GPLv3</name>
+      <name>GNU GENERAL PUBLIC LICENSE Version 3 (GPLv3)</name>
       <url>http://www.gnu.org/licenses/gpl.html</url>
     </license>
   </licenses>
@@ -35,10 +35,13 @@
     <url>https://github.com/paissad/waqtsalat</url>
   </scm>
 
+  <!-- Set of properties -->
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <jna.version>3.3.0</jna.version>
     <main.class>net.paissad.waqtsalat.WaqtSalat</main.class>
+    <extras.dir>${basedir}/extras</extras.dir>
+    <macosx.dir>${basedir}/macosx</macosx.dir>
   </properties>
 
   <!-- Build settings -->
@@ -76,12 +79,13 @@
         <artifactId>maven-assembly-plugin</artifactId>
         <version>2.2.1</version>
         <configuration>
+          <goal>single</goal>
           <descriptorRefs>
             <!-- http://maven.apache.org/plugins/maven-assembly-plugin/descriptor-refs.html -->
             <descriptorRef>jar-with-dependencies</descriptorRef>
-            <descriptorRef>bin</descriptorRef>
-<!--             <descriptorRef>src</descriptorRef> -->
-<!--             <descriptorRef>project</descriptorRef> -->
+            <!-- <descriptorRef>bin</descriptorRef> -->
+            <!-- <descriptorRef>src</descriptorRef> -->
+            <!-- <descriptorRef>project</descriptorRef> -->
           </descriptorRefs>
           <archive>
             <manifest>
@@ -94,6 +98,7 @@
     </plugins>
   </build>
 
+  <!-- List of dependencies -->
   <dependencies>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -188,12 +193,13 @@
       <version>2.2.1</version>
     </dependency>
     <dependency>
-    	<groupId>org.apache.ant</groupId>
-    	<artifactId>ant</artifactId>
-    	<version>1.8.2</version>
+      <groupId>org.apache.ant</groupId>
+      <artifactId>ant</artifactId>
+      <version>1.8.2</version>
     </dependency>
   </dependencies>
 
+  <!-- Additional repositories -->
   <repositories>
     <repository>
       <id>maven2-repository.java.net</id>
@@ -207,4 +213,65 @@
     </repository>
   </repositories>
 
+  <!-- Profiles settings -->
+  <!-- http://www.sonatype.com/books/mvnref-book/reference/public-book.html -->
+  <!-- http://www.sonatype.com/books/mvnref-book/reference/profiles-sect-activation.html -->
+  <profiles>
+
+    <profile>
+      <id>create-osx-app-bundle</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+        <os>
+          <family>mac</family>
+        </os>
+        <jdk>1.6</jdk>
+
+      </activation>
+      <build>
+        <!-- The plugin for creating the OSX App Bundle -->
+        <!-- http://mojo.codehaus.org/osxappbundle-maven-plugin/ -->
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>osxappbundle-maven-plugin</artifactId>
+            <version>1.0-alpha-2</version>
+            <configuration>
+              <mainClass>${main.class}</mainClass>
+              <iconFile>${macosx.dir}/waqtsalat.icns</iconFile>
+              <internetEnable>true</internetEnable>
+              <jvmVersion>1.6+</jvmVersion>
+              <vmOptions>-Xmx768M -Xss16M -Dfile.encoding=UTF-8 -jar</vmOptions>
+              <additionalResources>
+                <fileSet>
+                  <directory>${extras.dir}</directory>
+                  <includes>
+                    <include>${macosx.dir}/growlNotifier.applescript</include>
+                  </includes>
+                </fileSet>
+              </additionalResources>
+            </configuration>
+            <executions>
+              <execution>
+                <phase>package</phase>
+                <goals>
+                  <goal>bundle</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <!-- Specify the '\-\-gui' option/argument if the while creating the OSX App Bundle -->
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>1.2</version>
+            <configuration>
+              <commandlineArgs>--gui</commandlineArgs>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+  </profiles>
 </project>

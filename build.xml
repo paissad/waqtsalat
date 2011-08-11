@@ -24,7 +24,7 @@
 
     <property name="build.src" value="${mavenJava}:${mavenResources}" />
     <property name="build.classes" value="${mavenTarget}" />
-    <property name="main-class" value="net.waqtsalat.WaqtSalat" />
+    <property name="main-class" value="net.paissad.waqtsalat.WaqtSalat" />
 
     <property name="javadoc.outdir" value="doc" />
     <property name="javadoc.title" value="WaqtSalat project's documentation." />
@@ -76,7 +76,7 @@
         <jar basedir="${build.classes}" destfile="${output.jar}" compress="off" duplicate="preserve">	
             <manifest>
                 <attribute name="Main-Class" value="${main-class}" />
-                <section name="net/waqtsalat/*">
+                <section name="net/paissad/waqtsalat/*">
                     <attribute name="Specification-Title" value="${Name}" />
                     <attribute name="Spedification-Version" value="${version}" />
                     <attribute name="Implementation-Version" value="${version} ${TODAY} "/>
@@ -96,7 +96,7 @@
             <tarfileset
                 dir="."
                 prefix="waqtsalat-${version}"
-                includes="LICENSE, README, CHANGELOG, COPYING, AUTHORS, NEWS, INSTALL, TODO, ${output.jar}, waqtsalat.conf, waqtsalat.sh, extras/**, macosx/*.applescript" />
+                includes="LICENSE, README, AUTHORS, INSTALL, TODO, ${output.jar}, waqtsalat.conf, waqtsalat.sh, extras/**, macosx/*.applescript" />
         </tar>
 
         <condition property="isMac">
@@ -225,7 +225,7 @@
             notree="false" 
             splitindex="true" 
             >
-            <package name="*net.waqtsalat.*" />
+            <package name="*net.paissad.waqtsalat.*" />
         </javadoc>
     </target>
 

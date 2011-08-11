@@ -38,6 +38,9 @@ my %maven_rules = (
     'Failures: [1-9]+(,|$)'    => "red",
     'Errors: [1-9]+(,|$)'      => "red",
     'Unknown lifecycle phase'  => "red",
+    ' Building .*'             => "magenta",
+    ' >>> .* >>>$'             => "magenta",
+    ' --- .* ---$'             => "magenta",
 
 );
 
