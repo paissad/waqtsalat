@@ -76,7 +76,7 @@ public class DBConnection {
         } catch (InstantiationException ie) {
             logger.error("Unable to instanciate the JDBC driver : ", ie);
         } catch (IllegalAccessException iae) {
-            logger.error("Unable to acces the JDBC driver : ", iae);
+            logger.error("Unable to access the JDBC driver : ", iae);
         } catch (ClassNotFoundException cnfe) {
             logger.error("Unable to load the JDBC driver : ", cnfe);
         }
