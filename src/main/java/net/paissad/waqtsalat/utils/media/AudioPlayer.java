@@ -29,11 +29,15 @@ public interface AudioPlayer {
 
     /**
      * Stop playing an audio file.
+     * 
+     * @throws Exception
      */
-    public void stop();
+    public void stop() throws Exception;
 
     /**
      * Start playing an audio file.
+     * 
+     * @throws Exception
      */
-    public void play();
+    public void play() throws Exception;
 }

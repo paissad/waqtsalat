@@ -24,16 +24,15 @@ package net.paissad.waqtsalat.gui;
 import java.util.prefs.Preferences;
 
 /**
- * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
+ * @author Papa Issa DIAKHATE (paissad)
  */
 public class WaqtSalatPrefs {
 
 	/**
 	 * Some known settings for the GUI ...
-	 * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
-	 *
+	 * @author Papa Issa DIAKHATE (paissad)
 	 */
-	public static enum guiSettings {
+	public static enum GuiSettings {
 
 		DISPLAY_NEXT_PRAY_IN_MENUBAR,
 		DISPLAY_ICON_IN_MENUBAR,
@@ -66,11 +65,5 @@ public class WaqtSalatPrefs {
 		String root = "/waqtsalat";
 		userPrefs   = Preferences.userRoot().node(root);
 		systemPrefs = Preferences.systemRoot().node(root);
-        /*
-         * WaqtSalatPrefs o = new WaqtSalatPrefs(); root =
-         * o.getClass().getPackage().getName(); userPrefs =
-         * Preferences.userRoot().node(root); systemPrefs =
-         * Preferences.systemRoot().node(root); o = null;
-         */
     }
 }

@@ -30,7 +30,7 @@ WS_JARS="$WS_HOME/waqtsalat.jar"
     #-Xmx768M -Xss16M \
     #-Dfile.encoding=UTF-8 \
     #-classpath "$WS_JARS" \
-    #net/waqtsalat/WaqtSalat \
+    #net/paissad/waqtsalat/WaqtSalat \
     #"$@"
 
 # Execute the JVM (2nd solution)

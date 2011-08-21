@@ -32,6 +32,7 @@ import java.sql.Statement;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,23 +122,25 @@ public class WorldCitiesDB {
             stmt.execute(SQL_UPDATE_COUNTRY_CODE);
             logger.debug("Finished putting country codes in uppercase.");
 
-            // Update the country names entries.
-            updateTableCountryName(Locale.US);
-
             conn.commit();
 
+            long endTime = System.currentTimeMillis();
+            logger.debug("Database '{}' created in {} seconds.", WORLDCITIES_TABLE_NAME,
+                    (int) (endTime - startTime) / 1000);
+
         } catch (SQLException sqle) {
-            logger.error("An error occured , rolling back ...");
-            conn.rollback();
-            throw new SQLException(sqle);
+            String errMsg = "An error occured while creating the table (" + WORLDCITIES_TABLE_NAME + ")\n";
+            logger.error(errMsg, sqle);
+            JDBCUtils.printSQLException(sqle);
+            if (conn != null && !conn.isClosed()) {
+                conn.rollback();
+            }
+            throw new SQLException(errMsg, sqle);
 
         } finally {
             JDBCUtils.closeQuietly(conn);
             JDBCUtils.closeQuietly(stmt);
         }
-
-        long endTime = System.currentTimeMillis();
-        logger.debug("Database '{}' created in {} seconds.", WORLDCITIES_TABLE_NAME, (int) (endTime - startTime) / 1000);
     }
 
     // =========================================================================
@@ -171,9 +174,10 @@ public class WorldCitiesDB {
             conn.setAutoCommit(false);
             pstmt = conn.prepareStatement(SQL_UPDATE_COUNTRY_NAME);
             Map<String, String> countries = CommonUtils.getCountries(aLocale);
-            Iterator<String> iter = countries.keySet().iterator();
-            while (iter.hasNext()) {
-                String cc = iter.next(); // cc like Country Code.
+            Iterator<Entry<String, String>> it = countries.entrySet().iterator();
+            while (it.hasNext()) {
+                Entry<String, String> entry = it.next();
+                String cc = entry.getKey(); // cc like Country Code
                 pstmt.setString(1, countries.get(cc));
                 pstmt.setString(2, cc);
                 pstmt.addBatch();
@@ -181,6 +185,14 @@ public class WorldCitiesDB {
             pstmt.executeBatch();
             logger.info("Finished updating the country names into table '{}' using Locale '{}'.",
                     WORLDCITIES_TABLE_NAME, aLocale.getDisplayName());
+
+            conn.commit();
+
+        } catch (SQLException sqle) {
+            String errMsg = "Error while updating names of countries into the database.\n";
+            logger.error(errMsg, sqle);
+            JDBCUtils.printSQLException(sqle);
+            throw new SQLException(errMsg, sqle);
 
         } finally {
             JDBCUtils.closeQuietly(conn);
@@ -201,7 +213,8 @@ public class WorldCitiesDB {
      * @throws SQLException
      * 
      */
-    public Coordinates getCoordinates(String country, String city) throws SQLException {
+    public static Coordinates getCoordinatesFromCountryAndCity(String country, String city) throws SQLException {
+
         Connection conn = null;
         Statement stmt = null;
         ResultSet rs = null;
@@ -214,10 +227,17 @@ public class WorldCitiesDB {
             rs = stmt.executeQuery(sql);
             if (rs.next()) { // We only select the 1st row !
                 coord = new Coordinates();
-                coord.setLatitude(rs.getFloat(1));
-                coord.setLongitude(rs.getFloat(2));
+                coord.setLatitude(rs.getFloat("latitude"));
+                coord.setLongitude(rs.getFloat("longitude"));
             }
             return coord;
+
+        } catch (SQLException sqle) {
+            String errMsg = "Error while retrieving the coordinates of (" + country + ", " + city
+                    + ") from the database.";
+            logger.error(errMsg, sqle);
+            JDBCUtils.printSQLException(sqle);
+            throw new SQLException(errMsg, sqle);
 
         } finally {
             JDBCUtils.closeQuietly(conn);
@@ -234,12 +254,14 @@ public class WorldCitiesDB {
      * @param countryName
      *            The full name of the country.
      * 
-     * @return The String 2 letters representation of the country code.
+     * @return The String 2 letters representation of the country code in
+     *         upper case.
      * @throws SQLException
      */
-    public String getCountryCodeFromCountryName(String countryName) throws SQLException {
+    public static String getCountryCodeFromCountryName(String countryName) throws SQLException {
         Connection conn = null;
         ResultSet rs = null;
+        Statement stmt = null;
         try {
             conn = DBConnection.getInstance();
             conn.setAutoCommit(false);
@@ -248,7 +270,7 @@ public class WorldCitiesDB {
             if (countryName != null) {
                 String sql = "SELECT country_code FROM " + WORLDCITIES_TABLE_NAME
                         + " WHERE country_name LIKE '" + countryName + "';";
-                Statement stmt = conn.createStatement();
+                stmt = conn.createStatement();
                 rs = stmt.executeQuery(sql);
                 if (rs.next()) { // We only select the 1st row ...
                     cc = rs.getString(1);
@@ -256,8 +278,15 @@ public class WorldCitiesDB {
             }
             return cc;
 
+        } catch (SQLException sqle) {
+            String errMsg = "Error while getting country code for (" + countryName + ") from the database.";
+            logger.error(errMsg, sqle);
+            JDBCUtils.printSQLException(sqle);
+            throw new SQLException(errMsg, sqle);
+
         } finally {
             JDBCUtils.closeQuietly(conn);
+            JDBCUtils.closeQuietly(stmt);
             JDBCUtils.closeQuietly(rs);
         }
     }

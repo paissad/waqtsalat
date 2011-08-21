@@ -22,7 +22,6 @@ package net.paissad.waqtsalat.gui;
 
 import java.awt.Color;
 import java.awt.Toolkit;
-import java.io.File;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -30,13 +29,9 @@ import javax.swing.ImageIcon;
 /**
  * This interface contains some preferred/fixed values for the GUI.
  * 
- * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
+ * @author Papa Issa DIAKHATE (paissad)
  */
 public interface GuiConstants {
-
-    // No need to use 'public static final' with an Interface.
-
-    String    FS                           = File.separator;
 
     int       MAINFRAME_MINIMUM_WIDTH      = 500;
     int       MAINFRAME_MININUM_HEIGHT     = 450;

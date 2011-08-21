@@ -8,3 +8,6 @@ dist
 target
 waqtsalat.log
 src/main/resources/extras/geoip/worldcitiespop.trace.db
+extras/geoip/db/
+extras/geoip/lucene-index/
+extras/geoip/worldcitiespop.txt

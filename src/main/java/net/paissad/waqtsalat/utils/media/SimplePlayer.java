@@ -21,10 +21,12 @@
 package net.paissad.waqtsalat.utils.media;
 
 import java.io.File;
+import java.net.URL;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.paissad.waqtsalat.utils.media.AudioPlayerFactory.AudioType;
 
 /**
  * A simple player for MP3 & common audio files.
@@ -58,6 +60,24 @@ public class SimplePlayer implements AudioPlayer {
 
     /**
      * 
+     * @param url
+     *            - The url of the resource to play.
+     * @throws Exception
+     */
+    public SimplePlayer(final URL url) throws Exception {
+        try {
+            this.filename = url.getPath();
+            AudioType type = AudioPlayerFactory.guessTypeFromExtension(getFilename());
+            this.player = AudioPlayerFactory.getInstance(url.openStream(), type, null);
+
+        } catch (Exception e) {
+            logger.error("Error while getting an instance of AudioPlayer : ", e);
+            throw new Exception(e);
+        }
+    }
+
+    /**
+     * 
      * @param file
      *            - The file to use.
      * @param listener
@@ -70,22 +90,20 @@ public class SimplePlayer implements AudioPlayer {
             this.player = AudioPlayerFactory.getInstance(file, listener);
 
         } catch (Exception e) {
-            logger.error("Error while getting an instance of AudioPlayer : ", e);
-            throw new Exception(e);
+            String errMsg = "Error while getting an instance of AudioPlayer";
+            logger.error(errMsg, e);
+            throw new Exception(errMsg, e);
         }
     }
 
     @Override
-    public void stop() {
+    public void stop() throws Exception {
         player.stop();
-        logger.trace("The playback of the audio file '{}' stopped successfully.", getFilename());
     }
 
     @Override
-    public void play() {
-        logger.trace("Playing the audio file '{}'", getFilename());
+    public void play() throws Exception {
         player.play();
-        logger.trace("Finished playing the audio file '{}'", getFilename());
     }
 
     private String getFilename() {
@@ -99,4 +117,5 @@ public class SimplePlayer implements AudioPlayer {
         SimplePlayer player = new SimplePlayer("src/test/resources/sounds/alarm.mp3");
         player.play();
     }
+
 }

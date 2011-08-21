@@ -69,11 +69,12 @@ class Mp3Player implements AudioPlayer {
     }
 
     @Override
-    public void play() {
+    public void play() throws JavaLayerException {
         try {
             mp3player.play();
         } catch (JavaLayerException jle) {
             logger.error("Error while playing the mp3 file : {}", jle);
+            throw new JavaLayerException("Error while playing the mp3 file", jle);
         }
     }
 

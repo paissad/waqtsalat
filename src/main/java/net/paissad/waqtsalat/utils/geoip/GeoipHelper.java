@@ -26,6 +26,7 @@ import static net.paissad.waqtsalat.WSConstants.GEOIP_WORLDCITIES_URL;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 
 import org.apache.commons.httpclient.HttpException;
 import org.slf4j.Logger;
@@ -75,6 +76,10 @@ public class GeoipHelper {
     /**
      * Verify whether or not an update is available for the specified GEOIP
      * resource.
+     * <p>
+     * <b>Note</b>:If the local file does not exist yet, then an update is
+     * supposed to be automatically available.
+     * </p>
      * 
      * @param type
      * @param localFile
@@ -86,6 +91,13 @@ public class GeoipHelper {
      */
     public static boolean isUpdateAvailable(GEOIPTYPE type, final File localFile) {
 
+        /*
+         * TODO: instead of relying on the presence and timestamp of the local
+         * file, the datas should be stored into a database. It's safer.
+         * In other words, the timestamp of 'eventual' previous dates of updates
+         * should be saved into a database/table.
+         */
+
         logger.info("Checking GeoIP update for {}.", type.toString());
         String url = null;
         if (type == GEOIPTYPE.DATABASE) {
@@ -94,10 +106,14 @@ public class GeoipHelper {
             url = GEOIP_WORLDCITIES_URL;
         }
 
-        long localTimestamp = localFile.lastModified();
-        long remoteTimestamp = CommonUtils.getRemoteTimestamp(url);
+        if (!localFile.exists()) {
+            return true;
+        }
 
-        return (remoteTimestamp < localTimestamp) ? true : false;
+        Date localDate = new Date(localFile.lastModified());
+        Date remoteDate = new Date(CommonUtils.getRemoteTimestamp(url));
+
+        return remoteDate.after(localDate);
     }
 
     // _________________________________________________________________________

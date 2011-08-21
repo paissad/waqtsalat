@@ -23,18 +23,30 @@ package net.paissad.waqtsalat;
 import static net.paissad.waqtsalat.WSConstants.EXIT_ERROR;
 import static net.paissad.waqtsalat.WSConstants.EXIT_SUCCESS;
 
+import java.awt.AWTException;
 import java.io.File;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
+import javax.swing.SwingUtilities;
+
+import org.apache.commons.io.FileUtils;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.paissad.waqtsalat.gui.MainFrame;
 import net.paissad.waqtsalat.logging.LogColorConverter;
 import net.paissad.waqtsalat.logging.LogDirDefiner;
 import net.paissad.waqtsalat.logging.LogFileNameDefiner;
 import net.paissad.waqtsalat.logging.LogReloader;
+import net.paissad.waqtsalat.utils.UncompressUtils;
+import net.paissad.waqtsalat.utils.geoip.GeoipHelper;
+import net.paissad.waqtsalat.utils.geoip.WorldCitiesDB;
+import net.paissad.waqtsalat.utils.geoip.WorldCitiesLucene;
+import net.paissad.waqtsalat.utils.geoip.GeoipHelper.GEOIPTYPE;
 
 public class WaqtSalat {
 
@@ -46,15 +58,30 @@ public class WaqtSalat {
 
     // _________________________________________________________________________
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         processOptionsAndArguments(args);
-        
+
         logger.trace("trace ...");
         logger.debug("debug ...");
         logger.info("info ...");
         logger.warn("warn ...");
         logger.error("error ...");
+
+        // initDatabase();
+        initLuceneIndex();
+
+        SwingUtilities.invokeAndWait(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    MainFrame gui = new MainFrame();
+                    gui.setVisible(true);
+                } catch (AWTException e) {
+                    logger.error("Error while launching the GUI ... ", e);
+                }
+            }
+        });
     }
 
     // _________________________________________________________________________
@@ -194,6 +221,56 @@ public class WaqtSalat {
             logger.info("Freeing resources ...");
             System.gc();
             logger.info("Bye bye !");
+        }
+    }
+
+    // _________________________________________________________________________
+
+    /**
+     * Initialize the database which contains cities and countries names,
+     * coordinates and such stuffs ...
+     * 
+     * @throws SQLException
+     * @throws IOException
+     */
+    private static void initDatabase() throws IOException, SQLException {
+
+        GEOIPTYPE type = GEOIPTYPE.WORLD_CITIES;
+        File csvFile = new File(WSConstants.WORLDCITIES_CSV_FILENAME);
+        // if (GeoipHelper.isUpdateAvailable(type, csvFile)) {
+        // logger.info("An update is available ...");
+        // File downloadedFile = new File(csvFile.getAbsolutePath() + ".gz");
+        // GeoipHelper.download(type, downloadedFile);
+        // new UncompressUtils(downloadedFile).gunzip();
+        // if (downloadedFile.exists()) {
+        // FileUtils.forceDelete(downloadedFile);
+        // }
+        // } else {
+        // logger.info("The world cities file is up to date.");
+        // }
+
+        WorldCitiesDB citiesDB = new WorldCitiesDB();
+        citiesDB.createTable();
+        citiesDB.updateTableCountryName();
+    }
+
+    // _________________________________________________________________________
+
+    /**
+     * Initialize the Lucene index.
+     * 
+     * @throws IOException
+     * @throws SQLException
+     */
+    private static void initLuceneIndex() throws SQLException, IOException {
+
+        File indexDir = new File(WSConstants.LUCENE_INDEX_PATH);
+        if (!indexDir.exists()) {
+            logger.info("The lucene index does not exist yet, going to initialize it !");
+            WorldCitiesLucene.createIndex();
+
+        } else {
+            logger.info("The lucene index does already exist.");
         }
     }
 

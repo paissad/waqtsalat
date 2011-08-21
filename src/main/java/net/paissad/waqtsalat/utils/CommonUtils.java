@@ -149,10 +149,11 @@ public class CommonUtils {
             logger.warn("It seems like you don't have an internet connection.");
         }
 
+        BufferedReader bf = null;
         try {
             URL url = new URL("http://checkip.dyndns.org");
 
-            BufferedReader bf = new BufferedReader(new InputStreamReader(url.openStream()));
+            bf = new BufferedReader(new InputStreamReader(url.openStream()));
             String ipRegex = " *(((\\d{1,3}\\.){3}\\d{1,3}))";
             StringBuilder sb = new StringBuilder();
             String inputLine;
@@ -166,6 +167,10 @@ public class CommonUtils {
 
         } catch (IOException ioe) {
             throw new IOException("Error while retreiving public ip address !");
+
+        } finally {
+            if (bf != null)
+                bf.close();
         }
     }
 

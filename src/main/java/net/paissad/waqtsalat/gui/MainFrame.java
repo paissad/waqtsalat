@@ -44,11 +44,18 @@ import org.slf4j.LoggerFactory;
 import com.sun.jna.Platform;
 
 import net.paissad.waqtsalat.I18N;
+import net.paissad.waqtsalat.WSConstants;
 import net.paissad.waqtsalat.gui.addons.ImageLabel;
+import net.paissad.waqtsalat.gui.tabs.AdvancedTab;
+import net.paissad.waqtsalat.gui.tabs.AlertsTab;
+import net.paissad.waqtsalat.gui.tabs.GeneralTab;
+import net.paissad.waqtsalat.gui.tabs.LocationTab;
+import net.paissad.waqtsalat.gui.tabs.PrayTimesTab;
+import net.paissad.waqtsalat.gui.tabs.PreferencesTab;
 
 /**
  * 
- * @author Papa Issa DIAKHATE (<a href="mailto:paissad@gmail.com">paissad</a>)
+ * @author Papa Issa DIAKHATE (paissad)
  */
 public class MainFrame extends JFrame implements Observer {
 
@@ -70,7 +77,7 @@ public class MainFrame extends JFrame implements Observer {
 
         chooseCustomLookAndFeel();
 
-        this.setTitle("WaqtSalat");
+        this.setTitle(WSConstants.WS_NAME);
         this.setBackground(GuiConstants.COLOR_BACKGROUND_MAINFRAME);
         this.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         this.setPreferredSize(new Dimension(GuiConstants.MAINFRAME_PREFERED_WIDTH, GuiConstants.MAINFRAME_PREFERED_HEIGHT));

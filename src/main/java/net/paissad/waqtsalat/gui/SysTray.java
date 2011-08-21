@@ -20,6 +20,8 @@
 
 package net.paissad.waqtsalat.gui;
 
+import static net.paissad.waqtsalat.pray.PrayConstants.PRAY_NAMES;
+
 import java.awt.AWTException;
 import java.awt.Image;
 import java.awt.MenuItem;
@@ -29,6 +31,8 @@ import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
@@ -36,7 +40,8 @@ import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.paissad.waqtsalat.PrayName;
+import net.paissad.waqtsalat.WSConstants;
+import net.paissad.waqtsalat.pray.PrayTime.PrayName;
 
 /**
  * 
@@ -55,7 +60,7 @@ public class SysTray implements ActionListener {
         if (!SystemTray.isSupported()) {
             logger.warn("System tray is not supported by this system !!!");
         } else {
-            String tooltip = "WaqtSalat";
+            String tooltip = WSConstants.WS_NAME;
             PopupMenu popup = new PopupMenu("tray pop-up");
 
             MenuItem showInterfaceItem = new MenuItem("Show GUI");
@@ -63,18 +68,16 @@ public class SysTray implements ActionListener {
             popup.add(showInterfaceItem);
             popup.addSeparator();
 
-            PrayName[] prayNames = PrayName.values();
-            for (int i = 0; i < prayNames.length; i++) {
-                PrayName pn = prayNames[i];
+            Iterator<Entry<PrayName, String>> iter = PRAY_NAMES.entrySet().iterator();
+            while (iter.hasNext()) {
+                Entry<PrayName, String> entry = iter.next();
                 // JRadioButtonMenuItem prayItem = new
                 // JRadioButtonMenuItem(pn.getName(), false);
-                MenuItem prayItem = new MenuItem(pn.getName());
-                String action_pray = pn.toString();
-                prayItem.setActionCommand(action_pray);
-                action_prays_list.add(action_pray);
-
+                MenuItem prayItem = new MenuItem(entry.getValue());
+                String actionPray = entry.getKey().toString();
+                prayItem.setActionCommand(actionPray);
+                action_prays_list.add(actionPray);
                 popup.add(prayItem);
-                // popup.add(new Menu(pn.getName()));
             }
             popup.addSeparator();
 

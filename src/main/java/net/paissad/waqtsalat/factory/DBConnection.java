@@ -28,6 +28,8 @@ import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.paissad.waqtsalat.utils.jdbc.JDBCUtils;
+
 /**
  * @author Papa Issa DIAKHATE (paissad)
  * 
@@ -37,14 +39,12 @@ public class DBConnection {
     private static final String PROTOCOL = "jdbc:h2:";
     private static final String DBNAME   = "worldcitiespop";
     private static final String SETTINGS = ";LARGE_TRANSACTIONS=true;OPTIMIZE_IN_SELECT=true;OPTIMIZE_OR=true";
-    private static final String DRIVER   = "org.h2.Driver";
     private static final String BASEDIR  = "extras/geoip/db";
 
     private static Logger       logger   = LoggerFactory.getLogger(DBConnection.class);
-    private static Connection   conn     = null;
 
     static {
-        loadDriver();
+        System.setProperty("h2.baseDir", new File(BASEDIR).getAbsolutePath());
     }
 
     private DBConnection() {
@@ -56,29 +56,13 @@ public class DBConnection {
      */
     public static Connection getInstance() throws SQLException {
         try {
-            if (conn == null) {
-                conn = DriverManager.getConnection(getConnectionURL(), "", "");
-            }
-            return conn;
+            return DriverManager.getConnection(getConnectionURL(), "", "");
 
         } catch (SQLException sqle) {
-            logger.error("Error while getting an instance of database connection : ", sqle);
-            throw new SQLException(sqle);
-        }
-    }
-
-    private static void loadDriver() {
-        System.setProperty("h2.baseDir", new File(BASEDIR).getAbsolutePath());
-        try {
-            Class.forName(DRIVER).newInstance();
-            logger.debug("Loading the appropriate JDBC driver.");
-
-        } catch (InstantiationException ie) {
-            logger.error("Unable to instanciate the JDBC driver : ", ie);
-        } catch (IllegalAccessException iae) {
-            logger.error("Unable to acces the JDBC driver : ", iae);
-        } catch (ClassNotFoundException cnfe) {
-            logger.error("Unable to load the JDBC driver : ", cnfe);
+            String errMsg = "Error while getting an instance of database connection.\n";
+            logger.error(errMsg, sqle);
+            JDBCUtils.printSQLException(sqle);
+            throw new SQLException(errMsg, sqle);
         }
     }
 

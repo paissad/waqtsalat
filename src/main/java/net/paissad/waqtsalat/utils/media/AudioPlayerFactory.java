@@ -38,6 +38,11 @@ public class AudioPlayerFactory {
 
     private static Logger logger = LoggerFactory.getLogger(AudioPlayerFactory.class);
 
+    /**
+     * Represents an audio type.
+     * 
+     * @author Papa Issa DIAKHATE (paissad)
+     */
     public static enum AudioType {
         BASIC,
         MP3
@@ -47,6 +52,8 @@ public class AudioPlayerFactory {
     }
 
     /**
+     * Get one instance of <tt>AudioPlayer</tt> according the filename's
+     * extension.
      * 
      * @param file
      * @param listener
@@ -61,24 +68,7 @@ public class AudioPlayerFactory {
             logger.error(errMsg);
             throw new IllegalArgumentException(errMsg);
         }
-
-        String extension = CommonUtils
-                .getFilenameExtension(file.getName())
-                .toLowerCase();
-
-        AudioType type;
-
-        if (extension.equals(".mp3")) {
-            type = AudioType.MP3;
-
-        } else if (CommonUtils.getSupportedAudioTargetTypes().contains(extension)) {
-            type = AudioType.BASIC;
-
-        } else {
-            logger.warn("The extension '{}' of the audio file is unknown, an error may occur.", extension);
-            type = AudioType.BASIC;
-        }
-
+        final AudioType type = guessTypeFromExtension(file.getAbsolutePath());
         InputStream in = new BufferedInputStream(new FileInputStream(file));
         return getInstance(in, type, listener);
     }
@@ -86,9 +76,9 @@ public class AudioPlayerFactory {
     /**
      * 
      * @param in
-     *            - The audio file.
+     *            - The <tt>InputStream</tt> of the audio file.
      * @param type
-     *            - The type of the file.
+     *            - The type of the audio file.
      * @param listener
      * @return An instance of {@link AudioPlayer}.
      * @throws Exception
@@ -119,6 +109,29 @@ public class AudioPlayerFactory {
                 logger.error(errMsg);
                 throw new Exception(errMsg);
         }
+    }
+
+    /**
+     * 
+     * @param filename
+     * @return The <tt>AudioType<tt> from the filename's extension.
+     */
+    public static AudioType guessTypeFromExtension(final String filename) {
+        String extension = CommonUtils.getFilenameExtension(filename).toLowerCase();
+        AudioType type;
+
+        if (extension.equals(".mp3")) {
+            type = AudioType.MP3;
+
+        } else if (CommonUtils.getSupportedAudioTargetTypes().contains(extension)) {
+            type = AudioType.BASIC;
+
+        } else {
+            logger.warn("The extension '{}' of the audio file is unknown, an error may occur.", extension);
+            type = AudioType.BASIC;
+        }
+
+        return type;
     }
 
 }

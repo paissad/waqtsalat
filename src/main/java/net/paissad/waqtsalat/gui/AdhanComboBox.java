@@ -274,8 +274,12 @@ public class AdhanComboBox extends JComboBox {
                 @Override
                 public void actionPerformed(ActionEvent arg0) {
                     if (audioPlayer != null) {
-                        audioPlayer.stop();
-                        audioPlayer.play();
+                        try {
+                            audioPlayer.stop();
+                            audioPlayer.play();
+                        } catch (Exception e) {
+                            logger.error("Error while playing the audio file {}", e);
+                        }
                     }
                 }
             });
@@ -288,7 +292,11 @@ public class AdhanComboBox extends JComboBox {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (audioPlayer != null) {
-                        audioPlayer.stop();
+                        try {
+                            audioPlayer.stop();
+                        } catch (Exception e1) {
+                            logger.error("Error while playing the audio file {}", e1);
+                        }
                     }
                 }
             });
@@ -332,7 +340,11 @@ public class AdhanComboBox extends JComboBox {
 
         private void setCurrentClip(File audioFile) {
             if (audioPlayer != null)
-                audioPlayer.stop();
+                try {
+                    audioPlayer.stop();
+                } catch (Exception e1) {
+                    logger.error("Error while playing the audio file {}", e1);
+                }
 
             // Make sure we have a real file, otherwise, disable the buttons
             if (audioFile == null || audioFile.getName() == null
@@ -421,7 +433,11 @@ public class AdhanComboBox extends JComboBox {
             // Be a little cavalier here...we're assuming the dialog was just
             // approved or cancelled so we should stop any playing clip
             if (audioPlayer != null) {
-                audioPlayer.stop();
+                try {
+                    audioPlayer.stop();
+                } catch (Exception e1) {
+                    logger.error("Error while playing the audio file {}", e1);
+                }
             }
         }
 
