@@ -53,7 +53,8 @@ public interface GuiConstants {
     int       ABOUT_WINDOW_PREFERED_HEIGHT = 200;
 
     // Icons ...
-    Icon      TAB_ICON_GENERAL             = new ImageIcon(ClassLoader.getSystemResource("icons/general_preferences.png"));
+    Icon      TAB_ICON_GENERAL             = new ImageIcon(
+                                                   ClassLoader.getSystemResource("icons/general_preferences.png"));
     Icon      TAB_ICON_LOCATION            = new ImageIcon(ClassLoader.getSystemResource("icons/earth.png"));
     Icon      TAB_ICON_PREFERENCES         = new ImageIcon(ClassLoader.getSystemResource("icons/preferences.png"));
     Icon      TAB_ICON_PRAYTIMES           = new ImageIcon(ClassLoader.getSystemResource("icons/carpet.png"));
@@ -81,10 +82,4 @@ public interface GuiConstants {
     // Adhans
     String    DEFAULT_ADHAN_SOUND          = ClassLoader.getSystemResource("sounds/adhan.mp3").getFile();
     String    DEFAULT_ADHAN_DIR            = "extras/sounds/praytimes.org/audio/adhan";
-
-    // Supported audio files: additional extensions apart from the default ones
-    // (wav, au, aif ...)
-    // Use lower case !
-    String[]  ADDITIONAL_AUDIO_EXTENSIONS  = { "mp3" };
-
 }

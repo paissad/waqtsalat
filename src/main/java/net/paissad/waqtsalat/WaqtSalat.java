@@ -23,30 +23,31 @@ package net.paissad.waqtsalat;
 import static net.paissad.waqtsalat.WSConstants.EXIT_ERROR;
 import static net.paissad.waqtsalat.WSConstants.EXIT_SUCCESS;
 
-import java.awt.AWTException;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-import javax.swing.SwingUtilities;
-
-import org.apache.commons.io.FileUtils;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DateTime;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.paissad.waqtsalat.gui.MainFrame;
+import net.paissad.waqtsalat.gui.WSMainFrame;
 import net.paissad.waqtsalat.logging.LogColorConverter;
 import net.paissad.waqtsalat.logging.LogDirDefiner;
 import net.paissad.waqtsalat.logging.LogFileNameDefiner;
 import net.paissad.waqtsalat.logging.LogReloader;
-import net.paissad.waqtsalat.utils.UncompressUtils;
-import net.paissad.waqtsalat.utils.geoip.GeoipHelper;
+import net.paissad.waqtsalat.utils.geoip.GeoipHelper.GEOIPTYPE;
 import net.paissad.waqtsalat.utils.geoip.WorldCitiesDB;
 import net.paissad.waqtsalat.utils.geoip.WorldCitiesLucene;
-import net.paissad.waqtsalat.utils.geoip.GeoipHelper.GEOIPTYPE;
 
 public class WaqtSalat {
 
@@ -67,21 +68,11 @@ public class WaqtSalat {
         logger.info("info ...");
         logger.warn("warn ...");
         logger.error("error ...");
-
+        
+        launchGUI();
         // initDatabase();
-        initLuceneIndex();
+        // initLuceneIndex();
 
-        SwingUtilities.invokeAndWait(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    MainFrame gui = new MainFrame();
-                    gui.setVisible(true);
-                } catch (AWTException e) {
-                    logger.error("Error while launching the GUI ... ", e);
-                }
-            }
-        });
     }
 
     // _________________________________________________________________________
@@ -272,6 +263,39 @@ public class WaqtSalat {
         } else {
             logger.info("The lucene index does already exist.");
         }
+    }
+
+    // _________________________________________________________________________
+
+    private static void launchGUI() {
+        
+        Display display = new Display(); 
+        
+        final Shell shell = new Shell(display);
+        shell.setSize(520, 200);
+        shell.setLayout(new RowLayout());
+        
+        Composite parent  = new Composite(shell, SWT.None);
+        GridLayout gridLayout = new GridLayout();
+        gridLayout.numColumns = 1;
+        parent.setLayout(gridLayout);
+        
+        DateTime calender = new DateTime(parent, SWT.CALENDAR);
+        DateTime date = new DateTime(parent, SWT.DATE);
+        DateTime time = new DateTime(parent, SWT.TIME);
+        // Date Selection as a drop-down
+        DateTime dateD = new DateTime(parent, SWT.DATE | SWT.DROP_DOWN);
+        // show the SWT window
+        
+        shell.pack();
+        shell.open();
+        
+        while (!shell.isDisposed()) {
+            if (!display.readAndDispatch()) {
+                display.sleep();
+            }
+        }
+        display.dispose();
     }
 
     // _________________________________________________________________________

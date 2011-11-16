@@ -29,7 +29,7 @@ import java.sql.Statement;
  * @author Papa Issa DIAKHATE (paissad)
  * 
  */
-public class JDBCUtils {
+public class JdbcUtils {
 
     /**
      * Close quietly a {@link Connection}, or a {@link Statement} or a

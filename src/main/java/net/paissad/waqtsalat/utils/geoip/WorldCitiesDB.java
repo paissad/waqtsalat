@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 import net.paissad.waqtsalat.Coordinates;
 import net.paissad.waqtsalat.factory.DBConnection;
 import net.paissad.waqtsalat.utils.CommonUtils;
-import net.paissad.waqtsalat.utils.jdbc.JDBCUtils;
+import net.paissad.waqtsalat.utils.jdbc.JdbcUtils;
 
 /**
  * This class contains utilities to create a database from a worldcitiespop.txt
@@ -131,15 +131,15 @@ public class WorldCitiesDB {
         } catch (SQLException sqle) {
             String errMsg = "An error occured while creating the table (" + WORLDCITIES_TABLE_NAME + ")\n";
             logger.error(errMsg, sqle);
-            JDBCUtils.printSQLException(sqle);
+            JdbcUtils.printSQLException(sqle);
             if (conn != null && !conn.isClosed()) {
                 conn.rollback();
             }
             throw new SQLException(errMsg, sqle);
 
         } finally {
-            JDBCUtils.closeQuietly(conn);
-            JDBCUtils.closeQuietly(stmt);
+            JdbcUtils.closeQuietly(conn);
+            JdbcUtils.closeQuietly(stmt);
         }
     }
 
@@ -191,12 +191,12 @@ public class WorldCitiesDB {
         } catch (SQLException sqle) {
             String errMsg = "Error while updating names of countries into the database.\n";
             logger.error(errMsg, sqle);
-            JDBCUtils.printSQLException(sqle);
+            JdbcUtils.printSQLException(sqle);
             throw new SQLException(errMsg, sqle);
 
         } finally {
-            JDBCUtils.closeQuietly(conn);
-            JDBCUtils.closeQuietly(pstmt);
+            JdbcUtils.closeQuietly(conn);
+            JdbcUtils.closeQuietly(pstmt);
         }
     }
 
@@ -236,13 +236,13 @@ public class WorldCitiesDB {
             String errMsg = "Error while retrieving the coordinates of (" + country + ", " + city
                     + ") from the database.";
             logger.error(errMsg, sqle);
-            JDBCUtils.printSQLException(sqle);
+            JdbcUtils.printSQLException(sqle);
             throw new SQLException(errMsg, sqle);
 
         } finally {
-            JDBCUtils.closeQuietly(conn);
-            JDBCUtils.closeQuietly(stmt);
-            JDBCUtils.closeQuietly(rs);
+            JdbcUtils.closeQuietly(conn);
+            JdbcUtils.closeQuietly(stmt);
+            JdbcUtils.closeQuietly(rs);
         }
     }
 
@@ -281,13 +281,13 @@ public class WorldCitiesDB {
         } catch (SQLException sqle) {
             String errMsg = "Error while getting country code for (" + countryName + ") from the database.";
             logger.error(errMsg, sqle);
-            JDBCUtils.printSQLException(sqle);
+            JdbcUtils.printSQLException(sqle);
             throw new SQLException(errMsg, sqle);
 
         } finally {
-            JDBCUtils.closeQuietly(conn);
-            JDBCUtils.closeQuietly(stmt);
-            JDBCUtils.closeQuietly(rs);
+            JdbcUtils.closeQuietly(conn);
+            JdbcUtils.closeQuietly(stmt);
+            JdbcUtils.closeQuietly(rs);
         }
     }
 

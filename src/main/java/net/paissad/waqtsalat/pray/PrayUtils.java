@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
-import net.paissad.waqtsalat.exceptions.PrayException;
+import net.paissad.waqtsalat.exception.PrayException;
 import net.paissad.waqtsalat.pray.PrayTime.AdjustingMethod;
 import net.paissad.waqtsalat.pray.PrayTime.CalcMethod;
 import net.paissad.waqtsalat.pray.PrayTime.JuristicMethod;

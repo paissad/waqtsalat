@@ -18,7 +18,7 @@
  * PLEASE DO NOT REMOVE THIS COPYRIGHT BLOCK.
  */
 
-package net.paissad.waqtsalat.exceptions;
+package net.paissad.waqtsalat.exception;
 
 /**
  * @author Papa Issa DIAKHATE (paissad)

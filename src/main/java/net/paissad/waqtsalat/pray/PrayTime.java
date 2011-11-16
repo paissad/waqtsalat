@@ -376,6 +376,7 @@ public class PrayTime {
      * @param tZone
      * @return A <code>List</code> containing the pray times.
      */
+    @SuppressWarnings("hiding")
     private List<String> getDatePrayerTimes(int year, int month, int day,
             double latitude, double longitude, double tZone) {
 
@@ -397,6 +398,7 @@ public class PrayTime {
      * @param tZone
      * @return A <code>List</code> containing the pray times.
      */
+    @SuppressWarnings("hiding")
     public List<String> getPrayerTimes(Calendar date, double latitude,
             double longitude, double tZone) {
 

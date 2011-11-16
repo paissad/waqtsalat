@@ -24,7 +24,7 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.pattern.ClassicConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 
-import static net.paissad.waqtsalat.AnsiTermColors.*;
+import static net.paissad.waqtsalat.logging.AnsiTermColors.*;
 
 /**
  * A customised ClassicConverter that colors the level of the logging event,

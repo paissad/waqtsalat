@@ -20,10 +20,18 @@
 
 package net.paissad.waqtsalat.gui;
 
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.ToolBar;
+
 /**
- * 
  * @author Papa Issa DIAKHATE (paissad)
+ *
  */
-public class SysTray {
+public class WSToolbar extends ToolBar {
+
+    public WSToolbar(Composite parent, int style) {
+        super(parent, style);
+        // TODO Auto-generated constructor stub
+    }
 
 }

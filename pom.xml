@@ -42,6 +42,9 @@
     <main.class>net.paissad.waqtsalat.WaqtSalat</main.class>
     <extras.dir>${basedir}/extras</extras.dir>
     <macosx.dir>${basedir}/macosx</macosx.dir>
+    <swt.groupId>org.eclipse.swt</swt.groupId>
+    <swt.version>3.6.2</swt.version>
+    <swt.artifactId>(This will be set by the profiles ...)</swt.artifactId>
   </properties>
 
   <!-- Build settings -->
@@ -81,11 +84,7 @@
         <configuration>
           <goal>single</goal>
           <descriptorRefs>
-            <!-- http://maven.apache.org/plugins/maven-assembly-plugin/descriptor-refs.html -->
             <descriptorRef>jar-with-dependencies</descriptorRef>
-            <!-- <descriptorRef>bin</descriptorRef> -->
-            <!-- <descriptorRef>src</descriptorRef> -->
-            <!-- <descriptorRef>project</descriptorRef> -->
           </descriptorRefs>
           <archive>
             <manifest>
@@ -98,7 +97,6 @@
     </plugins>
   </build>
 
-  <!-- List of dependencies -->
   <dependencies>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -188,14 +186,14 @@
       <version>2.0.12</version>
     </dependency>
     <dependency>
-      <groupId>org.clojars.ghoseb</groupId>
-      <artifactId>cron4j</artifactId>
-      <version>2.2.1</version>
-    </dependency>
-    <dependency>
       <groupId>org.apache.ant</groupId>
       <artifactId>ant</artifactId>
       <version>1.8.2</version>
+    </dependency>
+    <dependency>
+      <groupId>${swt.groupId}</groupId>
+      <artifactId>${swt.artifactId}.${os.arch}</artifactId>
+      <version>${swt.version}</version>
     </dependency>
   </dependencies>
 
@@ -208,8 +206,10 @@
       <layout>default</layout>
     </repository>
     <repository>
-      <id>clojars.org</id>
-      <url>http://clojars.org/repo</url>
+      <id>maven2-eclipse-testing</id>
+      <name>Eclipse Repository for Maven (Testing)</name>
+      <url>http://maven.eclipse.org/nexus/content/repositories/testing</url>
+      <layout>default</layout>
     </repository>
   </repositories>
 
@@ -226,7 +226,6 @@
           <family>mac</family>
         </os>
         <jdk>1.6</jdk>
-
       </activation>
       <build>
         <!-- The plugin for creating the OSX App Bundle -->
@@ -273,5 +272,46 @@
       </build>
     </profile>
 
+    <!-- SWT libraries needed for MacOSX -->
+    <profile>
+      <id>mac</id>
+      <activation>
+        <os>
+          <family>mac</family>
+        </os>
+      </activation>
+      <properties>
+        <swt.artifactId>org.eclipse.swt.cocoa.macosx</swt.artifactId>
+      </properties>
+    </profile>
+
+    <!-- SWT libraries needed for Linux -->
+    <profile>
+      <id>linux</id>
+      <activation>
+        <os>
+          <family>unix</family>
+          <name>linux</name>
+        </os>
+      </activation>
+      <properties>
+        <swt.artifactId>org.eclipse.swt.gtk.linux</swt.artifactId>
+      </properties>
+    </profile>
+
+    <!-- SWT libraries needed for Windows -->
+    <profile>
+      <id>windows</id>
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+      </activation>
+      <properties>
+        <swt.artifactId>org.eclipse.swt.win32.win32</swt.artifactId>
+      </properties>
+    </profile>
+
   </profiles>
+
 </project>

@@ -41,7 +41,8 @@ my %maven_rules = (
     ' Building .*'             => "magenta",
     ' >>> .* >>>$'             => "magenta",
     ' --- .* ---$'             => "magenta",
-
+    'Reactor Summary:'         => "bold blue",
+    'Reactor Build Order:'     => "bold blue",
 );
 
 #### Main loop

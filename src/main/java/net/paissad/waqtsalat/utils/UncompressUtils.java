@@ -52,8 +52,8 @@ public class UncompressUtils {
     private static final String  BUNZIP_METHOD                = "bunzip2";
     private static final String  TAR_METHOD                   = "untar";
     private static final boolean CLOSE_STREAM                 = true;
-    
-    private static Logger logger = LoggerFactory.getLogger(UncompressUtils.class);
+
+    private static Logger        logger                       = LoggerFactory.getLogger(UncompressUtils.class);
 
     /**
      * Compressed file (typically .gz, tar.gz, .bz2, .tar.bz2, .tar, ...)
@@ -133,7 +133,7 @@ public class UncompressUtils {
                     tarFile = new UncompressUtils(source).gunzip();
                     return new UncompressUtils(tarFile).untar();
                 } finally {
-                    if (tarFile.exists())
+                    if (tarFile != null && tarFile.exists())
                         tarFile.delete();
                 }
             }
@@ -147,7 +147,7 @@ public class UncompressUtils {
                     tarFile = new UncompressUtils(source).bunzip2();
                     return new UncompressUtils(tarFile).untar();
                 } finally {
-                    if (tarFile.exists())
+                    if (tarFile != null && tarFile.exists())
                         tarFile.delete();
                 }
             }

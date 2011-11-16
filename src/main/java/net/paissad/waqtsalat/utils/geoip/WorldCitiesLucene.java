@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
 import com.sun.jna.Platform;
 
 import net.paissad.waqtsalat.factory.DBConnection;
-import net.paissad.waqtsalat.utils.jdbc.JDBCUtils;
+import net.paissad.waqtsalat.utils.jdbc.JdbcUtils;
 
 /**
  * This class contains convenient methods to create a Lucene search index from
@@ -99,7 +99,7 @@ public class WorldCitiesLucene {
             writer.close();
 
         } finally {
-            JDBCUtils.closeQuietly(conn);
+            JdbcUtils.closeQuietly(conn);
             closeIndex();
         }
 
@@ -223,8 +223,8 @@ public class WorldCitiesLucene {
             }
 
         } finally {
-            JDBCUtils.closeQuietly(stmt);
-            JDBCUtils.closeQuietly(rs);
+            JdbcUtils.closeQuietly(stmt);
+            JdbcUtils.closeQuietly(rs);
         }
     }
 
